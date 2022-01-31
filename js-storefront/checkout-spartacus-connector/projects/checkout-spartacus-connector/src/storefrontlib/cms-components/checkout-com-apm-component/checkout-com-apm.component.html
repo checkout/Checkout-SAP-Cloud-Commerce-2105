@@ -1,0 +1,92 @@
+<ng-container>
+  <ng-container *ngIf="!(loading$ |async) else loading">
+    <div class="row my-3">
+
+      <div class="col-4 col-md-3 my-2 cc" *ngIf="card$ | async as apm">
+        <lib-checkout-com-apm-tile [apm]="apm"></lib-checkout-com-apm-tile>
+      </div>
+
+      <div class="col-4 col-md-3 my-2" *ngFor="let apm of (availableApms$ | async)">
+        <lib-checkout-com-apm-tile [apm]="apm"></lib-checkout-com-apm-tile>
+      </div>
+
+      <div class="col-4 col-md-3 my-2 gpay" *ngIf="googlePay$ | async as googlepayApm">
+        <lib-checkout-com-apm-tile [apm]="googlepayApm"></lib-checkout-com-apm-tile>
+      </div>
+
+      <div class="col-4 col-md-3 my-2 apay" *ngIf="applePay$ | async as applePayApm">
+        <lib-checkout-com-apm-tile [apm]="applePayApm"></lib-checkout-com-apm-tile>
+      </div>
+    </div>
+
+    <div *ngIf="selectedApm$ | async as selectedApm">
+      <div [ngSwitch]="selectedApm.code">
+        <ng-container *ngSwitchCase="'CARD'"></ng-container>
+        <ng-container *ngSwitchCase="'GOOGLE_PAY'">
+          <lib-checkout-com-apm-googlepay
+              [billingAddressForm]="billingAddressForm"
+          ></lib-checkout-com-apm-googlepay>
+        </ng-container>
+        <ng-container *ngSwitchCase="'APPLEPAY'">
+          <lib-checkout-com-apm-applepay></lib-checkout-com-apm-applepay>
+        </ng-container>
+        <ng-container *ngSwitchCase="paymentType.Klarna">
+          <lib-checkout-com-apm-klarna
+              [billingAddressForm]="billingAddressForm"
+              (setPaymentDetails)="setPaymentDetails.emit($event)"
+          ></lib-checkout-com-apm-klarna>
+        </ng-container>
+        <ng-container *ngSwitchCase="paymentType.Oxxo">
+          <lib-checkout-com-apm-oxxo
+              [billingAddressForm]="billingAddressForm"
+              (setPaymentDetails)="setPaymentDetails.emit($event)"
+          ></lib-checkout-com-apm-oxxo>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="paymentType.Sepa">
+          <lib-checkout-com-sepa-apm
+            (setPaymentDetails)="setPaymentDetails.emit($event)"
+          ></lib-checkout-com-sepa-apm>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="paymentType.Fawry">
+          <lib-checkout-com-apm-fawry
+              [billingAddressForm]="billingAddressForm"
+              (setPaymentDetails)="setPaymentDetails.emit($event)"
+          ></lib-checkout-com-apm-fawry>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="paymentType.iDeal">
+          <lib-checkout-com-apm-ideal
+            (setPaymentDetails)="setPaymentDetails.emit($event)"
+          ></lib-checkout-com-apm-ideal>
+        </ng-container>
+
+      </div>
+
+      <ng-container *ngIf="showBillingFormAndContinueButton(selectedApm.code)">
+        <lib-checkout-com-billing-address
+          [billingAddressForm]="billingAddressForm"
+          (sameAsShippingAddressChange)="sameAsShippingAddress$.next($event)"
+        ></lib-checkout-com-billing-address>
+
+        <!-- BUTTON SECTION -->
+        <div class="cx-checkout-btns row justify-content-end mb-3">
+          <div class="col-md-12 col-lg-6">
+            <button class="btn btn-block btn-primary"
+                    (click)="selectApmPaymentDetails()"
+                    [disabled]="(submitting$|async) || (!sameAsShippingAddress$ && this.billingAddressForm.invalid) || processing">
+              {{ 'common.continue' | cxTranslate }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="cx-spinner">
+      <cx-spinner></cx-spinner>
+    </div>
+  </ng-template>
+</ng-container>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <alias name="defaultCheckoutComKlarnaProductsRequestDtoPopulator"
+           alias="checkoutComKlarnaProductsRequestDtoPopulator"/>
+    <bean id="defaultCheckoutComKlarnaProductsRequestDtoPopulator"
+          class="com.checkout.hybris.core.payment.klarna.request.converters.populators.CheckoutComKlarnaProductsRequestDtoPopulator">
+        <constructor-arg ref="checkoutComCurrencyService"/>
+        <constructor-arg ref="checkoutComKlarnaDiscountAmountStrategy"/>
+    </bean>
+
+    <alias name="defaultCheckoutComKlarnaProductsRequestDtoConverter"
+           alias="checkoutComKlarnaProductsRequestDtoConverter"/>
+    <bean id="defaultCheckoutComKlarnaProductsRequestDtoConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="java.util.ArrayList"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComKlarnaProductsRequestDtoPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComOxxoRequestPayerDtoPopulator"
+           alias="checkoutComOxxoRequestPayerDtoPopulator"/>
+    <bean id="defaultCheckoutComOxxoRequestPayerDtoPopulator"
+          class="com.checkout.hybris.core.payment.oxxo.request.converter.populator.CheckoutComOxxoRequestPayerDtoPopulator">
+    </bean>
+
+    <alias name="defaultCheckoutComOxxoRequestPayerDtoConverter"
+           alias="checkoutComOxxoRequestPayerDtoConverter"/>
+    <bean id="defaultCheckoutComOxxoRequestPayerDtoConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.core.oxxo.session.request.OxxoPayerRequestDto"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComOxxoRequestPayerDtoPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

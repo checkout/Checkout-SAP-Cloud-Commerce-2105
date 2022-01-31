@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project name="spartacussampledata_buildcallbacks">
+	
+	<macrodef name="spartacussampledata_after_build">
+		<sequential>
+			<impexGenerate extname="spartacussampledata"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="spartacussampledata_after_clean">
+		<sequential>
+			<delete file="${ext.spartacussampledata.path}/resources-lang/touch_impexgen" failonerror="false"/>
+		</sequential>
+	</macrodef>
+
+	<patternset id="spartacussampledata.localization.pattern">
+		<patternset refid="localization.defaultpattern" />
+		<exclude name="**/*.impex"/>
+	</patternset>
+	
+	<macrodef name="spartacussampledata_before_ear">
+		<sequential>
+
+			<!-- you can do anything before the EAR file is being packed -->
+			
+		</sequential>
+	</macrodef>
+		
+</project>
+

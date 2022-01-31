@@ -1,0 +1,816 @@
+#% impex.setLocale(Locale.ENGLISH);
+
+INSERT_UPDATE Currency; isocode[unique = true]; conversion; digits; symbol; name[lang = en]; active[default = true]
+                      ; BRL                   ; 0.18      ; 2     ; S$    ; Brazilian Real
+                      ; AUD                   ; 0.52      ; 2     ; A$    ; Australian Dollar
+                      ; NZD                   ; 0.50      ; 2     ; $     ; New Zealand Dollar
+                      ; BHD                   ; 2.05      ; 2     ; BD    ; Bahraini Dinar
+                      ; KWD                   ; 2.54      ; 2     ; KD    ; Kuwaiti dinar
+                      ; QAR                   ; 0.21      ; 2     ; QR    ; Qatari Rial
+                      ; EGP                   ; 0.049     ; 2     ; E£    ; Egyptian Pound
+                      ; PLN                   ; 0.20      ; 2     ; zł    ; Poland złoty
+                      ; MXN                   ; 0.041     ; 2     ; Mex$  ; Mexican peso
+
+INSERT_UPDATE Zone; code[unique = true]; countries(isocode)
+                  ; brazil             ; BR
+                  ; australia          ; AU
+                  ; newnewzeland       ; NZ
+                  ; bahrain            ; BH
+                  ; kuwait             ; KW
+                  ; qatar              ; QA
+                  ; egypt              ; EG
+                  ; poland             ; PL
+                  ; mexico             ; MX
+
+INSERT_UPDATE AchAccountType; code[unique = true]
+                            ; Checking
+                            ; Savings
+                            ; Corporate
+                            ; CorpSavings
+
+INSERT_UPDATE CheckoutComAPMConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode)                                                                                         ; restrictedCurrencies(isocode)
+                                         ; SOFORT             ; Sofort         ; AT,BE,DE,ES,IT,NL                                                                                                    ; EUR
+                                         ; PAYPAL             ; PayPal         ;                                                                                                                      ;
+                                         ; POLI               ; POLi           ; AU,NZ                                                                                                                ; AUD,NZD
+                                         ; IDEAL              ; iDeal          ; NL                                                                                                                   ; EUR
+                                         ; KLARNA             ; Klarna         ; AT,DK,FI,DE,NL,NO,SE,GB,IM,JE,GG                                                                                     ; EUR,GBP
+                                         ; ALIPAY             ; Alipay         ; US,CN                                                                                                                ; USD
+                                         ; BENEFITPAY         ; Benefit Pay    ; BH                                                                                                                   ; BHD
+                                         ; BANCONTACT         ; Bancontact     ; BE                                                                                                                   ; EUR
+                                         ; GIROPAY            ; Giropay        ; DE                                                                                                                   ; EUR
+                                         ; EPS                ; Eps            ; AT                                                                                                                   ; EUR
+                                         ; KNET               ; Knet           ; KW                                                                                                                   ; KWD
+                                         ; QPAY               ; QPay           ; QA                                                                                                                   ; QAR
+                                         ; MULTIBANCO         ; Multibanco     ; PT                                                                                                                   ; EUR
+                                         ; SEPA               ; Sepa           ; AT,BE,CY,DE,EE,ES,FI,FR,GR,IE,IT,LT,LU,LV,MT,NL,PT,SI,SK,AD,BG,CH,CZ,DK,GB,IM,JE,GG,HR,HU,IS,LI,MC,NO,PL,RO,SM,SE,VA ; EUR
+                                         ; P24                ; Przelewy24     ; PL                                                                                                                   ; EUR,PLN
+
+INSERT_UPDATE CheckoutComFawryConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); productId        ; productDescription[lang = en]
+                                           ; FAWRY              ; Fawry          ; EG                          ; EGP                          ; Fawry product id ; Fawry product description
+
+INSERT_UPDATE CheckoutComOxxoConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); description[lang = en]     ; integrationType(code)
+                                          ; OXXO               ; Oxxo           ; MX                          ; MXN                          ; redirect OXXO Demo Payment ; redirect
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'brazil'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-gross                    ; 0.00  ; 0.00                  ; EUR                             ; continentalEurope
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'australia'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'newnewzeland'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'bahrain'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'kuwait'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'qatar'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'egypt'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'continentalEurope'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'mexico'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'usa'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'otherAsianRegions'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'uk'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 7.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 79.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'ca'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; value ; minimum[unique = true]; currency(isocode)[unique = true]; zone(code)[default = 'china'][unique = true]
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; USD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-gross                    ; 10.99 ; 0.00                  ; GBP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; USD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; JPY                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BRL                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; AUD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; NZD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; BHD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; KWD                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; QAR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EGP                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; PLN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; MXN                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; EUR                             ;
+                                   ; premium-net                      ; 99.99 ; 0.00                  ; GBP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; USD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; JPY                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BRL                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; AUD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; NZD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; BHD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; KWD                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; QAR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EGP                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; PLN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; MXN                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; EUR                             ;
+                                   ; standard-gross                   ; 5.99  ; 0.00                  ; GBP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; USD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; JPY                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BRL                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; AUD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; NZD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; BHD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; KWD                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; QAR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EGP                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; PLN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; MXN                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; EUR                             ;
+                                   ; standard-net                     ; 59.99 ; 0.00                  ; GBP                             ;
+
+# Zone Delivery Modes
+INSERT_UPDATE ZoneDeliveryMode; code[unique = true]    ; name   [lang = en]      ; net; active[default = true]
+                              ; premium-net            ; Premium net shipping    ; true
+                              ; standard-net           ; Standard net shipping   ; true
+                              ; premium-gross          ; Premium gross shipping  ; false
+                              ; standard-gross         ; Standard gross shipping ; false
+                              ; free-standard-shipping ; Standard free shipping  ; true

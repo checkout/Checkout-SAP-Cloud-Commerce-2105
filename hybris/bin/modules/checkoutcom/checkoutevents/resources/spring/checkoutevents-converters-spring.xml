@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComPaymentEventReversePopulator" alias="checkoutComPaymentEventReversePopulator"/>
+    <bean id="defaultCheckoutComPaymentEventReversePopulator"
+          class="com.checkout.hybris.events.populators.CheckoutComPaymentEventReversePopulator">
+        <constructor-arg ref="commonI18NService"/>
+        <constructor-arg ref="checkoutComCurrencyService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentEventReverseConverter" alias="checkoutComPaymentEventReverseConverter"/>
+    <bean id="defaultCheckoutComPaymentEventReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.events.model.CheckoutComPaymentEventModel"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComPaymentEventReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

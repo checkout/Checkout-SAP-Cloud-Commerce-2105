@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+           
+    <context:annotation-config/>
+
+	<!-- Consignment Process Actions -->
+
+	<bean id="sendConsignmentToWarehouseAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SendConsignmentToWarehouseAction"  parent="abstractAction">
+		<property name="process2WarehouseAdapter" ref="process2WarehouseAdapter"/>
+	</bean>
+
+	<bean id="waitBeforeTransmissionAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.WaitBeforeTransmissionAction"  parent="abstractAction"/>
+
+	<bean id="receiveConsignmentStatusAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.ReceiveConsignmentStatusAction"  parent="abstractAction"/>
+
+	<bean id="confirmConsignmentPickupAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.ConfirmConsignmentPickupAction"  parent="abstractAction"/>
+
+	<bean id="sendDeliveryMessageAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SendDeliveryMessageAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="sendReadyForPickupMessageAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SendReadyForPickupMessageAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+	
+	<bean id="sendPickedUpMessageAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SendPickedUpMessageAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="cancelConsignmentAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.CancelConsignmentAction"  parent="abstractAction"/>
+
+	<bean id="sendCancelMessageAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SendCancelMessageAction"  parent="abstractAction"/>
+
+	<bean id="subprocessEndAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.SubprocessEndAction"  parent="abstractAction">
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+
+	<bean id="allowShipmentAction" class="com.checkout.hybris.fulfilmentprocess.actions.consignment.AllowShipmentAction"  parent="abstractAction">
+		<property name="process2WarehouseAdapter" ref="process2WarehouseAdapter"/>
+	</bean>
+
+</beans>

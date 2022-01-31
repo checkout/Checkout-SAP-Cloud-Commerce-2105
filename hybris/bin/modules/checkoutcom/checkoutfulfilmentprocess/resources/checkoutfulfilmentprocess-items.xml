@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <itemtypes>
+        <itemtype code="ConsignmentProcess" autocreate="false" generate="false">
+            <attributes>
+                <attribute qualifier="done" type="boolean">
+                    <description>Mark process as done</description>
+                    <modifiers optional="false" initial="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+
+                <attribute qualifier="waitingForConsignment" type="boolean">
+                    <description>Mark that process is waiting for consignment</description>
+                    <modifiers optional="false" initial="false"/>
+                    <persistence type="property"/>
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+
+                <attribute qualifier="warehouseConsignmentState" type="WarehouseConsignmentState">
+                    <description>State of warehouse process.</description>
+                    <persistence type="property"/>
+                    <modifiers initial="false" optional="true"/>
+                </attribute>
+
+            </attributes>
+        </itemtype>
+
+        <typegroup name="Process">
+            <itemtype code="ReturnProcess" autocreate="false" generate="false">
+                <description>Extending ReturnProcess type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="refundActionId" type="java.lang.String">
+                        <description>The actionId related to the refund</description>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComVoidProcess" extends="OrderProcess">
+            </itemtype>
+        </typegroup>
+
+    </itemtypes>
+</items>

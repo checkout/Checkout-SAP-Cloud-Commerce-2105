@@ -1,0 +1,27 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundCreditCardPaymentInfo; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
+; InboundCreditCardPaymentInfo	; CheckoutComCreditCardPaymentInfo	; CheckoutComCreditCardPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundCreditCardPaymentInfo	; User                            	; User                            	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundCreditCardPaymentInfo	; CreditCardType                  	; CreditCardType                  	; 	; ALL_SUBTYPES           	;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; cardBin       	; CheckoutComCreditCardPaymentInfo:cardBin       	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; creationtime  	; CheckoutComCreditCardPaymentInfo:creationtime  	;                                            	; true	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validFromMonth	; CheckoutComCreditCardPaymentInfo:validFromMonth	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; type          	; CheckoutComCreditCardPaymentInfo:type          	; InboundCreditCardPaymentInfo:CreditCardType	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validToMonth  	; CheckoutComCreditCardPaymentInfo:validToMonth  	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validToYear   	; CheckoutComCreditCardPaymentInfo:validToYear   	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; code          	; CheckoutComCreditCardPaymentInfo:code          	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; paymentId     	; CheckoutComCreditCardPaymentInfo:paymentId     	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validFromYear 	; CheckoutComCreditCardPaymentInfo:validFromYear 	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; user          	; CheckoutComCreditCardPaymentInfo:user          	; InboundCreditCardPaymentInfo:User          	; 	;
+; InboundCreditCardPaymentInfo:User                            	; uid           	; User:uid                                       	;                                            	; true	;
+; InboundCreditCardPaymentInfo:CreditCardType                  	; name          	; CreditCardType:name                            	;                                            	; 	;
+; InboundCreditCardPaymentInfo:CreditCardType                  	; code          	; CreditCardType:code                            	;                                            	; true	;
+
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundCreditCardPaymentInfo                          ; BASIC
+

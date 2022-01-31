@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <alias name="defaultCheckoutComPaymentDetailsWsDTOValidValidator"
+           alias="checkoutComPaymentDetailsWsDTOValidValidator"/>
+    <bean id="defaultCheckoutComPaymentDetailsWsDTOValidValidator"
+          class="com.checkout.hybris.occ.validators.impl.CheckoutComPaymentDetailsWsDTOValidValidator">
+        <constructor-arg ref="checkoutComPaymentTypeResolver"/>
+        <constructor-arg name="validators">
+            <map key-type="com.checkout.hybris.core.payment.enums.CheckoutComPaymentType"
+                 value-type="org.springframework.validation.Validator">
+                <entry key="CARD" value-ref="checkoutComCardPaymentDetailsWsDTOValidator"/>
+                <entry key="ACH" value-ref="checkoutComAchPaymentDetailsWsDTOValidator"/>
+                <entry key="FAWRY" value-ref="checkoutComFawryPaymentDetailsWsDTOValidator"/>
+                <entry key="IDEAL" value-ref="checkoutComIdealPaymentDetailsWsDTOValidator"/>
+                <entry key="KLARNA" value-ref="checkoutComKlarnaPaymentDetailsWsDTOValidator"/>
+                <entry key="SEPA" value-ref="checkoutComSepaPaymentDetailsWsDTOValidator"/>
+                <entry key="OXXO" value-ref="checkoutComOxxoPaymentDetailsWsDTOValidator"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <alias name="defaultCheckoutComCardPaymentDetailsWsDTOValidator"
+           alias="checkoutComCardPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComCardPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComCardPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComAchPaymentDetailsWsDTOValidator" alias="checkoutComAchPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComAchPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComAchPaymentDetailsWsDTOValidator">
+        <constructor-arg ref="enumerationService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComFawryPaymentDetailsWsDTOValidator"
+           alias="checkoutComFawryPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComFawryPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComFawryPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComIdealPaymentDetailsWsDTOValidator"
+           alias="checkoutComIdealPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComIdealPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComIdealPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComKlarnaPaymentDetailsWsDTOValidator"
+           alias="checkoutComKlarnaPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComKlarnaPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComKlarnaPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComSepaPaymentDetailsWsDTOValidator"
+           alias="checkoutComSepaPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComSepaPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComSepaPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComOxxoPaymentDetailsWsDTOValidator"
+           alias="checkoutComOxxoPaymentDetailsWsDTOValidator"/>
+    <bean id="defaultCheckoutComOxxoPaymentDetailsWsDTOValidator"
+          class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComOxxoPaymentDetailsWsDTOValidator"/>
+
+    <alias name="defaultCheckoutComPlaceOrderCartValidator" alias="checkoutComPlaceOrderCartValidator"/>
+    <bean id="defaultCheckoutComPlaceOrderCartValidator"
+          class="com.checkout.hybris.occ.validators.impl.CheckoutComPlaceOrderCartValidator">
+        <constructor-arg name="checkoutFlowFacade" ref="checkoutFlowFacade"/>
+        <constructor-arg name="checkoutComPaymentInfoFacade" ref="checkoutComPaymentInfoFacade"/>
+    </bean>
+
+    <alias name="defaultDeliveryAddressValidator" alias="checkoutDeliveryAddressValidator"/>
+    <bean id="defaultDeliveryAddressValidator"
+          class="com.checkout.hybris.occ.validators.impl.CheckoutDeliveryAddressValidator">
+    </bean>
+
+    <bean id="minimalAddressValidator" class="de.hybris.platform.webservicescommons.validators.CompositeValidator">
+        <property name="validators">
+            <list>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="firstName"/>
+                    <property name="maxLength" value="255"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="lastName"/>
+                    <property name="maxLength" value="255"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="line1"/>
+                    <property name="maxLength" value="255"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="town"/>
+                    <property name="maxLength" value="255"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="postalCode"/>
+                    <property name="maxLength" value="10"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.OptionalFieldValidator">
+                    <property name="fieldPath" value="email"/>
+                    <constructor-arg>
+                        <bean class="de.hybris.platform.webservicescommons.validators.EmailValidator">
+                            <property name="fieldPath" value="email"/>
+                        </bean>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="commonAddressValidator" class="de.hybris.platform.webservicescommons.validators.CompositeValidator">
+        <property name="validators">
+            <list>
+                <ref bean="minimalAddressValidator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="japaneseAddressValidator" class="de.hybris.platform.webservicescommons.validators.CompositeValidator">
+        <property name="validators">
+            <list>
+                <ref bean="minimalAddressValidator"/>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="line2"/>
+                    <property name="maxLength" value="255"/>
+                </bean>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="region.isocode"/>
+                    <property name="maxLength" value="7"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="chineseAddressValidator" class="de.hybris.platform.webservicescommons.validators.CompositeValidator">
+        <property name="validators">
+            <list>
+                <ref bean="commonAddressValidator"/>
+                <bean class="de.hybris.platform.webservicescommons.validators.FieldNotEmptyOrTooLongValidator">
+                    <property name="fieldPath" value="region.isocode"/>
+                    <property name="maxLength" value="7"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultAddressDTOValidator" alias="checkoutAddressDTOValidator"/>
+    <bean id="defaultAddressDTOValidator"
+          class="com.checkout.hybris.occ.validators.impl.CheckoutCountryAwareAddressDTOValidator">
+        <constructor-arg name="commonAddressWsDTOValidator" ref="commonAddressValidator"/>
+        <constructor-arg name="countrySpecificAddressWsDTOValidators" >
+            <map>
+                <entry key="JP" value-ref="japaneseAddressValidator"/>
+                <entry key="CN" value-ref="chineseAddressValidator"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+</beans>

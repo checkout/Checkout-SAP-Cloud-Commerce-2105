@@ -1,0 +1,12 @@
+<div class="mb-4">
+  <lib-checkout-com-billing-address
+      [billingAddressForm]="billingAddressForm"
+      (sameAsShippingAddressChange)="sameAsShippingAddress$.next($event)"
+  ></lib-checkout-com-billing-address>
+</div>
+
+<div class="cx-checkout-btns row">
+  <div class="col-sm-12 col-md-6 offset-md-6 text-md-right mb-4">
+    <div #gpayBtn></div>
+  </div>
+</div>

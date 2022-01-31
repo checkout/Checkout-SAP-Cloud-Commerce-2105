@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="http://www.hybris.de/xsd/processdefinition" start="sendVoidCommand" name="void-process"
+         processClass="com.checkout.hybris.fulfilmentprocess.model.CheckoutComVoidProcessModel">
+
+    <action id="sendVoidCommand" bean="checkoutComVoidOrderAction">
+        <transition name="OK" to="end"/>
+        <transition name="NOK" to="failed"/>
+        <transition name="WAIT" to="waitFor_CANCEL"/>
+    </action>
+
+    <wait id="waitFor_CANCEL" then="sendVoidCommand" prependProcessCode="false">
+        <event>${process.code}_CANCEL</event>
+    </wait>
+
+    <end id="end" state="SUCCEEDED">Success</end>
+    <end id="failed" state="FAILED">Void failed.</end>
+
+</process>

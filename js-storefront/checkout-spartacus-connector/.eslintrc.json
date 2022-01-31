@@ -1,0 +1,57 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*",
+    "**/*.html",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/mock.*.ts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["rxjs", "rxjs-angular"],
+      "extends": [
+        "plugin:rxjs/recommended",
+        "plugin:@angular-eslint/recommended"
+      ],
+      "rules": {
+        "rxjs-angular/prefer-takeuntil": ["error"],
+        "rxjs/ban-observables": ["error"],
+        "rxjs/ban-operators": ["error"],
+        "rxjs/no-connectable": ["error"],
+        "rxjs/no-cyclic-action": ["error"],
+        "rxjs/no-unsafe-takeuntil": ["error"],
+        "rxjs/no-compat": ["error"],
+        "rxjs/no-ignored-replay-buffer": ["error"],
+        "rxjs/no-unsafe-catch": ["error"],
+        "rxjs/no-unsafe-first": ["error"],
+        "rxjs/no-unsafe-switchmap": ["error"],
+        "rxjs/no-async-subscribe": ["error"],
+        "rxjs/no-create": ["error"],
+        "rxjs/no-ignored-observable": ["error"],
+        "rxjs/no-ignored-error": ["warn"],
+        "rxjs/no-ignored-subscription": ["off"],
+        "rxjs/no-exposed-subjects": ["off"],
+        "rxjs/no-implicit-any-catch": ["off"]
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+      ],
+      "rules": {}
+    }
+  ]
+}

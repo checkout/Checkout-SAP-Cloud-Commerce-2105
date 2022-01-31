@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config/>
+
+    <bean id="checkoutSpartacussampledataCoreDataImportedEventListener" parent="abstractCoreDataImportedEventListener">
+        <property name="supportedChannels">
+            <list value-type="de.hybris.platform.commerceservices.enums.SiteChannel">
+                <value>B2C</value>
+                <!--
+                                <value>B2B</value>
+                -->
+            </list>
+        </property>
+        <property name="addonExtensionMetadata">
+            <bean class="de.hybris.platform.addonsupport.data.AddonExtensionMetadata">
+                <property name="suffixChannel" value="false"/>
+                <property name="baseExtensionName" value="checkoutspartacussampledata"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="checkoutSpartacussampledataSampleDataEventListener" parent="abstractGenericAddOnSampleDataEventListener">
+        <property name="extensionName" value="checkoutspartacussampledata"/>
+        <property name="addOnSampleDataImportService" ref="defaultAddonSampleDataImportService"/>
+    </bean>
+
+</beans>

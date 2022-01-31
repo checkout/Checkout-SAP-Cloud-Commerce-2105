@@ -1,0 +1,31 @@
+.klarna-payment-method-category {
+  .card-header {
+    background-color: transparent;
+    color: #49494A;
+    font-size: 1.5em;
+    cursor: pointer;
+    border-bottom: none;
+        
+    &.disabled {
+      background-color: #DDD;
+      color: #49494A;
+    }
+  }
+}
+
+.klarna-method-selected {
+  border-style: solid;
+  border-color: #FA82A0;
+  border-radius: 0;
+  border-width: 2px;
+  
+  .card-header {
+    background-color: #FA82A0;
+    color: #ffffff;
+        
+    &.disabled {
+      background-color: #DDD;
+      color: #49494A;
+    }
+  }
+}

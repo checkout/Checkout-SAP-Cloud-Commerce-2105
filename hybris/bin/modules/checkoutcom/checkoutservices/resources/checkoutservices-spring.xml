@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="spring/checkoutservices-daos-spring.xml"/>
+    <import resource="spring/checkoutservices-services-spring.xml"/>
+    <import resource="spring/checkoutservices-strategies-spring.xml"/>
+    <import resource="spring/checkoutservices-converters-spring.xml"/>
+    <import resource="spring/checkoutservices-interceptors-spring.xml"/>
+    <import resource="spring/checkoutservices-commands-spring.xml"/>
+
+</beans>

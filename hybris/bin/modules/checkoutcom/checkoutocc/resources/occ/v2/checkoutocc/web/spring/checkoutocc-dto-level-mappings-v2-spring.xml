@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean parent="fieldSetLevelMapping" id="paymentDetailsWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.order.PaymentDetailsWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="id"/>
+                <entry key="DEFAULT"
+                       value="expiryYear,id,issueNumber,startYear,expiryMonth,saved,cardType(DEFAULT),billingAddress(DEFAULT),startMonth,subscriptionId,defaultPayment,cardNumber,accountHolderName,paymentToken,cardBin"/>
+                <entry key="FULL"
+                       value="expiryYear,id,issueNumber,startYear,expiryMonth,saved,cardType(FULL),billingAddress(FULL),startMonth,subscriptionId,defaultPayment,cardNumber,accountHolderName,paymentToken,cardBin"/>
+            </map>
+        </property>
+    </bean>
+    <bean parent="fieldSetLevelMapping" id="placeWalletOrderWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.PlaceWalletOrderWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC"
+                       value="status,errorMessage,orderData(BASIC)"/>
+                <entry key="DEFAULT"
+                       value="status,errorMessage,orderData(DEFAULT)"/>
+                <entry key="FULL"
+                       value="status,errorMessage,orderData(FULL)"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="apmConfigurationWsDTOFieldSetLevelMapping">
+        <property name="dtoClass" value="com.checkout.dto.apm.CheckoutComAPMConfigurationWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC"
+                       value="code,name,isRedirect,isUserDataRequired,media(DEFAULT)"/>
+                <entry key="DEFAULT"
+                       value="BASIC"/>
+                <entry key="FULL"
+                       value="BASIC,media(FULL)"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="orderWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="code,guid"/>
+                <entry key="DEFAULT"
+                       value="paymentType,qrCodeData,unconsignedEntries(DEFAULT),status,created,deliveryStatusDisplay,statusDisplay,consignments(DEFAULT),guestCustomer,deliveryStatus,store,appliedOrderPromotions(DEFAULT),pickupItemsQuantity,net,calculated,appliedVouchers(DEFAULT),productDiscounts(DEFAULT),totalDiscounts(DEFAULT),subTotal(DEFAULT),orderDiscounts(DEFAULT),entries(DEFAULT),appliedProductPromotions(DEFAULT),totalPrice(DEFAULT),site,deliveryMode(DEFAULT),code,deliveryOrderGroups(DEFAULT),guid,paymentInfo(DEFAULT),pickupOrderGroups(DEFAULT),totalItems,totalPriceWithTax(DEFAULT),deliveryItemsQuantity,totalTax(DEFAULT),user(DEFAULT),deliveryAddress(DEFAULT),deliveryCost(DEFAULT),cancellable,returnable"/>
+                <entry key="FULL"
+                       value="paymentType,qrCodeData,unconsignedEntries(FULL),status,created,deliveryStatusDisplay,statusDisplay,consignments(FULL),guestCustomer,deliveryStatus,store,appliedOrderPromotions(FULL),pickupItemsQuantity,net,calculated,appliedVouchers(FULL),productDiscounts(FULL),totalDiscounts(FULL),subTotal(FULL),orderDiscounts(FULL),entries(FULL),appliedProductPromotions(FULL),totalPrice(FULL),site,deliveryMode(FULL),code,deliveryOrderGroups(FULL),guid,paymentInfo(FULL),pickupOrderGroups(FULL),totalItems,totalPriceWithTax(FULL),deliveryItemsQuantity,totalTax(FULL),user(FULL),deliveryAddress(FULL),deliveryCost(FULL),cancellable,returnable"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="addressWsDTOFieldSetLevelMapping">
+        <property name="dtoClass"
+                  value="de.hybris.platform.commercefacades.user.data.AddressData"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="firstName,lastName,titleCode,phone,line1,line2,town,postalCode,country(isocode),region(isocode),defaultAddress"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="applePayPaymentRequestWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.ApplePayPaymentRequestWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="supportedNetworks,merchantCapabilities,countryCode,currencyCode,total,requiredBillingContactFields"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="applePayTotalWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.ApplePayTotalWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="label,amount,type"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="googlePayMerchantConfigurationWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.GooglePayMerchantConfigurationWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="baseCardPaymentMethod,clientSettings,gateway,gatewayMerchantId,merchantName,merchantId,transactionInfo"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="baseCardPaymentMethodWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.BaseCardPaymentMethodWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="type,parameters"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="baseCardPaymentMethodParametersWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.BaseCardPaymentMethodParametersWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="allowedAuthMethods,allowedCardNetworks,billingAddressRequired,billingAddressParameters"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="googlePayBillingAddressParametersFormatWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.GooglePayBillingAddressParametersFormatWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="format"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="googlePayClientSettingsWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.GooglePayClientSettingsWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="environment"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="googlePayTransactionInfoWsDTO">
+        <property name="dtoClass"
+                  value="com.checkout.dto.order.GooglePayTransactionInfoWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="currencyCode,totalPrice,totalPriceStatus"/>
+                <entry key="DEFAULT" value="BASIC"/>
+                <entry key="FULL" value="DEFAULT"/>
+            </map>
+        </property>
+    </bean>
+</beans>

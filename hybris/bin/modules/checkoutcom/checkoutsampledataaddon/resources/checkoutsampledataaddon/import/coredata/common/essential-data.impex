@@ -1,0 +1,22 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# Import essential data for the Accelerator
+#
+# Includes:
+# * Languages
+# * Currencies
+# * Titles
+# * Vendors
+# * Warehouses
+# * Supported Credit/Debit cards
+# * User Groups
+# * DistanceUnits for Storelocator
+# * MediaFolders
+# * MediaFormats
+# * Tax & Tax Groups
+# * Jobs
+
+# Credit / Debit Cards to solve issue in checkout.com for testing
+INSERT_UPDATE CreditCardType; code[unique = true]     ; name[lang = en]             ; name[lang = de]
+                            ; undefined                    ; "undefined"                      ; "undefined"

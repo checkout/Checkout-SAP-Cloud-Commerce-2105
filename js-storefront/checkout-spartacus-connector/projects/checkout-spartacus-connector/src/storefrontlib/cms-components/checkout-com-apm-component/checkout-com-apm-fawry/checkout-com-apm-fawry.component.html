@@ -1,0 +1,26 @@
+<form (ngSubmit)="next()" [formGroup]="form">
+  <div class="row">
+    <div class="col-12 col-xl-10 mb-1">
+      <label>{{'paymentForm.fawry.mobileNumber' | cxTranslate}}</label>
+    </div>
+    <div class="col-12 mb-2">
+      <input class="form-control" data-test-id="fawry-number-input" [formControl]="mobileNumberCtrl" [placeholder]="'paymentForm.fawry.mobileNumber' | cxTranslate" type="text"/>
+      <cx-form-errors [prefix]="'paymentForm.fawry'" [control]="mobileNumberCtrl"></cx-form-errors>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <lib-checkout-com-billing-address
+        [billingAddressForm]="billingAddressForm"
+        (sameAsShippingAddressChange)="sameAsShippingAddress = $event"
+    ></lib-checkout-com-billing-address>
+  </div>
+
+  <div class="cx-checkout-btns row justify-content-end my-3">
+    <div class="col-md-12 col-lg-6">
+      <button class="btn btn-block btn-primary" data-test-id="fawry-continue-btn" type="submit" [disabled]="!mobileNumberCtrl.valid">
+        {{ 'common.continue' | cxTranslate }}
+      </button>
+    </div>
+  </div>
+</form>

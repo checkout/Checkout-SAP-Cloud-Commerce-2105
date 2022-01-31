@@ -1,0 +1,17 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+
+$defaultpassword = 1234
+INSERT_UPDATE Employee; UID[unique = true]           ; password[default = $defaultpassword]; backOfficeLoginDisabled[default = false]; loginDisabled[default = false]
+                      ; CustomerSupportAdministrator ;
+                      ; CustomerSupportManager       ;
+                      ; CustomerSupportAgent         ;
+                      ; customer.support.1@sap.com   ;
+                      ; customer.support.2@sap.com   ;
+                      ; customer.support.3@sap.com   ;
+                      ; customer.support.4@sap.com   ;
+                      ; customer.support.5@sap.com   ;
+                      ; customer.support.6@sap.com   ;
+                      ; customer.support.7@sap.com   ;
+                      ; customer.support.8@sap.com   ;

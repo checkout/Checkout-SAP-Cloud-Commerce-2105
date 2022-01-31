@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <!-- Return Process Actions -->
+
+    <bean id="initialReturnAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.InitialReturnAction"
+          parent="abstractAction"/>
+
+    <alias name="checkoutComCaptureRefundAction" alias="captureRefundAction"/>
+    <bean id="checkoutComCaptureRefundAction"
+          class="com.checkout.hybris.fulfilmentprocess.actions.returns.CheckoutComCaptureRefundAction"
+          parent="abstractAction">
+        <constructor-arg ref="paymentService"/>
+        <constructor-arg ref="checkoutComPaymentTransactionService"/>
+    </bean>
+
+    <bean id="successCaptureAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.SuccessCaptureAction"
+          parent="abstractAction"/>
+
+    <bean id="approveReturnAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.ApproveReturnAction"
+          parent="abstractAction"/>
+
+    <bean id="cancelReturnAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.CancelReturnAction"
+          parent="abstractAction"/>
+
+    <bean id="printReturnLabelAction"
+          class="com.checkout.hybris.fulfilmentprocess.actions.returns.PrintReturnLabelAction" parent="abstractAction"/>
+
+    <bean id="printPackingLabelAction"
+          class="com.checkout.hybris.fulfilmentprocess.actions.returns.PrintPackingLabelAction"
+          parent="abstractAction"/>
+
+    <bean id="acceptGoodsAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.AcceptGoodsAction"
+          parent="abstractAction"/>
+
+    <bean id="taxReverseAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.TaxReverseAction"
+          parent="abstractAction"/>
+
+    <bean id="successTaxReverseAction"
+          class="com.checkout.hybris.fulfilmentprocess.actions.returns.SuccessTaxReverseAction"
+          parent="abstractAction"/>
+
+    <bean id="inventoryUpdateAction" class="com.checkout.hybris.fulfilmentprocess.actions.returns.InventoryUpdateAction"
+          parent="abstractAction"/>
+
+</beans>

@@ -1,0 +1,340 @@
+.cms-payment-button {
+    margin-bottom: 10px;
+}
+
+.cms-payment-button > input[type=radio],
+.cms-payment-button > label span {
+    display: none;
+}
+
+.cms-payment-button > label.available-false {
+    display: none;
+}
+
+.cms-payment-button > label {
+    border: 1px solid transparent;
+    width: 65px;
+    height: 50px;
+    vertical-align: middle;
+    display: inline-flex;
+}
+
+.cms-payment-button label img {
+    pointer-events: none;
+    max-width: 60px;
+    max-height: 40px;
+    margin: auto;
+
+}
+
+.cms-payment-button > input[type="radio"]:checked + label {
+    background: #eee;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.cms-payment-button label:hover {
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.checkout-saved-card .security-headline {
+    font-weight: bold;
+    margin: -10px -20px 0 -20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-top: 1px solid #adaeb0;
+}
+
+.checkout-saved-card .security-form {
+    background: #f2f4f7;
+    padding: 0 20px 10px 20px;
+}
+
+.checkout-saved-card .security-form.dark {
+    background: #19212b;
+    color: #fff;
+}
+
+.form-control.security {
+    max-width: 50%;
+    height: 46px;
+}
+
+form#payment-form {
+    width: auto;
+    margin: 0;
+}
+
+form#payment-form .input-container {
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+form#payment-form .input-container.card-holder input {
+    width: 100%;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    border-radius: 0;
+    border: solid 1px #cccccc;
+    color: #19212b;
+}
+
+form#payment-form span.error-message {
+    flex: 100%;
+    font-size: 14px;
+    color: #c53131;
+    font-style: italic;
+    font-weight: 600;
+}
+
+form#payment-form .icon-error {
+    right: 0;
+}
+
+form#payment-form .frame--activated {
+    border-radius: 0;
+    border: solid 1px #cccccc;
+    color: #19212b;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    flex: 1;
+}
+
+form#payment-form .date-and-code > div {
+    flex: 1;
+    width: auto;
+}
+
+form#payment-form .date-and-code > div:nth-child(1) {
+    margin-right: 20px;
+}
+
+form#payment-form .form-billing-address .headline {
+    padding-top: 5px;
+}
+
+@media screen and (max-width: 540px) {
+    form#payment-form .date-and-code {
+        flex-direction: column;
+    }
+
+    form#payment-form .date-and-code > div:nth-child(1) {
+        margin-right: 0;
+    }
+
+    form#payment-form .input-container {
+        margin: 10px 0;
+        height: auto;
+    }
+
+    form#payment-form .icon-container {
+        height: 40px;
+    }
+}
+
+label#card-payment-method {
+    position: relative;
+    align-items: center;
+}
+
+label#card-payment-method span#card-payment-method-caption {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    padding: 5px;
+    overflow-wrap: break-word;
+}
+
+label.available-true span#apm-payment-method-caption {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    padding: 5px;
+    overflow-wrap: break-word;
+}
+
+label#card-payment-method {
+    box-sizing: content-box;
+    height: auto;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+label#card-payment-method div.card-img-not-found {
+    position: relative;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    word-break: break-word;
+    line-height: 1;
+    text-align: center;
+}
+
+label.available-true {
+    box-sizing: content-box;
+    height: auto;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+label.available-true div.apm-img-not-found {
+    position: relative;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    word-break: break-word;
+    line-height: 1;
+    text-align: center;
+}
+
+.checkout-paymentmethod .checkout-indent > .form-group {
+    padding-top: 15px;
+}
+
+#markToSave {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.payment-method-error {
+    font-weight: 600;
+    color: #ed1c24;
+}
+
+label#wallet-payment-method {
+    position: relative;
+    align-items: center;
+}
+
+label#wallet-payment-method span#wallet-payment-method-caption {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    padding: 5px;
+    overflow-wrap: break-word;
+}
+
+label#wallet-payment-method {
+    box-sizing: content-box;
+    height: auto;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+label#wallet-payment-method div.wallet-img-not-found {
+    position: relative;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    word-break: break-word;
+    line-height: 1;
+    text-align: center;
+}
+
+canvas#checkoutComCanvas {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label.paymentFormFieldLabel {
+    display: block;
+    height: 10px;
+    color: #13395E;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 10px;
+    margin: 8px 0;
+}
+
+form.paymentDataForm {
+    padding-top: 16px;
+}
+
+form.paymentDataForm span.error-message {
+    flex: 100%;
+    font-size: 14px;
+    color: #c53131;
+    font-style: italic;
+    font-weight: 600;
+}
+
+.ach-info {
+    margin: 25px 0 20px;
+}
+
+.ach-info p {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #19212b;
+}
+
+.sepa-info {
+    margin: 25px 0 20px;
+}
+
+.sepa-info p {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #19212b;
+}
+
+a.applePayButton {
+    width: 100%;
+    display: block;
+    margin: 16px 0;
+}
+
+.gpay-button.black.long {
+    display: block;
+    width: 100%;
+    margin: 30px 0;
+    height: 48px;
+}
+
+.klarna-container iframe {
+    height: auto;
+    min-height: auto;
+}
+
+.klarna-container {
+    min-width: 280px;
+}
+
+#klarnaError {
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-bottom: -35px;
+}
+
+#buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+}
+
+a#backToPaymentMethods {
+    flex: 1;
+    margin-right: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+button#submitKlarnaForm {
+    flex: 1;
+    margin-left: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}

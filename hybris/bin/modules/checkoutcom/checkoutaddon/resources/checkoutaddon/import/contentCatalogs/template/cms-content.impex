@@ -1,0 +1,103 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+######
+## PARAMETERS REQUIRED FOR THIS SCRIPT
+##
+##   * contentCatalog   - content catalog id
+##   * addonExtensionName - extension name of the ui addon
+#######
+
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$jarResourceCmsCockpit = jar:com.checkout.hybris.addon.constants.CheckoutaddonConstants&/checkoutaddon/import/cockpits/cmscockpit
+$addonExtensionName = checkoutaddon
+
+INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]                                     ; name                                              ; restrictedPageTypes(code); active[default = true]; frontendTemplateName
+                          ;                          ; CheckoutComPaymentMethodAndBillingCheckoutPageTemplate ; Checkout Payment Method and Billing Page Template ; ContentPage              ;                       ; addon:/$addonExtensionName/pages/checkout/multi/checkoutComPaymentMethodAndBillingCheckoutPage
+                          ;                          ; CheckoutComPaymentFramesCheckoutPageTemplate           ; Checkout Payment Frames Page Template             ; ContentPage              ;                       ; addon:/$addonExtensionName/pages/checkout/multi/checkoutComPaymentFramesCheckoutPage
+                          ;                          ; CheckoutComPaymentButtonsPageTemplate                  ; Checkout Payment Buttons Page Template            ; ContentPage              ;                       ; addon:/$addonExtensionName/pages/checkout/frames/checkoutComPaymentButtonsPage
+
+# Content Pages
+INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]                             ; name                                              ; masterTemplate(uid, $contentCV)                        ; label; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false'];
+                         ;                          ; checkoutComPaymentMethodAndBillingCheckoutPage ; Checkout Payment Method And Billing Checkout Page ; CheckoutComPaymentMethodAndBillingCheckoutPageTemplate ; checkoutComPaymentMethodAndBillingCheckoutPage
+                         ;                          ; checkoutComPaymentFramesCheckoutPage           ; Checkout Payment Frames Checkout Page             ; CheckoutComPaymentFramesCheckoutPageTemplate           ; checkoutComPaymentFramesCheckoutPage
+                         ;                          ; checkoutComPaymentButtonsPage                  ; Checkout Payment Buttons Page                     ; CheckoutComPaymentButtonsPageTemplate                  ; checkoutComPaymentButtonsPage
+
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name
+                         ;                          ; CheckoutComPaymentButtonsSlot ; "Payment Buttons"
+
+# ContentSlotNames for CheckoutComPaymentMethodAndBillingCheckoutPageTemplate
+INSERT_UPDATE ContentSlotName; name[unique = true]    ; template(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentMethodAndBillingCheckoutPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; SiteLogo               ;                                                                                                             ;                          ; logo
+                             ; HeaderLinks            ;                                                                                                             ;                          ; headerlinks
+                             ; SearchBox              ;                                                                                                             ;                          ; searchbox
+                             ; MiniCart               ;                                                                                                             ;                          ; minicart
+                             ; NavigationBar          ;                                                                                                             ;                          ; navigation
+                             ; PaymentButtons         ;                                                                                                             ;                          ; checkoutcompaymentbuttons
+                             ; SideContent            ;                                                                                                             ;                          ; narrow
+                             ; Footer                 ;                                                                                                             ;                          ; footer
+                             ; TopHeaderSlot          ;                                                                                                             ;                          ; wide
+                             ; BottomHeaderSlot       ;                                                                                                             ;                          ; wide
+                             ; PlaceholderContentSlot ;                                                                                                             ;                          ;
+
+# Bind Content Slots to the Checkout Payment Method And Billing Checkout Page Template
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                                    ; position[unique = true]; pageTemplate(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentMethodAndBillingCheckoutPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; SiteLogo-CheckoutComPaymentMethodAndBillingCheckoutPage               ; SiteLogo               ;                                                                                                                 ; SiteLogoSlot                               ; true
+                                    ;                          ; HomepageLink-CheckoutComPaymentMethodAndBillingCheckoutPage           ; HomepageNavLink        ;                                                                                                                 ; HomepageNavLinkSlot                        ; true
+                                    ;                          ; NavigationBar-CheckoutComPaymentMethodAndBillingCheckoutPage          ; NavigationBar          ;                                                                                                                 ; NavigationBarSlot                          ; true
+                                    ;                          ; MiniCart-CheckoutComPaymentMethodAndBillingCheckoutPage               ; MiniCart               ;                                                                                                                 ; MiniCartSlot                               ; true
+                                    ;                          ; PaymentButtons-CheckoutComPaymentMethodAndBillingCheckoutPage         ; PaymentButtons         ;                                                                                                                 ; CheckoutComPaymentButtonsSlot              ; true
+                                    ;                          ; Footer-CheckoutComPaymentMethodAndBillingCheckoutPage                 ; Footer                 ;                                                                                                                 ; FooterSlot                                 ; true
+                                    ;                          ; HeaderLinks-CheckoutComPaymentMethodAndBillingCheckoutPage            ; HeaderLinks            ;                                                                                                                 ; HeaderLinksSlot                            ; true
+                                    ;                          ; SearchBox-CheckoutComPaymentMethodAndBillingCheckoutPage              ; SearchBox              ;                                                                                                                 ; SearchBoxSlot                              ; true
+                                    ;                          ; TopHeaderSlot-CheckoutComPaymentMethodAndBillingCheckoutPage          ; TopHeaderSlot          ;                                                                                                                 ; TopHeaderSlot                              ; true
+                                    ;                          ; BottomHeaderSlot-CheckoutComPaymentMethodAndBillingCheckoutPage       ; BottomHeaderSlot       ;                                                                                                                 ; BottomHeaderSlot                           ; true
+                                    ;                          ; PlaceholderContentSlot-CheckoutComPaymentMethodAndBillingCheckoutPage ; PlaceholderContentSlot ;                                                                                                                 ; PlaceholderContentSlot                     ; true
+
+# ContentSlotNames for CheckoutComPaymentFramesCheckoutPageTemplate
+INSERT_UPDATE ContentSlotName; name[unique = true]    ; template(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentFramesCheckoutPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; SiteLogo               ;                                                                                                   ;                          ; logo
+                             ; HeaderLinks            ;                                                                                                   ;                          ; headerlinks
+                             ; SearchBox              ;                                                                                                   ;                          ; searchbox
+                             ; MiniCart               ;                                                                                                   ;                          ; minicart
+                             ; NavigationBar          ;                                                                                                   ;                          ; navigation
+                             ; SideContent            ;                                                                                                   ;                          ; narrow
+                             ; Footer                 ;                                                                                                   ;                          ; footer
+                             ; TopHeaderSlot          ;                                                                                                   ;                          ; wide
+                             ; BottomHeaderSlot       ;                                                                                                   ;                          ; wide
+                             ; PlaceholderContentSlot ;                                                                                                   ;                          ;
+
+# Bind Content Slots to the Checkout Payment Frames Checkout Page Template
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                                  ; position[unique = true]; pageTemplate(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentFramesCheckoutPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; SiteLogo-CheckoutComPaymentFramesCheckoutPageTemplate               ; SiteLogo               ;                                                                                                       ; SiteLogoSlot                               ; true
+                                    ;                          ; HomepageLink-CheckoutComPaymentFramesCheckoutPageTemplate           ; HomepageNavLink        ;                                                                                                       ; HomepageNavLinkSlot                        ; true
+                                    ;                          ; NavigationBar-CheckoutComPaymentFramesCheckoutPageTemplate          ; NavigationBar          ;                                                                                                       ; NavigationBarSlot                          ; true
+                                    ;                          ; MiniCart-CheckoutComPaymentFramesCheckoutPageTemplate               ; MiniCart               ;                                                                                                       ; MiniCartSlot                               ; true
+                                    ;                          ; Footer-CheckoutComPaymentFramesCheckoutPageTemplate                 ; Footer                 ;                                                                                                       ; FooterSlot                                 ; true
+                                    ;                          ; HeaderLinks-CheckoutComPaymentFramesCheckoutPageTemplate            ; HeaderLinks            ;                                                                                                       ; HeaderLinksSlot                            ; true
+                                    ;                          ; SearchBox-CheckoutComPaymentFramesCheckoutPageTemplate              ; SearchBox              ;                                                                                                       ; SearchBoxSlot                              ; true
+                                    ;                          ; TopHeaderSlot-CheckoutComPaymentFramesCheckoutPageTemplate          ; TopHeaderSlot          ;                                                                                                       ; TopHeaderSlot                              ; true
+                                    ;                          ; BottomHeaderSlot-CheckoutComPaymentFramesCheckoutPageTemplate       ; BottomHeaderSlot       ;                                                                                                       ; BottomHeaderSlot                           ; true
+                                    ;                          ; PlaceholderContentSlot-CheckoutComPaymentFramesCheckoutPageTemplate ; PlaceholderContentSlot ;                                                                                                       ; PlaceholderContentSlot                     ; true
+
+# Preview Image for use in the CMS Cockpit for special ContentPages
+INSERT_UPDATE Media; $contentCV[unique = true]; code[unique = true]                ; mime     ; realfilename                           ; @media[translator = de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite = true]
+                   ;                          ; ContentPageModel__function_preview ; text/gif ; ContentPageModel__function_preview.gif ; jar:de.hybris.platform.yacceleratorcore.setup.CoreSystemSetup&/yacceleratorcore/import/cockpits/cmscockpit/preview-images/ContentPageModel__function_preview.gif
+
+# Content Pages
+INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]     ; name                  ; masterTemplate(uid, $contentCV)      ; label; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false']; previewImage(code, $contentCV)[default = 'ContentPageModel__function_preview']
+                         ;                          ; checkoutComSummaryPage ; Checkout Summary Page ; MultiStepCheckoutSummaryPageTemplate ; checkoutComSummaryPage
+
+# ContentSlotNames for CheckoutComPaymentButtonsPageTemplate
+INSERT_UPDATE ContentSlotName; name[unique = true]; template(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentButtonsPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; PaymentButtons     ;                                                                                            ;                          ; checkoutcompaymentbuttons
+
+# Bind Content Slots to the Checkout Buttons Page Template
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                           ; position[unique = true]; pageTemplate(uid, $contentCV)[unique = true][default = 'CheckoutComPaymentButtonsPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; PaymentButtons-CheckoutComPaymentButtonsPage ; PaymentButtons         ;                                                                                                ; CheckoutComPaymentButtonsSlot              ; true
+
+INSERT_UPDATE JspIncludeComponent; $contentCV[unique = true]; uid[unique = true]                     ; name                                           ; page                                                                                                             ; actions(uid, $contentCV); &componentRef
+                                 ;                          ; OrderConfirmationShippingComponent     ; Order Confirmation Shipping Info Component     ; /WEB-INF/views/addons/$addonExtensionName/responsive/pages/account/checkoutComAccountOrderDetailShippingInfo.jsp ;                         ; OrderConfirmationShippingComponent
+                                 ;                          ; AccountOrderDetailsShippingComponent   ; Account Order Details Shipping Info Component  ; /WEB-INF/views/addons/$addonExtensionName/responsive/pages/account/checkoutComAccountOrderDetailShippingInfo.jsp ;                         ; AccountOrderDetailsShippingComponent
+                                 ;                          ; OrderConfirmationThankMessageComponent ; Order Confirmation Thank You Message Component ; /WEB-INF/views/addons/$addonExtensionName/responsive/pages/checkout/checkoutComConfirmationThankMessage.jsp      ;                         ; OrderConfirmationThankMessageComponent
+                                 ;                          ; AccountOrderDetailsHeadlineComponent   ; Account Order Details Headline Component       ; /WEB-INF/views/addons/$addonExtensionName/responsive/pages/checkout/checkoutComAccountOrderDetailHeadline.jsp    ;                         ; AccountOrderDetailsHeadlineComponent

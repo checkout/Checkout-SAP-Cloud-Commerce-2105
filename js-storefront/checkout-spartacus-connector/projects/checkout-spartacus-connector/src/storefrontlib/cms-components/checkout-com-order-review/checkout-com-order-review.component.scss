@@ -1,0 +1,6 @@
+@import "~@spartacus/styles/scss/mixins";
+@import "~@spartacus/styles/scss/components/misc/order-overview/order-overview";
+
+:host {
+  @extend %cx-order-overview !optional;
+}

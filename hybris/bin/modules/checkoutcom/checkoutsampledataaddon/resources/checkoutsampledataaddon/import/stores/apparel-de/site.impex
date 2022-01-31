@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+$productCatalog = apparelProductCatalog
+$contentCatalog = apparel-deContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$defaultLanguage = en
+$storeUid = apparel-de
+$siteUid = apparel-de
+$webServiceSiteUid = $siteUidWS
+
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+
+$secretKey = $config-checkout.secret.key
+$publicKey = $config-checkout.public.key
+$privateSharedKey = $config-checkout.private.shared.key
+
+INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId[unique = true]
+                                            ; klarnaConfig          ; e2yCheckoutCom
+
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; environment(code); paymentAction(code); threeDSEnabled; noThreeDSAttempt; klarnaConfiguration(&klarnaConfigurationId); authorisationAmountValidationThreshold; checkoutComPaymentEventTypes(code)
+                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; test             ; authorize          ; true          ; false           ; klarnaConfig                               ; 0.01                                  ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled
+
+UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code)
+               ; $siteUid          ; merchantConfiguration-$siteUid

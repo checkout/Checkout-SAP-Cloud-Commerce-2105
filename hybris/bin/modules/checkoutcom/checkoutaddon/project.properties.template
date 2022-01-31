@@ -1,0 +1,25 @@
+# Specifies the location of the spring context file added automatically to the global platform application context.
+checkoutaddon.application-context=checkoutaddon-spring.xml
+
+yacceleratorstorefront.additionalWebSpringConfigs.checkoutaddon=classpath\:/checkoutaddon/web/spring/checkoutaddon-web-spring.xml, classpath\:/checkoutaddon/web/spring/b2c-multi-step-checkout-spring.xml
+
+storefront.supportedUiExperienceLevels.electronics=DESKTOP,MOBILE
+storefront.supportedUiExperienceLevels.apparel-uk=DESKTOP,MOBILE
+storefront.supportedUiExperienceLevels.apparel-de=DESKTOP,MOBILE
+
+checkoutaddon.javascript.paths.responsive=\
+    /responsive/common/js/checkoutaddon.js;\
+    /responsive/common/js/applepay.js;\
+    /responsive/common/js/googlepay.js;\
+    /responsive/common/js/klarna.js;\
+    /responsive/common/js/checkoutcomjavascript.js;\
+    /responsive/common/js/qrcode.min.js
+
+checkoutaddon.css.paths.responsive=\
+    /responsive/common/css/checkoutaddon.css;\
+    /responsive/common/css/checkoutdotcomstyle.css;\
+    /responsive/common/css/checkoutdotcomnormailize.css
+
+yacceleratorstorefront.wro4jconfigscan.checkoutaddon=true
+
+checkout.addon.prefix=addon:/checkoutaddon/

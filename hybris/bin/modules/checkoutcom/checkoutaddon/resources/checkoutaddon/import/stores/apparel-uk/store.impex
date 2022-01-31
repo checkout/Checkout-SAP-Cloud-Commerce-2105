@@ -1,0 +1,23 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+$productCatalog = apparelProductCatalog
+$currencies = GBP
+$net = false
+$storeUid = apparel-uk
+$defaultCurrency = GBP
+$languages = en
+$defaultLanguage = en
+
+$checkoutB2CCheckoutGroup = checkoutB2CCheckoutGroup
+$checkoutB2CResponsiveCheckoutGroup = checkoutB2CResponsiveCheckoutGroup
+$paymentProvider = Checkout.com
+
+# Base Store
+UPDATE BaseStore; uid[unique = true]; checkoutFlowGroup         ; paymentProvider
+                ; $storeUid         ; $checkoutB2CCheckoutGroup ; $paymentProvider
+
+#% if: "responsive".equalsIgnoreCase(Config.getParameter("commerceservices.default.desktop.ui.experience"));
+UPDATE BaseStore; uid[unique = true]; checkoutFlowGroup
+                ; $storeUid         ; $checkoutB2CResponsiveCheckoutGroup
+#% endif:

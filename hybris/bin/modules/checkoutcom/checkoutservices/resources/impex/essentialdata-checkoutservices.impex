@@ -1,0 +1,156 @@
+# Credit / Debit Cards
+INSERT_UPDATE CreditCardType; code[unique = true]
+                            ; visa
+                            ; amex
+                            ; master
+                            ; diners
+                            ; maestro
+                            ; mastercard_eurocard
+                            ; switch
+                            ; jcb
+                            ; discover
+                            ; mastercard
+                            ; americanexpress
+                            ; dinersclubinternational
+
+INSERT_UPDATE EnvironmentType; code[unique = true]
+                             ; test
+                             ; production
+
+INSERT_UPDATE PaymentActionType; code[unique = true]
+                               ; authorize
+                               ; authorize_and_capture
+
+INSERT_UPDATE MadaBin; code[unique = true]
+                     ; 588845
+                     ; 440647
+                     ; 440795
+                     ; 446404
+                     ; 457865
+                     ; 968208
+                     ; 588846
+                     ; 493428
+                     ; 539931
+                     ; 558848
+                     ; 557606
+                     ; 968210
+                     ; 636120
+                     ; 417633
+                     ; 468540
+                     ; 468541
+                     ; 468542
+                     ; 468543
+                     ; 968201
+                     ; 446393
+                     ; 588847
+                     ; 400861
+                     ; 409201
+                     ; 458456
+                     ; 484783
+                     ; 968205
+                     ; 462220
+                     ; 455708
+                     ; 588848
+                     ; 455036
+                     ; 968203
+                     ; 486094
+                     ; 486095
+                     ; 486096
+                     ; 504300
+                     ; 440533
+                     ; 489317
+                     ; 489318
+                     ; 489319
+                     ; 445564
+                     ; 968211
+                     ; 401757
+                     ; 410685
+                     ; 432328
+                     ; 428671
+                     ; 428672
+                     ; 428673
+                     ; 968206
+                     ; 446672
+                     ; 543357
+                     ; 434107
+                     ; 431361
+                     ; 604906
+                     ; 521076
+                     ; 588850
+                     ; 968202
+                     ; 535825
+                     ; 529415
+                     ; 543085
+                     ; 524130
+                     ; 554180
+                     ; 549760
+                     ; 588849
+                     ; 968209
+                     ; 524514
+                     ; 529741
+                     ; 537767
+                     ; 535989
+                     ; 536023
+                     ; 513213
+                     ; 585265
+                     ; 588983
+                     ; 588982
+                     ; 589005
+                     ; 508160
+                     ; 531095
+                     ; 530906
+                     ; 532013
+                     ; 588851
+                     ; 605141
+                     ; 968204
+                     ; 422817
+                     ; 422818
+                     ; 422819
+                     ; 428331
+                     ; 483010
+                     ; 483011
+                     ; 483012
+                     ; 589206
+                     ; 968207
+                     ; 419593
+                     ; 439954
+                     ; 407197
+                     ; 407395
+                     ; 520058
+                     ; 530060
+                     ; 531196
+
+INSERT_UPDATE CheckoutComAPMConfiguration; code[unique = true]; name[lang = en]
+                                         ; SOFORT             ; Sofort
+                                         ; PAYPAL             ; PayPal
+                                         ; POLI               ; POLi
+                                         ; IDEAL              ; iDeal
+                                         ; KLARNA             ; Klarna
+                                         ; ALIPAY             ; Alipay
+                                         ; BENEFITPAY         ; Benefit Pay
+                                         ; BANCONTACT         ; Bancontact
+                                         ; GIROPAY            ; Giropay
+                                         ; EPS                ; Eps
+                                         ; KNET               ; Knet
+                                         ; QPAY               ; QPay
+                                         ; MULTIBANCO         ; Multibanco
+                                         ; SEPA               ; Sepa
+                                         ; P24                ; Przelewy24
+                                         ; ACH                ; Ach
+
+INSERT_UPDATE CheckoutComFawryConfiguration; code[unique = true]; name[lang = en]; productId        ; productDescription[lang = en]
+                                           ; FAWRY              ; Fawry          ; Fawry product id ; Fawry product description
+
+INSERT_UPDATE CheckoutComOxxoConfiguration; code[unique = true]; name[lang = en]; description[lang = en]     ; integrationType(code)
+                                          ; OXXO               ; Oxxo           ; redirect OXXO Demo Payment ; redirect
+
+# Constraints
+INSERT_UPDATE SizeConstraint; descriptor(enclosingType(code), qualifier); id[unique = true, allownull = true]; max[allownull = false]; min[allownull = false]; qualifier[allownull = false]; severity(code, itemtype(code)); target[allownull = false]                                            ; type(code)                       ; message[lang = en]
+                            ; CheckoutComMerchantConfiguration:code     ; billingDescriptorNameLength        ; 25                    ; 1                     ; billingDescriptorName       ; ERROR:Severity                ; com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel ; CheckoutComMerchantConfiguration ; "Billing Descriptor Name should be at least 1 characters long but not more than 25"
+                            ; CheckoutComMerchantConfiguration:code     ; billingDescriptorCityLength        ; 13                    ; 1                     ; billingDescriptorCity       ; ERROR:Severity                ; com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel ; CheckoutComMerchantConfiguration ; "Billing Descriptor City should be at least 1 characters long but not more than 13"
+
+INSERT_UPDATE AchAccountType; code[unique = true]
+                            ; Checking
+                            ; Savings
+                            ; Corporate
+                            ; CorpSavings

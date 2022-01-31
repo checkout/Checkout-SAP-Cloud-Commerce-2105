@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <bean id="checkoutaddonCoreDataImportedEventListener" parent="abstractCoreDataImportedEventListener">
+        <property name="supportedChannels">
+            <list value-type="de.hybris.platform.commerceservices.enums.SiteChannel">
+                <value>B2C</value>
+            </list>
+        </property>
+        <property name="addonExtensionMetadata">
+            <bean class="de.hybris.platform.addonsupport.data.AddonExtensionMetadata">
+                <property name="suffixChannel" value="false"/>
+                <property name="baseExtensionName" value="checkoutaddon"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="checkoutaddonSampleDataEventListener" parent="abstractGenericAddOnSampleDataEventListener">
+        <property name="extensionName" value="checkoutaddon"/>
+    </bean>
+
+</beans>

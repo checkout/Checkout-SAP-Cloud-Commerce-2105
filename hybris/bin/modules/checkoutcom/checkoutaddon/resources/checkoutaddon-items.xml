@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <itemtypes>
+
+        <typegroup name="cms">
+            <itemtype code="CheckoutComPaymentMethodComponent" extends="SimpleCMSComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComPaymentMethodComponent">
+                <attributes>
+                    <attribute type="localized:Media" qualifier="media">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComCardComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComCardComponent"/>
+
+            <itemtype code="CheckoutComAPMComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComAPMComponent">
+                <attributes>
+                    <attribute qualifier="apmConfiguration" type="CheckoutComAPMConfiguration">
+                        <modifiers read="true" write="true" search="true" optional="true"/>
+                        <persistence type="property"/>
+                        <description>APM Configuration Reference.</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComApplePayComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComApplePayComponent"/>
+
+            <itemtype code="CheckoutComGooglePayComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComGooglePayComponent"/>
+        </typegroup>
+
+    </itemtypes>
+</items>

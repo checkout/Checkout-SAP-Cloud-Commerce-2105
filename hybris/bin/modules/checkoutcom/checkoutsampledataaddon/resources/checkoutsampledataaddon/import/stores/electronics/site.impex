@@ -1,0 +1,67 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+$productCatalog = electronicsProductCatalog
+$contentCatalog = electronicsContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$defaultLanguage = en
+$storeUid = electronics
+$siteUid = electronics
+$webServiceSiteUid = $siteUidWS
+$siteMapLangCur = jaJpy, jaUsd, enJpy, enUsd, deJpy, deUsd, zhJpy, zhUsd, enBrl, enAud, enNdz, enBhd, enKwd, enQar, enEgp, enPln, enMxn, enGbp, enEur
+$currencies = JPY, USD, BRL, AUD, NZD, BHD, KWD, QAR, EGP, PLN, MXN, GBP, EUR
+
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+
+$secretKey = $config-checkout.secret.key
+$publicKey = $config-checkout.public.key
+$privateSharedKey = $config-checkout.private.shared.key
+$applePayCertificate = $config-checkout.applepay.certificate
+$applePayPrivateKey = $config-checkout.applepay.privatekey
+
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; environment(code); paymentAction(code); reviewTransactionsAtRisk; authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)                                                                                                                                                                                   ; includeBillingDescriptor; billingDescriptorName; billingDescriptorCity
+                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; test             ; authorize          ; true                    ; 0.01                                  ; true          ; true            ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled ; true                    ; $siteUid             ; INTERNET
+
+INSERT_UPDATE CheckoutComApplePayConfiguration; &applePayConfigurationId; certificate[unique = true]; privateKey          ; supportedNetworks(code)                                                                                                                  ; countryCode; merchantCapabilities(code)                              ; merchantId                        ; merchantName
+                                              ; applePayConfig          ; $applePayCertificate      ; $applePayPrivateKey ; amex, cartesBancaires, chinaUnionPay, discover, eftpos, electron, elo, interac, jcb, mada, maestro, masterCard, privateLabel, visa, vPay ; GB         ; supportsCredit, supportsDebit, supports3DS, supportsEMV ; merchant.com.checkout.sandbox.e2y ; e2yCheckoutCom
+
+INSERT_UPDATE CheckoutComGooglePayConfiguration; &googlePayConfigurationId; merchantId[unique = true]; merchantName   ; environment(code); type ; gateway     ; gatewayMerchantId; allowedCardNetworks(code)                      ; allowedCardAuthMethods(code)
+                                               ; googlePayConfig          ; 01234567890123456789     ; e2yCheckoutCom ; test             ; CARD ; checkoutltd ; $publicKey       ; AMEX, DISCOVER, INTERAC, JCB, MASTERCARD, VISA ; PAN_ONLY, CRYPTOGRAM_3DS
+
+INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId[unique = true]
+                                            ; klarnaConfig          ; e2yCheckoutCom
+
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; applePayConfiguration(&applePayConfigurationId); googlePayConfiguration(&googlePayConfigurationId); klarnaConfiguration(&klarnaConfigurationId)
+                                              ; merchantConfiguration-$siteUid ; applePayConfig                                 ; googlePayConfig                                  ; klarnaConfig
+
+# SiteMap Language Currencies
+INSERT_UPDATE SiteMapLanguageCurrency; &siteMapLanguageCurrency; language(isoCode)[unique = true]; currency(isocode)[unique = true];
+                                     ; enUsd                   ; en                              ; USD
+                                     ; enJpy                   ; en                              ; JPY
+                                     ; jaUsd                   ; ja                              ; USD
+                                     ; jaJpy                   ; ja                              ; JPY
+                                     ; deUsd                   ; de                              ; USD
+                                     ; deJpy                   ; de                              ; JPY
+                                     ; zhUsd                   ; zh                              ; USD
+                                     ; zhJpy                   ; zh                              ; JPY
+                                     ; enBrl                   ; en                              ; BRL
+                                     ; enAud                   ; en                              ; AUD
+                                     ; enNdz                   ; en                              ; NZD
+                                     ; enBhd                   ; en                              ; BHD
+                                     ; enKwd                   ; en                              ; KWD
+                                     ; enQar                   ; en                              ; QAR
+                                     ; enEgp                   ; en                              ; EGP
+                                     ; enPln                   ; en                              ; PLN
+                                     ; enMxn                   ; en                              ; MXN
+                                     ; enGbp                   ; en                              ; GBP
+                                     ; enEur                   ; en                              ; EUR
+
+INSERT_UPDATE SiteMapConfig; &siteMapConfigId      ; configId[unique = true]; siteMapLanguageCurrencies(&siteMapLanguageCurrency);
+                           ; $siteUidSiteMapConfig ; $storeUidSiteMapConfig ; $siteMapLangCur                                    ;
+
+# CMS Site
+INSERT_UPDATE CMSSite; uid[unique = true]; siteMapConfig(&siteMapConfigId);
+                     ; $siteUid          ; $siteUidSiteMapConfig          ;
+
+UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code)
+               ; $siteUid          ; merchantConfiguration-$siteUid

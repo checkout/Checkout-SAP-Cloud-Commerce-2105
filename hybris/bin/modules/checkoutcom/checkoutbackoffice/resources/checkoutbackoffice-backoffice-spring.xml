@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="checkoutbackofficeLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator"
+          init-method="init" lazy-init="false">
+        <property name="location" value="/checkoutbackoffice-backoffice-labels/"/>
+        <property name="name" value="labels"/>
+    </bean>
+
+    <alias name="defaultCheckoutComCancelOrderAction" alias="checkoutComCancelOrderAction"/>
+    <bean id="defaultCheckoutComCancelOrderAction"
+          class=" com.checkout.hybris.backoffice.actions.order.cancel.CheckoutComCancelOrderAction"
+          parent="cancelOrderAction"/>
+
+</beans>

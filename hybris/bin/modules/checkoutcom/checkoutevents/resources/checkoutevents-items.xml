@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <enumtypes>
+        <enumtype code="CheckoutComPaymentEventType" dynamic="true">
+            <value code="payment_approved"/>
+            <value code="payment_voided"/>
+            <value code="payment_void_declined"/>
+            <value code="payment_captured"/>
+            <value code="payment_capture_declined"/>
+            <value code="payment_refunded"/>
+            <value code="payment_refund_declined"/>
+            <value code="payment_pending"/>
+            <value code="payment_expired"/>
+            <value code="payment_declined"/>
+            <value code="payment_canceled"/>
+        </enumtype>
+
+        <enumtype code="CheckoutComPaymentEventStatus">
+            <value code="PENDING"/>
+            <value code="COMPLETED"/>
+            <value code="FAILED"/>
+            <value code="IGNORED"/>
+        </enumtype>
+    </enumtypes>
+
+    <relations>
+        <relation code="CheckoutComMerchantConfiguration2CheckoutComPaymentEventType" localized="false">
+            <deployment table="merchant_eventtype" typecode="23305"/>
+            <sourceElement qualifier="merchantConfigurations" type="CheckoutComMerchantConfiguration" cardinality="many"
+                           collectiontype="set"/>
+            <targetElement qualifier="checkoutComPaymentEventTypes" type="CheckoutComPaymentEventType"
+                           cardinality="many"
+                           collectiontype="set"/>
+        </relation>
+
+        <relation code="CheckoutComPaymentEventType2CheckoutComPaymentEventProcessingCronJob" localized="false">
+            <deployment table="eventtype_cronjob" typecode="23309"/>
+            <sourceElement type="CheckoutComPaymentEventProcessingCronJob" cardinality="many" navigable="false"/>
+            <targetElement qualifier="checkoutComPaymentEventTypes" type="CheckoutComPaymentEventType"
+                           cardinality="many"
+                           collectiontype="set"/>
+        </relation>
+    </relations>
+
+    <itemtypes>
+
+        <typegroup name="checkoutCom">
+            <itemtype code="CheckoutComPaymentEvent" extends="GenericItem">
+                <deployment table="checkoutcom_payment" typecode="23304"/>
+                <attributes>
+                    <attribute qualifier="eventId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The Checkout.com Event id.</description>
+                        <modifiers initial="true" optional="false" unique="true"/>
+                    </attribute>
+                    <attribute qualifier="actionId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The Checkout.com Event Action id.</description>
+                        <modifiers initial="true" optional="false" unique="true"/>
+                    </attribute>
+                    <attribute qualifier="eventType" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The Event type.</description>
+                    </attribute>
+                    <attribute qualifier="responseCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The response code.</description>
+                    </attribute>
+                    <attribute qualifier="responseSummary" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Explain the status of the request.</description>
+                    </attribute>
+                    <attribute qualifier="sourceType" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The payment type.</description>
+                    </attribute>
+                    <attribute qualifier="amount" type="java.math.BigDecimal">
+                        <persistence type="property"/>
+                        <description>The payment amount.</description>
+                    </attribute>
+                    <attribute qualifier="siteId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The website id for the event.</description>
+                    </attribute>
+                    <attribute qualifier="riskFlag" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>True if the risk check is applied.</description>
+                    </attribute>
+                    <attribute qualifier="paymentId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The payment identifier.</description>
+                    </attribute>
+                    <attribute qualifier="currency" type="Currency">
+                        <persistence type="property"/>
+                        <description>The payment currency.</description>
+                    </attribute>
+                    <attribute qualifier="paymentReference" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The payment reference.</description>
+                    </attribute>
+                    <attribute qualifier="status" type="CheckoutComPaymentEventStatus">
+                        <persistence type="property"/>
+                        <description>The event processing status.</description>
+                    </attribute>
+                    <attribute qualifier="payload" type="java.lang.String">
+                        <description>Json Payload</description>
+                        <modifiers optional="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype database="mysql">
+                                <value>MEDIUMTEXT</value>
+                            </columntype>
+                            <columntype database="sqlserver">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="failReason" type="java.lang.String">
+                        <description>The the reason why the event processing failed if it fails.</description>
+                        <modifiers optional="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype database="mysql">
+                                <value>MEDIUMTEXT</value>
+                            </columntype>
+                            <columntype database="sqlserver">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComPaymentEventProcessingCronJob" extends="CronJob">
+                <attributes>
+                    <attribute qualifier="paymentTransactionType" type="PaymentTransactionType">
+                        <persistence type="property"/>
+                        <description>Payment transaction type handled by the cronjob</description>
+                        <modifiers initial="true" optional="false"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComPaymentEventCleanupCronJob" extends="CronJob">
+                <attributes>
+                    <attribute qualifier="paymentEventStatus" type="CheckoutComPaymentEventStatus">
+                        <persistence type="property"/>
+                        <description>Payment event processing status handled by the cronjob</description>
+                        <modifiers initial="true" optional="false"/>
+                    </attribute>
+                    <attribute qualifier="ageInDaysBeforeDeletion" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers optional="false" initial="true"/>
+                        <description>Max unprocessed time (in days) before payment events are deleted</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+        </typegroup>
+
+    </itemtypes>
+
+</items>

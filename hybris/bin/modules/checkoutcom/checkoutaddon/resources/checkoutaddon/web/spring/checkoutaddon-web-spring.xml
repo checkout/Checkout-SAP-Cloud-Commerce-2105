@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config/>
+
+    <!-- Scan for annotation configured controller -->
+    <context:component-scan base-package="com.checkout.hybris.addon"
+                            scope-resolver="de.hybris.platform.spring.IgnoreTenantScopeMetadataResolver"/>
+
+    <alias name="defaultCheckoutComCardComponentRenderer" alias="checkoutComCardComponentRenderer"/>
+    <bean id="defaultCheckoutComCardComponentRenderer"
+          class="com.checkout.hybris.addon.renderes.CheckoutComCardComponentRenderer"
+          parent="addOnJspIncludeCMSComponentRenderer"/>
+
+    <bean id="checkoutComCardComponentRendererMapping" parent="addonCmsComponentRendererMapping">
+        <property name="typeCode" value="CheckoutComCardComponent"/>
+        <property name="renderer" ref="checkoutComCardComponentRenderer"/>
+    </bean>
+
+    <!-- Expose /acceleratoraddon/web/webroot/WEB-INF/messages/base.js.properties  resource bundle as javascript variables -->
+    <bean id="defaultCheckoutaddonJavaScriptMessageResourceAccessor" parent="abstractJavaScriptMessageResourceAccessor">
+        <property name="addOnName" value="checkoutaddon"/>
+    </bean>
+
+    <bean id="defaultCheckoutaddonBeforeViewJsPropsHandlerAdaptee" parent="abstractBeforeViewJsPropsHandlerAdaptee"
+          class="de.hybris.platform.addonsupport.interceptors.ExportJsPropertiesBeforeViewHandler">
+        <property name="messageSource" ref="defaultCheckoutaddonJavaScriptMessageResourceAccessor"/>
+    </bean>
+
+    <bean id="getCheckoutaddonBeforeViewHandler" parent="beforeViewHandlerAdapter">
+        <property name="adaptee">
+            <ref bean="defaultCheckoutaddonBeforeViewJsPropsHandlerAdaptee"/>
+        </property>
+    </bean>
+    <bean id="CheckoutaddonBeforeViewHandlerListMergeDirective" depends-on="beforeViewHandlersList"
+          parent="listMergeDirective">
+        <property name="add" ref="getCheckoutaddonBeforeViewHandler"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPreviewUrlResolverPageMappings" alias="previewUrlResolverPageMappings"/>
+    <util:map id="defaultCheckoutComPreviewUrlResolverPageMappings">
+        <entry key="checkoutComPaymentMethodAndBillingCheckoutPage"
+               value="/checkout/multi/checkout-com/choose-payment-method"/>
+        <entry key="checkoutComPaymentFramesCheckoutPage" value="/checkout/multi/checkout-com/payment/payment-method"/>
+        <entry key="checkoutComSummaryPage" value="/checkout/multi/add-delivery-address"/>
+
+        <!--Configuration WCMS Mobile Page to URL -->
+        <entry key="mobile-checkoutComPaymentMethodAndBillingCheckoutPage"
+               value="/checkout/multi/checkout-com/choose-payment-method"/>
+        <entry key="mobile-checkoutComPaymentFramesCheckoutPage"
+               value="/checkout/multi/checkout-com/payment/payment-method"/>
+        <entry key="mobile-checkoutComSummaryPage" value="/checkout/multi/add-delivery-address"/>
+    </util:map>
+
+    <bean id="REDIRECT_TO_CHOOSE_PAYMENT_METHOD" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/checkout-com/choose-payment-method"/>
+    </bean>
+
+    <bean id="REDIRECT_TO_PAYMENT_METHOD" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/checkout-com/payment/payment-method"/>
+    </bean>
+
+    <bean id="REDIRECT_TO_SUMMARY" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/checkout-com/summary/view"/>
+    </bean>
+
+    <alias name="defaultCheckoutComMappedPaymentDataFormReverseConverter"
+           alias="checkoutComMappedPaymentDataFormReverseConverter"/>
+    <bean id="defaultCheckoutComMappedPaymentDataFormReverseConverter"
+          class="com.checkout.hybris.addon.converters.impl.DefaultCheckoutComMappedPaymentDataFormReverseConverter">
+        <constructor-arg name="convertersMap">
+            <map key-type="com.checkout.hybris.core.payment.enums.CheckoutComPaymentType"
+                 value-type="de.hybris.platform.servicelayer.dto.converter.Converter">
+                <entry key="CARD" value-ref="checkoutComCCPaymentInfoDataReverseConverter"/>
+                <entry key="FAWRY" value-ref="checkoutComFawryPaymentInfoDataReverseConverter"/>
+                <entry key="IDEAL" value-ref="checkoutComIdealPaymentInfoDataReverseConverter"/>
+                <entry key="ACH" value-ref="checkoutComAchPaymentInfoDataReverseConverter"/>
+                <entry key="SEPA" value-ref="checkoutComSepaPaymentInfoDataReverseConverter"/>
+                <entry key="KLARNA" value-ref="checkoutComKlarnaPaymentInfoDataReverseConverter"/>
+                <entry key="OXXO" value-ref="checkoutComOxxoPaymentInfoDataReverseConverter"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg name="defaultConverter" ref="checkoutComPaymentDataFormConverter"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentDataFormPopulator" alias="checkoutComPaymentDataFormPopulator"/>
+    <bean id="defaultCheckoutComPaymentDataFormPopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComPaymentDataFormReversePopulator"/>
+
+    <alias name="defaultCheckoutComPaymentDataFormConverter"
+           alias="checkoutComPaymentDataFormConverter"/>
+    <bean id="defaultCheckoutComPaymentDataFormConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.core.model.CheckoutComAPMPaymentInfoModel"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComPaymentDataFormPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComCCPaymentInfoDataReversePopulator"
+           alias="checkoutComCCPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComCCPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComCCPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComFawryPaymentInfoDataReversePopulator"
+           alias="checkoutComFawryPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComFawryPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComFawryPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComFawryPaymentInfoDataReverseConverter"
+           alias="checkoutComFawryPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComFawryPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.FawryPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComFawryPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComIdealPaymentInfoDataReversePopulator"
+           alias="checkoutComIdealPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComIdealPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComIdealPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComIdealPaymentInfoDataReverseConverter"
+           alias="checkoutComIdealPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComIdealPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.IdealPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComIdealPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComAchPaymentInfoDataReversePopulator"
+           alias="checkoutComAchPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComAchPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComAchPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComAchPaymentInfoDataReverseConverter"
+           alias="checkoutComAchPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComAchPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.AchPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComAchPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComSepaPaymentInfoDataReversePopulator"
+           alias="checkoutComSepaPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComSepaPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComSepaPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComSepaPaymentInfoDataReverseConverter"
+           alias="checkoutComSepaPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComSepaPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.SepaPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComSepaPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComKlarnaPaymentInfoDataReversePopulator"
+           alias="checkoutComKlarnaPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComKlarnaPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComKlarnaPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComKlarnaPaymentInfoDataReverseConverter"
+           alias="checkoutComKlarnaPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComKlarnaPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.KlarnaPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComKlarnaPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComOxxoPaymentInfoDataReversePopulator"
+           alias="checkoutComOxxoPaymentInfoDataReversePopulator"/>
+    <bean id="defaultCheckoutComOxxoPaymentInfoDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComOxxoPaymentInfoDataReversePopulator"/>
+
+    <alias name="defaultCheckoutComOxxoPaymentInfoDataReverseConverter"
+           alias="checkoutComOxxoPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComOxxoPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.OxxoPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComOxxoPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComStepsValidator" alias="checkoutComStepsValidator"/>
+    <bean id="defaultCheckoutComStepsValidator"
+          class="com.checkout.hybris.addon.validators.impl.DefaultCheckoutComStepsValidator">
+        <constructor-arg ref="checkoutFlowFacade"/>
+        <constructor-arg ref="checkoutComPaymentInfoFacade"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentDataFormValidValidator" alias="checkoutComPaymentDataFormValidValidator"/>
+    <bean id="defaultCheckoutComPaymentDataFormValidValidator"
+          class="com.checkout.hybris.addon.validators.impl.CheckoutComPaymentDataFormValidValidator">
+        <constructor-arg ref="checkoutComPaymentTypeResolver"/>
+        <constructor-arg name="validators">
+            <map key-type="com.checkout.hybris.core.payment.enums.CheckoutComPaymentType"
+                 value-type="org.springframework.validation.Validator">
+                <entry key="CARD" value-ref="checkoutComCardPaymentDataFormValidator"/>
+                <entry key="ACH" value-ref="checkoutComAchPaymentDataFormValidator"/>
+                <entry key="FAWRY" value-ref="checkoutComFawryPaymentDataFormValidator"/>
+                <entry key="IDEAL" value-ref="checkoutComIdealPaymentDataFormValidator"/>
+                <entry key="KLARNA" value-ref="checkoutComKlarnaPaymentDataFormValidator"/>
+                <entry key="SEPA" value-ref="checkoutComSepaPaymentDataFormValidator"/>
+                <entry key="OXXO" value-ref="checkoutComOxxoPaymentDataFormValidator"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <alias name="defaultCheckoutComAbstractPaymentDataFormValidValidator"
+           alias="checkoutComAbstractPaymentDataFormValidValidator"/>
+    <bean id="defaultCheckoutComAbstractPaymentDataFormValidValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComAbstractPaymentDataFormValidValidator"
+          abstract="true"/>
+
+    <alias name="defaultCheckoutComCardPaymentDataFormValidator" alias="checkoutComCardPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComCardPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComCardPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComAchPaymentDataFormValidator" alias="checkoutComAchPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComAchPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComAchPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator">
+        <constructor-arg ref="enumerationService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComFawryPaymentDataFormValidator" alias="checkoutComFawryPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComFawryPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComFawryPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComIdealPaymentDataFormValidator" alias="checkoutComIdealPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComIdealPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComIdealPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComKlarnaPaymentDataFormValidator" alias="checkoutComKlarnaPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComKlarnaPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComKlarnaPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComSepaPaymentDataFormValidator" alias="checkoutComSepaPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComSepaPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComSepaPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComOxxoPaymentDataFormValidator" alias="checkoutComOxxoPaymentDataFormValidator"/>
+    <bean id="defaultCheckoutComOxxoPaymentDataFormValidator"
+          class="com.checkout.hybris.addon.validators.paymentform.CheckoutComOxxoPaymentDataFormValidator"
+          parent="checkoutComAbstractPaymentDataFormValidValidator"/>
+
+    <alias name="defaultCheckoutComCCPaymentInfoDataReverseConverter"
+           alias="checkoutComCCPaymentInfoDataReverseConverter"/>
+    <bean id="defaultCheckoutComCCPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComCCPaymentInfoDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComAddressDataReverseConverter" alias="checkoutComAddressDataReverseConverter"/>
+    <bean id="defaultCheckoutComAddressDataReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.user.data.AddressData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComAddressDataReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComAddressDataReversePopulator" alias="checkoutComAddressDataReversePopulator"/>
+    <bean id="defaultCheckoutComAddressDataReversePopulator"
+          class="com.checkout.hybris.addon.converters.populators.CheckoutComAddressDataReversePopulator">
+        <constructor-arg ref="i18NFacade"/>
+    </bean>
+
+</beans>

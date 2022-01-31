@@ -1,0 +1,11 @@
+#% impex.setLocale(Locale.ENGLISH);
+
+$productCatalog = wsTestProductCatalog
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default='$productCatalog:Staged']
+
+INSERT PriceRow; currency(isocode)[unique = true]; price ; product(code, $catalogVersion)[unique = true]; unit(code)
+               ; EUR                             ; 23.21 ; 1934795                                      ; pieces
+               ; AUD                             ; 23.21 ; 1934795                                      ; pieces
+               ; EGP                             ; 95.39 ; 1934795                                      ; pieces
+               ; KWD                             ; 95.39 ; 1934795                                      ; pieces
+               ; MXN                             ; 95.39 ; 1934795                                      ; pieces

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <bean class="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData">
+        <property name="paymentToken" type="java.lang.String"/>
+        <property name="cardBin" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.CheckoutComPaymentInfoData">
+        <property name="type" type="java.lang.String"/>
+        <property name="billingAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+        <property name="qrCodeData" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.AuthorizeResponseData">
+        <property name="isSuccess" type="java.lang.Boolean"/>
+        <property name="isRedirect" type="java.lang.Boolean"/>
+        <property name="isDataRequired" type="java.lang.Boolean"/>
+        <property name="redirectUrl" type="java.lang.String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
+        <property name="checkoutComPaymentInfo" type="com.checkout.hybris.facades.beans.CheckoutComPaymentInfoData"/>
+        <property name="baseStoreName" type="java.lang.String"/>
+        <property name="qrCodeData" type="java.lang.String"/>
+        <property name="paymentType" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="type" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.FawryPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="mobileNumber" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.OxxoPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="document" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.AchPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="accountHolderName" type="java.lang.String"/>
+        <property name="accountType" type="java.lang.String"/>
+        <property name="accountNumber" type="java.lang.String"/>
+        <property name="routingNumber" type="java.lang.String"/>
+        <property name="companyName" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.SepaPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="paymentType" type="java.lang.String"/>
+        <property name="accountIban" type="java.lang.String"/>
+        <property name="firstName" type="java.lang.String"/>
+        <property name="lastName" type="java.lang.String"/>
+        <property name="addressLine1" type="java.lang.String"/>
+        <property name="addressLine2" type="java.lang.String"/>
+        <property name="city" type="java.lang.String"/>
+        <property name="postalCode" type="java.lang.String"/>
+        <property name="country" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.IdealPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="bic" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.KlarnaPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="authorizationToken" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.WalletPaymentInfoData"
+          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+        <property name="token" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayValidateMerchantRequestData">
+        <property name="validationURL" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayValidateMerchantData">
+        <property name="displayName" type="java.lang.String"/>
+        <property name="merchantIdentifier" type="java.lang.String"/>
+        <property name="initiative" type="java.lang.String"/>
+        <property name="initiativeContext" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayAuthorisationRequest">
+        <property name="token" type="com.checkout.hybris.facades.beans.ApplePayPaymentToken"/>
+        <property name="billingContact" type="com.checkout.hybris.facades.beans.ApplePayPaymentContact"/>
+        <property name="shippingContact" type="com.checkout.hybris.facades.beans.ApplePayPaymentContact"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayPaymentToken">
+        <property name="paymentData" type="com.checkout.hybris.facades.beans.ApplePayAdditionalAuthInfo"/>
+    </bean>
+
+    <enum class="com.checkout.hybris.facades.enums.WalletPaymentType">
+        <value>APPLEPAY</value>
+        <value>GOOGLEPAY</value>
+    </enum>
+
+    <bean class="com.checkout.hybris.facades.beans.WalletPaymentAdditionalAuthInfo">
+        <property name="walletType" type="com.checkout.hybris.facades.enums.WalletPaymentType"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayAdditionalAuthInfo"
+          extends="com.checkout.hybris.facades.beans.WalletPaymentAdditionalAuthInfo">
+        <property name="installationId" type="java.lang.String"/>
+        <property name="statementNarrative" type="java.lang.String"/>
+        <property name="orderContent" type="java.lang.String"/>
+        <property name="usingShippingAsBilling" type="java.lang.Boolean"/>
+        <property name="saveCard" type="java.lang.Boolean"/>
+        <property name="paymentMethod" type="java.lang.String"/>
+        <property name="paResponse" type="java.lang.String"/>
+        <property name="header" type="com.checkout.hybris.facades.beans.ApplePayHeader"/>
+        <property name="signature" type="java.lang.String"/>
+        <property name="version" type="java.lang.String"/>
+        <property name="data" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.WalletPaymentContact">
+        <property name="administrativeArea" type="java.lang.String"/>
+        <property name="countryCode" type="java.lang.String"/>
+        <property name="locality" type="java.lang.String"/>
+        <property name="postalCode" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayPaymentContact"
+          extends="com.checkout.hybris.facades.beans.WalletPaymentContact">
+        <property name="phoneNumber" type="java.lang.String"/>
+        <property name="emailAddress" type="java.lang.String"/>
+        <property name="givenName" type="java.lang.String"/>
+        <property name="familyName" type="java.lang.String"/>
+        <property name="phoneticGivenName" type="java.lang.String"/>
+        <property name="phoneticFamilyName" type="java.lang.String"/>
+        <property name="addressLines" type="java.util.List&lt;java.lang.String&gt;"/>
+        <property name="subLocality" type="java.lang.String"/>
+        <property name="subAdministrativeArea" type="java.lang.String"/>
+        <property name="country" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayPaymentPass">
+        <property name="primaryAccountIdentifier" type="java.lang.String"/>
+        <property name="primaryAccountNumberSuffix" type="java.lang.String"/>
+        <property name="deviceAccountIdentifier" type="java.lang.String"/>
+        <property name="deviceAccountNumberSuffix" type="java.lang.String"/>
+        <property name="activationState" type="com.checkout.hybris.facades.enums.ApplePayPaymentPassActivationState"/>
+    </bean>
+
+    <enum class="com.checkout.hybris.facades.enums.ApplePayPaymentPassActivationState">
+        <value>activated</value>
+        <value>requiresActivation</value>
+        <value>activating</value>
+        <value>suspended</value>
+        <value>deactivated</value>
+    </enum>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayHeader">
+        <property name="ephemeralPublicKey" type="java.lang.String"/>
+        <property name="publicKeyHash" type="java.lang.String"/>
+        <property name="transactionId" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePaySettingsData">
+        <property name="merchantId" type="java.lang.String"/>
+        <property name="merchantName" type="java.lang.String"/>
+        <property name="certificate" type="java.lang.String"/>
+        <property name="privateKey" type="java.lang.String"/>
+        <property name="countryCode" type="java.lang.String"/>
+        <property name="supportedNetworks"
+                  type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="merchantCapabilities"
+                  type="java.util.Set&lt;java.lang.String&gt;"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayAuthorisationRequest">
+        <property name="token" type="com.checkout.hybris.facades.beans.GooglePayPaymentToken"/>
+        <property name="billingAddress" type="com.checkout.hybris.facades.beans.GooglePayPaymentContact"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentContact"
+          extends="com.checkout.hybris.facades.beans.WalletPaymentContact">
+        <property name="address1" type="java.lang.String"/>
+        <property name="address2" type="java.lang.String"/>
+        <property name="address3" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="sortingCode" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentToken"
+          extends="com.checkout.hybris.facades.beans.WalletPaymentAdditionalAuthInfo">
+        <property name="protocolVersion" type="java.lang.String"/>
+        <property name="signature" type="java.lang.String"/>
+        <property name="signedMessage" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.PlaceWalletOrderDataResponse">
+        <property name="orderData" type="de.hybris.platform.commercefacades.order.data.OrderData"/>
+        <property name="status" type="com.checkout.hybris.facades.enums.PlaceWalletOrderStatus"/>
+        <property name="errorMessage" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePaySettingsData">
+        <property name="merchantId" type="java.lang.String"/>
+        <property name="merchantName" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="environment" type="java.lang.String"/>
+        <property name="gateway" type="java.lang.String"/>
+        <property name="gatewayMerchantId" type="java.lang.String"/>
+        <property name="allowedAuthMethods"
+                  type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="allowedCardNetworks"
+                  type="java.util.Set&lt;java.lang.String&gt;"/>
+    </bean>
+
+    <enum class="com.checkout.hybris.facades.enums.PlaceWalletOrderStatus">
+        <value>SUCCESS</value>
+        <value>FAILURE</value>
+    </enum>
+
+    <bean class="com.checkout.hybris.facades.beans.KlarnaClientTokenData">
+        <property name="success" type="java.lang.Boolean"/>
+        <property name="clientToken" type="java.lang.String"/>
+        <property name="instanceId" type="java.lang.String"/>
+        <property name="paymentMethodCategories"
+                  type="java.util.Set&lt;java.lang.String&gt;"/>
+    </bean>
+
+    <bean class="com.checkout.data.apm.CheckoutComAPMConfigurationData">
+        <property name="code" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="isRedirect" type="java.lang.Boolean"/>
+        <property name="isUserDataRequired" type="java.lang.Boolean"/>
+        <property name="media" type="de.hybris.platform.cmsfacades.data.MediaData"/>
+    </bean>
+
+    <bean class="com.checkout.data.apm.CheckoutComAPMConfigurationDataList">
+        <property name="availableApmConfigurations"
+                  type="java.util.List&lt;com.checkout.data.apm.CheckoutComAPMConfigurationData>">
+        </property>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayPaymentRequestData">
+        <property name="supportedNetworks" type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="merchantCapabilities" type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="countryCode" type="java.lang.String"/>
+        <property name="currencyCode" type="java.lang.String"/>
+        <property name="total" type="com.checkout.hybris.facades.beans.ApplePayTotalData"/>
+        <property name="requiredBillingContactFields" type="java.util.List&lt;java.lang.String>"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayTotalData">
+        <property name="label" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayMerchantConfigurationData">
+        <property name="baseCardPaymentMethod" type="com.checkout.hybris.facades.beans.BaseCardPaymentMethodData"/>
+        <property name="clientSettings" type="com.checkout.hybris.facades.beans.GooglePayClientSettingsData"/>
+        <property name="gateway" type="java.lang.String"/>
+        <property name="gatewayMerchantId" type="java.lang.String"/>
+        <property name="merchantName" type="java.lang.String"/>
+        <property name="merchantId" type="java.lang.String"/>
+        <property name="transactionInfo" type="com.checkout.hybris.facades.beans.GooglePayTransactionInfoData"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.BaseCardPaymentMethodData">
+        <property name="type" type="java.lang.String"/>
+        <property name="parameters" type="com.checkout.hybris.facades.beans.BaseCardPaymentMethodParametersData"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.BaseCardPaymentMethodParametersData">
+        <property name="allowedAuthMethods" type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="allowedCardNetworks" type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="billingAddressRequired" type="java.lang.Boolean"/>
+        <property name="billingAddressParameters" type="com.checkout.hybris.facades.beans.GooglePayBillingAddressParametersFormatData"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayBillingAddressParametersFormatData">
+        <property name="format" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayClientSettingsData">
+        <property name="environment" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayTransactionInfoData">
+        <property name="currencyCode" type="java.lang.String"/>
+        <property name="totalPrice" type="java.lang.String"/>
+        <property name="totalPriceStatus" type="java.lang.String"/>
+    </bean>
+</beans>

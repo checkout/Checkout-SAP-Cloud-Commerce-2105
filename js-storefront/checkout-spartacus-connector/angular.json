@@ -1,0 +1,208 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "checkout-spartacus-connector": {
+      "projectType": "",
+      "root": "projects/checkout-spartacus-connector",
+      "sourceRoot": "projects/checkout-spartacus-connector/src",
+      "prefix": "y",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/checkout-spartacus-connector/tsconfig.lib.json",
+            "project": "projects/checkout-spartacus-connector/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/checkout-spartacus-connector/tsconfig.lib.prod.json"
+            }
+          },
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/checkout-spartacus-connector/src/test.ts",
+            "tsConfig": "projects/checkout-spartacus-connector/tsconfig.spec.json",
+            "karmaConfig": "projects/checkout-spartacus-connector/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/checkout-spartacus-connector/**/*.ts",
+              "projects/checkout-spartacus-connector/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "example-storefront": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/example-storefront",
+      "sourceRoot": "projects/example-storefront/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/example-storefront",
+            "index": "projects/example-storefront/src/index.html",
+            "main": "projects/example-storefront/src/main.ts",
+            "polyfills": "projects/example-storefront/src/polyfills.ts",
+            "tsConfig": "projects/example-storefront/tsconfig.app.json",
+            "assets": [
+              "projects/example-storefront/src/favicon.ico",
+              "projects/example-storefront/src/assets"
+            ],
+            "styles": [
+              "projects/example-storefront/src/styles.scss",
+              "projects/example-storefront/src/styles/spartacus/user.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "qrcode"
+            ],
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/example-storefront/src/environments/environment.ts",
+                  "with": "projects/example-storefront/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputPath": "dist/example-storefront",
+              "index": "projects/example-storefront/src/index.html",
+              "main": "projects/example-storefront/src/main.ts",
+              "polyfills": "projects/example-storefront/src/polyfills.ts",
+              "tsConfig": "projects/example-storefront/tsconfig.app.json",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "ci": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/example-storefront/src/environments/environment.ts",
+                  "with": "projects/example-storefront/src/environments/environment.ci.ts"
+                }
+              ],
+              "outputPath": "dist/example-storefront",
+              "index": "projects/example-storefront/src/index.html",
+              "main": "projects/example-storefront/src/main.ts",
+              "polyfills": "projects/example-storefront/src/polyfills.ts",
+              "tsConfig": "projects/example-storefront/tsconfig.app.json",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": ""
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "example-storefront:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "example-storefront:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "example-storefront:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/example-storefront/**/*.ts",
+              "projects/example-storefront/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "checkout-spartacus-translations": {
+      "projectType": "library",
+      "root": "projects/checkout-spartacus-translations",
+      "sourceRoot": "projects/checkout-spartacus-translations/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/checkout-spartacus-translations/tsconfig.lib.json",
+            "project": "projects/checkout-spartacus-translations/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/checkout-spartacus-translations/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/checkout-spartacus-translations/**/*.ts",
+              "projects/checkout-spartacus-translations/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "checkout-spartacus-connector"
+}

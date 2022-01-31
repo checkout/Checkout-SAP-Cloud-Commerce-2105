@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComAbstractCommand" alias="checkoutComAbstractCommand"/>
+    <bean name="defaultCheckoutComAbstractCommand" abstract="true"
+          class="com.checkout.hybris.core.payment.commands.impl.CheckoutComAbstractCommand"/>
+
+    <bean name="checkoutComCommandFactory"
+          class="de.hybris.platform.payment.commands.factory.impl.DefaultCommandFactoryImpl">
+        <property name="paymentProvider" value="Checkout.com"/>
+        <property name="commands">
+            <map>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.CaptureCommand</value>
+                    </key>
+                    <bean class="com.checkout.hybris.core.payment.commands.impl.CheckoutComCaptureCommand"
+                          parent="checkoutComAbstractCommand">
+                        <constructor-arg ref="checkoutComRequestFactory"/>
+                        <constructor-arg ref="checkoutComPaymentIntegrationService"/>
+                        <constructor-arg ref="timeService"/>
+                        <constructor-arg ref="checkoutComPaymentTransactionService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.FollowOnRefundCommand</value>
+                    </key>
+                    <bean class="com.checkout.hybris.core.payment.commands.impl.CheckoutComRefundCommand"
+                          parent="checkoutComAbstractCommand">
+                        <constructor-arg ref="checkoutComRequestFactory"/>
+                        <constructor-arg ref="checkoutComPaymentIntegrationService"/>
+                        <constructor-arg ref="timeService"/>
+                        <constructor-arg ref="checkoutComPaymentTransactionService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.VoidCommand</value>
+                    </key>
+                    <bean class="com.checkout.hybris.core.payment.commands.impl.CheckoutComVoidCommand"
+                          parent="checkoutComAbstractCommand">
+                        <constructor-arg ref="checkoutComRequestFactory"/>
+                        <constructor-arg ref="checkoutComPaymentIntegrationService"/>
+                        <constructor-arg ref="timeService"/>
+                        <constructor-arg ref="checkoutComPaymentTransactionService"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

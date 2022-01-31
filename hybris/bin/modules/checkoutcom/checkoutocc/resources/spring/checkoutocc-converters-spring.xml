@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <alias name="defaultCheckoutComPaymentDetailsDTOReverseConverter"
+           alias="checkoutComPaymentDetailsDTOReverseConverter"/>
+    <bean id="defaultCheckoutComPaymentDetailsDTOReverseConverter"
+          class="com.checkout.hybris.occ.converters.impl.DefaultCheckoutComPaymentDetailsDTOReverseConverter">
+        <constructor-arg name="converters">
+            <map key-type="com.checkout.hybris.core.payment.enums.CheckoutComPaymentType"
+                 value-type="de.hybris.platform.servicelayer.dto.converter.Converter">
+                <entry key="CARD" value-ref="checkoutComCCPaymentDetailsDTOToPaymentInfoDataConverter"/>
+                <entry key="FAWRY" value-ref="checkoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataConverter"/>
+                <entry key="IDEAL" value-ref="checkoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataConverter"/>
+                <entry key="ACH" value-ref="checkoutComAchPaymentInfoDTOToAchPaymentInfoDataConverter"/>
+                <entry key="SEPA" value-ref="checkoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataConverter"/>
+                <entry key="KLARNA" value-ref="checkoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataConverter"/>
+                <entry key="OXXO" value-ref="checkoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataConverter"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg name="defaultConverter" ref="checkoutComPaymentDetailsDTOConverter"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentDetailsDTOConverter"
+           alias="checkoutComPaymentDetailsDTOConverter"/>
+    <bean id="defaultCheckoutComPaymentDetailsDTOConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.APMPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentDetailsDTOToPaymentInfoDataPopulator"
+           alias="checkoutComPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComPaymentDetailsDTOToPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComCCPaymentDetailsDTOToPaymentInfoDataConverter"
+           alias="checkoutComCCPaymentDetailsDTOToPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComCCPaymentDetailsDTOToPaymentInfoDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataPopulator"
+           alias="checkoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataConverter"
+           alias="checkoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.FawryPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComFawryPaymentDetailsDTOToFawryPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataPopulator"
+           alias="checkoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataConverter"
+           alias="checkoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.IdealPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComIdealPaymentDetailsDTOToIdealPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator"
+           alias="checkoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComAchPaymentInfoDTOToAchPaymentInfoDataConverter"
+           alias="checkoutComAchPaymentInfoDTOToAchPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComAchPaymentInfoDTOToAchPaymentInfoDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.AchPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataPopulator"
+           alias="checkoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataConverter"
+           alias="checkoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.SepaPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComSepaPaymentDetailsDTOToSepaPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataPopulator"
+           alias="checkoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataConverter"
+           alias="checkoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.KlarnaPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComKlarnaPaymentDetailsDTOToKlarnaPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator"
+           alias="checkoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataPopulator"
+           alias="checkoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataPopulator"/>
+    <bean id="defaultCheckoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataPopulator"
+          class="com.checkout.hybris.occ.converters.populators.CheckoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataPopulator"/>
+
+    <alias name="defaultCheckoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataConverter"
+           alias="checkoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.OxxoPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComOxxoPaymentDetailsDTOToOxxoPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

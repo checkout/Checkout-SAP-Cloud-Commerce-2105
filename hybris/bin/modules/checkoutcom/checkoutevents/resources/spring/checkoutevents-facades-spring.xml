@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComEventFacade" alias="checkoutComEventFacade"/>
+    <bean id="defaultCheckoutComEventFacade"
+          class="com.checkout.hybris.events.facades.impl.DefaultCheckoutComEventFacade">
+        <constructor-arg ref="eventService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComRequestEventValidator" alias="checkoutComRequestEventValidator"/>
+    <bean id="defaultCheckoutComRequestEventValidator"
+          class="com.checkout.hybris.events.validators.impl.DefaultCheckoutComRequestEventValidator">
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="checkoutComPaymentEventService"/>
+    </bean>
+
+</beans>

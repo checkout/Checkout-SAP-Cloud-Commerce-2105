@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "es2020",
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "checkout-spartacus-connector": [
+        "dist/checkout-spartacus-connector/checkout-spartacus-connector",
+        "dist/checkout-spartacus-connector"
+      ],
+      "checkout-spartacus-translations": [
+        "dist/checkout-spartacus-translations/checkout-spartacus-translations",
+        "dist/checkout-spartacus-translations"
+      ]
+    }
+  }
+}

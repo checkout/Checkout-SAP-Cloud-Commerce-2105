@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComPaymentEventService" alias="checkoutComPaymentEventService"/>
+    <bean id="defaultCheckoutComPaymentEventService"
+          class="com.checkout.hybris.events.services.impl.DefaultCheckoutComPaymentEventService">
+        <constructor-arg ref="cmsSiteService"/>
+        <constructor-arg ref="paymentInfoService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentEventCleanupService" alias="checkoutComPaymentEventCleanupService"/>
+    <bean id="defaultCheckoutComPaymentEventCleanupService"
+          class="com.checkout.hybris.events.services.impl.DefaultCheckoutComPaymentEventCleanupService">
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="checkoutComPaymentEventDao"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentEventProcessingService" alias="checkoutComPaymentEventProcessingService"/>
+    <bean id="defaultCheckoutComPaymentEventProcessingService"
+          class="com.checkout.hybris.events.services.impl.DefaultCheckoutComPaymentEventProcessingService">
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="paymentService"/>
+        <constructor-arg ref="paymentInfoService"/>
+        <constructor-arg ref="sessionService"/>
+        <constructor-arg ref="businessProcessService"/>
+        <constructor-arg ref="checkoutComPaymentTransactionService"/>
+        <constructor-arg name="transactionTemplate">
+            <bean class="org.springframework.transaction.support.TransactionTemplate">
+                <property name="transactionManager" ref="txManager"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <alias name="defaultCheckoutComBusinessProcessService" alias="businessProcessService"/>
+    <bean id="defaultCheckoutComBusinessProcessService"
+          class="com.checkout.hybris.events.order.process.services.impl.DefaultCheckoutComBusinessProcessService"
+          parent="defaultBusinessProcessService">
+        <constructor-arg ref="checkoutComProcessDefinitionDao"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentEventListener" alias="checkoutComPaymentEventListener"/>
+    <bean id="defaultCheckoutComPaymentEventListener"
+          class="com.checkout.hybris.events.payments.listeners.CheckoutComPaymentEventListener"
+          parent="abstractEventListener">
+        <constructor-arg ref="checkoutComPaymentEventService"/>
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="checkoutComPaymentEventReverseConverter"/>
+        <constructor-arg ref="paymentInfoService"/>
+    </bean>
+
+</beans>

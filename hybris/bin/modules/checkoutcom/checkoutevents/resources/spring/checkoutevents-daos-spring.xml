@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComPaymentEventDao" alias="checkoutComPaymentEventDao"/>
+    <bean id="defaultCheckoutComPaymentEventDao"
+          class="com.checkout.hybris.events.daos.impl.DefaultCheckoutComPaymentEventDao">
+        <constructor-arg ref="flexibleSearchService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComProcessDefinitionDao" alias="checkoutComProcessDefinitionDao"/>
+    <bean id="defaultCheckoutComProcessDefinitionDao"
+          class="com.checkout.hybris.events.order.process.daos.impl.DefaultCheckoutComProcessDefinitionDao">
+        <constructor-arg ref="flexibleSearchService"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.checkout.controllers"/>
+
+    <!-- Checkout.com Checkout Steps START -->
+
+    <alias name="defaultCheckoutB2CMultiStepCheckout" alias="checkoutB2CMultiStepCheckout" />
+    <bean id="defaultCheckoutB2CMultiStepCheckout" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultMultiStepCheckoutValidator"/>
+        <property name="transitions">
+            <map>
+                <entry key="previous" value-ref="REDIRECT_TO_CART"/>
+                <entry key="current" value-ref="REDIRECT_MULTI_STEP_CHECKOUT"/>
+                <entry key="next" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="multi"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CDeliveryAddressCheckoutStep" alias="checkoutB2CDeliveryAddressCheckoutStep"/>
+    <bean id="defaultCheckoutB2CDeliveryAddressCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="deliveryAddressCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_MULTI_STEP_CHECKOUT"/>
+                <entry key="current" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="next" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryAddress"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CDeliveryMethodCheckoutStep" alias="checkoutB2CDeliveryMethodCheckoutStep" />
+    <bean id="defaultCheckoutB2CDeliveryMethodCheckoutStep"  parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="deliveryMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="current" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CPickupLocationCheckoutStep" alias="checkoutB2CPickupLocationCheckoutStep" />
+    <bean id="defaultCheckoutB2CPickupLocationCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPickupCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_PICKUP_LOCATION"/>
+                <entry key="next" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CChoosePaymentCheckoutStep" alias="checkoutB2CChoosePaymentCheckoutStep"/>
+    <bean id="defaultCheckoutB2CChoosePaymentCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPaymentMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="paymentMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CPaymentMethodCheckoutStep" alias="checkoutB2CPaymentMethodCheckoutStep" />
+    <bean id="defaultCheckoutB2CPaymentMethodCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPaymentMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="paymentMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CSummaryCheckoutStep" alias="checkoutB2CSummaryCheckoutStep"/>
+    <bean id="defaultCheckoutB2CSummaryCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultResponsiveSummaryCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_SUMMARY"/>
+                <entry key="next" value="redirect:/checkout/checkout-com/orderConfirmation/%s"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="confirmOrder"/>
+    </bean>
+
+    <!-- Checkout.com Checkout Steps END -->
+
+    <!--- Checkout.com checkout group START-->
+
+    <bean id="checkoutB2CCheckoutGroup" class="de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutGroup">
+        <property name="groupId" value="checkoutB2CCheckoutGroup"/>
+        <property name="checkoutStepMap">
+            <map merge="true">
+                <entry key="multi" value-ref="checkoutB2CMultiStepCheckout"/>
+                <entry key="delivery-address" value-ref="checkoutB2CDeliveryAddressCheckoutStep"/>
+                <entry key="delivery-method" value-ref="checkoutB2CDeliveryMethodCheckoutStep"/>
+                <entry key="pickup-location" value-ref="checkoutB2CPickupLocationCheckoutStep"/>
+                <entry key="choose-payment-method" value-ref="checkoutB2CChoosePaymentCheckoutStep"/>
+                <entry key="payment-method" value-ref="checkoutB2CPaymentMethodCheckoutStep"/>
+                <entry key="summary" value-ref="checkoutB2CSummaryCheckoutStep"/>
+            </map>
+        </property>
+        <property name="validationResultsMap">
+            <map merge="true">
+                <entry key="FAILED" value-ref="REDIRECT_TO_CART"/>
+                <entry key="REDIRECT_TO_DELIVERY_ADDRESS" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="REDIRECT_TO_CART" value-ref="REDIRECT_TO_CART"/>
+                <entry key="REDIRECT_TO_PAYMENT_METHOD" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_PAYMENT_METHOD" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_CHOOSE_PAYMENT_METHOD" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_SUMMARY" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="checkoutProgressBar">
+            <map merge="true">
+                <entry key="1" value-ref="checkoutB2CDeliveryAddressCheckoutStep"/>
+                <entry key="2" value-ref="checkoutB2CDeliveryMethodCheckoutStep"/>
+                <entry key="3" value-ref="checkoutB2CChoosePaymentCheckoutStep"/>
+                <entry key="4" value-ref="checkoutB2CSummaryCheckoutStep"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--- Checkout.com checkout group END-->
+
+    <!-- Checkout.com Responsive Checkout Steps START -->
+
+    <alias name="defaultCheckoutB2CResponsiveMultiStepCheckout" alias="checkoutB2CResponsiveMultiStepCheckout" />
+    <bean id="defaultCheckoutB2CResponsiveMultiStepCheckout" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultMultiStepCheckoutValidator"/>
+        <property name="transitions">
+            <map>
+                <entry key="previous" value-ref="REDIRECT_TO_CART"/>
+                <entry key="current" value-ref="REDIRECT_MULTI_STEP_CHECKOUT"/>
+                <entry key="next" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="multi"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsiveDeliveryAddressCheckoutStep" alias="checkoutB2CResponsiveDeliveryAddressCheckoutStep"/>
+    <bean id="defaultCheckoutB2CResponsiveDeliveryAddressCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="deliveryAddressCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_MULTI_STEP_CHECKOUT"/>
+                <entry key="current" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="next" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryAddress"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsiveDeliveryMethodCheckoutStep" alias="checkoutB2CResponsiveDeliveryMethodCheckoutStep" />
+    <bean id="defaultCheckoutB2CResponsiveDeliveryMethodCheckoutStep"  parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="deliveryMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="current" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsivePickupLocationCheckoutStep" alias="checkoutB2CResponsivePickupLocationCheckoutStep" />
+    <bean id="defaultCheckoutB2CResponsivePickupLocationCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPickupCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_PICKUP_LOCATION"/>
+                <entry key="next" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="deliveryMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsiveChoosePaymentCheckoutStep" alias="checkoutB2CResponsiveChoosePaymentCheckoutStep"/>
+    <bean id="defaultCheckoutB2CResponsiveChoosePaymentCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPaymentMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="paymentMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsivePaymentMethodCheckoutStep" alias="checkoutB2CResponsivePaymentMethodCheckoutStep" />
+    <bean id="defaultCheckoutB2CResponsivePaymentMethodCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultPaymentMethodCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="next" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="paymentMethod"/>
+    </bean>
+
+    <alias name="defaultCheckoutB2CResponsiveSummaryCheckoutStep" alias="checkoutB2CResponsiveSummaryCheckoutStep"/>
+    <bean id="defaultCheckoutB2CResponsiveSummaryCheckoutStep" parent="checkoutStep">
+        <property name="checkoutGroup" ref="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepValidator" ref="defaultResponsiveSummaryCheckoutValidator"/>
+        <property name="transitions">
+            <map merge="true">
+                <entry key="previous" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="current" value-ref="REDIRECT_TO_SUMMARY"/>
+                <entry key="next" value="redirect:/checkout/checkout-com/orderConfirmation/%s"/>
+            </map>
+        </property>
+        <property name="progressBarId" value="confirmOrder"/>
+    </bean>
+
+    <!-- Checkout.com Responsive Checkout Steps END -->
+
+    <!--- Checkout.com Responsive checkout group START-->
+
+    <bean id="checkoutB2CResponsiveCheckoutGroup"  class="de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutGroup">
+        <property name="groupId"  value="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="checkoutStepMap">
+            <map merge="true">
+                <entry key="multi" value-ref="checkoutB2CResponsiveMultiStepCheckout"/>
+                <entry key="delivery-address" value-ref="checkoutB2CResponsiveDeliveryAddressCheckoutStep"/>
+                <entry key="delivery-method" value-ref="checkoutB2CResponsiveDeliveryMethodCheckoutStep"/>
+                <entry key="pickup-location" value-ref="checkoutB2CResponsivePickupLocationCheckoutStep"/>
+                <entry key="choose-payment-method" value-ref="checkoutB2CResponsiveChoosePaymentCheckoutStep"/>
+                <entry key="payment-method" value-ref="checkoutB2CResponsivePaymentMethodCheckoutStep"/>
+                <entry key="summary" value-ref="checkoutB2CResponsiveSummaryCheckoutStep"/>
+            </map>
+        </property>
+        <property name="validationResultsMap">
+            <map merge="true">
+                <entry key="FAILED" value-ref="REDIRECT_TO_CART"/>
+                <entry key="REDIRECT_TO_DELIVERY_ADDRESS" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+                <entry key="REDIRECT_TO_CART" value-ref="REDIRECT_TO_CART"/>
+                <entry key="REDIRECT_TO_PAYMENT_METHOD" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_PAYMENT_METHOD" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_CHOOSE_PAYMENT_METHOD" value-ref="REDIRECT_TO_CHOOSE_PAYMENT_METHOD"/>
+                <entry key="REDIRECT_TO_SUMMARY" value-ref="REDIRECT_TO_SUMMARY"/>
+            </map>
+        </property>
+        <property name="checkoutProgressBar">
+            <map merge="true">
+                <entry key="1" value-ref="checkoutB2CResponsiveDeliveryAddressCheckoutStep"/>
+                <entry key="2" value-ref="checkoutB2CResponsiveDeliveryMethodCheckoutStep"/>
+                <entry key="3" value-ref="checkoutB2CResponsiveChoosePaymentCheckoutStep"/>
+                <entry key="4" value-ref="checkoutB2CResponsiveSummaryCheckoutStep"/>
+            </map>
+        </property>
+    </bean>
+    <!--- Checkout.com Responsive checkout group END -->
+
+    <!--Checkout GroupMap-->
+    <bean id="checkoutB2CCheckoutFlowGroupMapMergeDirective" parent="mapMergeDirective" depends-on="checkoutFlowGroupMap">
+        <property name="key" value="checkoutB2CCheckoutGroup"/>
+        <property name="value" ref="checkoutB2CCheckoutGroup"/>
+    </bean>
+
+    <bean id="checkoutB2CCheckoutFlowGroupResponsiveMapMergeDirective" parent="mapMergeDirective" depends-on="checkoutFlowGroupMap">
+        <property name="key" value="checkoutB2CResponsiveCheckoutGroup"/>
+        <property name="value" ref="checkoutB2CResponsiveCheckoutGroup"/>
+    </bean>
+
+</beans>

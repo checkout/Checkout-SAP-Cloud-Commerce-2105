@@ -1,0 +1,38 @@
+INSERT_UPDATE ComponentTypeGroup; code[unique = true]
+                                ; checkoutcompaymentbuttons ;
+
+INSERT_UPDATE ComponentTypeGroups2ComponentType; source(code)[unique = true]; target(code)[unique = true]
+                                               ; checkoutcompaymentbuttons  ; CheckoutComCardComponent
+                                               ; checkoutcompaymentbuttons  ; CheckoutComAPMComponent
+                                               ; checkoutcompaymentbuttons  ; CheckoutComApplePayComponent
+                                               ; checkoutcompaymentbuttons  ; CheckoutComGooglePayComponent
+
+# Credit / Debit Cards names
+INSERT_UPDATE CreditCardType; code[unique = true]     ; name[lang = en]
+                            ; visa                    ; "Visa"
+                            ; amex                    ; "American Express"
+                            ; master                  ; "Mastercard"
+                            ; diners                  ; "Diner's Club"
+                            ; maestro                 ; "Maestro"
+                            ; mastercard_eurocard     ; "Mastercard/Eurocard"
+                            ; switch                  ; "Switch"
+                            ; jcb                     ; "JCB"
+                            ; discover                ; "Discover"
+                            ; mastercard              ; "Mastercard"
+                            ; americanexpress         ; "American Express"
+                            ; dinersclubinternational ; "Diners Club International"
+
+# Env types names
+INSERT_UPDATE EnvironmentType; code[unique = true]; name[lang = en]
+                             ; test               ; "Test"
+                             ; production         ; "Production"
+
+# Payment action types names
+INSERT_UPDATE PaymentActionType; code[unique = true]   ; name[lang = en]
+                               ; authorize             ; "Authorize"
+                               ; authorize_and_capture ; "Authorize and Capture"
+
+# Sepa Payment types names
+INSERT_UPDATE SepaPaymentType; code[unique = true]; name[lang = en]
+                             ; RECURRING  ; "Recurring payment"
+                             ; SINGLE     ; "One-off payment"

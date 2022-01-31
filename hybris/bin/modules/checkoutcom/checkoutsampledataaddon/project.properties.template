@@ -1,0 +1,15 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# you can put key/value pairs here.
+# Use Config.getParameter(..) to retrieve the values during runtime.
+
+checkoutsampledataaddon.key=value
+
+# Specifies the location of the spring context file added automatically to the global platform application context.
+checkoutsampledataaddon.application-context=checkoutsampledataaddon-spring.xml
+
+yacceleratorstorefront.additionalWebSpringConfigs.checkoutsampledataaddon=classpath:/checkoutsampledataaddon/web/spring/checkoutsampledataaddon-web-spring.xml
+
+checkoutsampledataaddon.javascript.paths.responsive=/responsive/common/js/checkoutsampledataaddon.js
+checkoutsampledataaddon.css.paths.responsive=/responsive/common/css/checkoutsampledataaddon.css

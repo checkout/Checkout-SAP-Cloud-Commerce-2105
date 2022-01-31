@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <alias name="defaultCheckoutComPaymentAttributesStrategyMapper" alias="checkoutComPaymentAttributesStrategyMapper"/>
+    <bean id="defaultCheckoutComPaymentAttributesStrategyMapper"
+          class="com.checkout.hybris.facades.payment.attributes.mapper.CheckoutComPaymentAttributesStrategyMapper"/>
+
+    <alias name="defaultCheckoutComAbstractPaymentAttributeStrategy"
+           alias="checkoutComAbstractPaymentAttributeStrategy"/>
+    <bean id="defaultCheckoutComAbstractPaymentAttributeStrategy"
+          class="com.checkout.hybris.facades.payment.attributes.strategies.impl.CheckoutComAbstractPaymentAttributeStrategy"
+          abstract="true">
+        <constructor-arg name="checkoutComPaymentAttributesStrategyMapper" ref="checkoutComPaymentAttributesStrategyMapper"/>
+    </bean>
+
+    <alias name="checkoutComSepaPaymentAttributeStrategy" alias="checkoutComSepaPaymentAttributeStrategy"/>
+    <bean id="checkoutComSepaPaymentAttributeStrategy"
+          class="com.checkout.hybris.facades.payment.attributes.strategies.impl.CheckoutComSepaPaymentAttributeStrategy"
+          parent="checkoutComAbstractPaymentAttributeStrategy">
+        <constructor-arg name="typeService" ref="typeService"/>
+    </bean>
+
+    <alias name="checkoutComAchPaymentAttributeStrategy" alias="checkoutComAchPaymentAttributeStrategy"/>
+    <bean id="checkoutComAchPaymentAttributeStrategy"
+          class="com.checkout.hybris.facades.payment.attributes.strategies.impl.CheckoutComAchPaymentAttributeStrategy"
+          parent="checkoutComAbstractPaymentAttributeStrategy">
+        <constructor-arg name="enumerationService" ref="enumerationService"/>
+    </bean>
+
+    <alias name="checkoutComKlarnaPaymentAttributeStrategy" alias="checkoutComKlarnaPaymentAttributeStrategy"/>
+    <bean id="checkoutComKlarnaPaymentAttributeStrategy"
+          class="com.checkout.hybris.facades.payment.attributes.strategies.impl.CheckoutComKlarnaPaymentAttributeStrategy"
+          parent="checkoutComAbstractPaymentAttributeStrategy">
+        <constructor-arg name="checkoutComKlarnaFacade" ref="checkoutComKlarnaFacade"/>
+    </bean>
+
+</beans>

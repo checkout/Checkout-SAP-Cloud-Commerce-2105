@@ -1,0 +1,20 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+                               ; InboundOrder; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
+                                   ; InboundOrder	; Order      	; Order      	; true	; ALL_SUB_AND_SUPER_TYPES	;
+                                   ; InboundOrder	; OrderStatus	; OrderStatus	; 	; ALL_SUBTYPES           	;
+                                   ; InboundOrder	; User       	; User       	; 	; ALL_SUB_AND_SUPER_TYPES	;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundOrder:Order      	; code                       	; Order:code                       	;                         	; true	;
+                                            ; InboundOrder:Order      	; user                       	; Order:user                       	; InboundOrder:User       	; 	;
+                                            ; InboundOrder:Order      	; checkoutComPaymentReference	; Order:checkoutComPaymentReference	;                         	; true	;
+                                            ; InboundOrder:Order      	; status                     	; Order:status                     	; InboundOrder:OrderStatus	; 	;
+                                            ; InboundOrder:OrderStatus	; name                       	; OrderStatus:name                 	;                         	; 	;
+                                            ; InboundOrder:OrderStatus	; code                       	; OrderStatus:code                 	;                         	; true	;
+                                            ; InboundOrder:User       	; uid                        	; User:uid                         	;                         	; true	;
+                                            ; InboundOrder:User       	; name                       	; User:name                        	;                         	; 	;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundOrder                          ; BASIC

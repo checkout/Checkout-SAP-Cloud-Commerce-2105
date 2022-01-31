@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="defaultCheckoutComOrderDao" alias="orderDao"/>
+    <bean id="defaultCheckoutComOrderDao"
+          class="com.checkout.hybris.core.order.daos.impl.DefaultCheckoutComOrderDao" parent="defaultOrderDao"/>
+
+    <alias name="defaultCheckoutComPaymentInfoDao" alias="paymentInfoDao"/>
+    <bean id="defaultCheckoutComPaymentInfoDao"
+          class="com.checkout.hybris.core.payment.daos.impl.DefaultCheckoutComPaymentInfoDao" parent="defaultPaymentInfoDao"/>
+
+</beans>

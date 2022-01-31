@@ -1,0 +1,5 @@
+
+<div class="apm" [class.apm--selected]="(selectedApm$ | async)?.code === apm.code">
+  <cx-media [container]="apm.media" class="apm-image"></cx-media>
+  <h3 class="apm-title">{{apm.name}}</h3>
+</div>

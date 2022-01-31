@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        
+    <extension abstractclassprefix="Generated" classprefix="Checkouttest" jaloLogicFree="true" managername="CheckouttestManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="checkouttest" usemaven="false">
+                
+        <requires-extension name="odata2services"/>
+                
+        <coremodule generated="true" manager="com.checkout.hybris.test.jalo.CheckouttestManager" packageroot="com.checkout.hybris.test"/>
+            
+    </extension>
+    
+</extensioninfo>

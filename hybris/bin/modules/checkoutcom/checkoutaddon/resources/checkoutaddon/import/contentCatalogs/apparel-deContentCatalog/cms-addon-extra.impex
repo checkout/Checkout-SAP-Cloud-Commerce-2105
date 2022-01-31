@@ -1,0 +1,6 @@
+$contentCatalog = apparel-deContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# This update modifies the existing CheckoutComponent jspInclude component by setting a new page existing in the checkoutaddon
+INSERT_UPDATE JspIncludeComponent; $contentCV[unique = true]; uid[unique = true]; name                       ; page
+                                 ;                          ; CheckoutComponent ; Checkout Display Component ; /WEB-INF/views/addons/checkoutaddon/responsive/pages/cart/checkoutComDisplay.jsp

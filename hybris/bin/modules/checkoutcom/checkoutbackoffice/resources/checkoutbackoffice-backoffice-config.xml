@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<config xmlns="http://www.hybris.com/cockpit/config"
+        xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+        xmlns:explorer-tree="http://www.hybris.com/cockpitng/config/explorertree"
+        xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+        xmlns:yss="http://www.hybris.com/cockpitng/config/simplesearch"
+        xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch"
+        xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+        xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+>
+
+    <context component="explorer-tree" merge-by="module">
+        <explorer-tree:explorer-tree>
+            <explorer-tree:navigation-node id="checkoutcom.navigation.node">
+                <explorer-tree:type-node code="CheckoutComMerchantConfiguration" id="checkoutcom.merchantconfig.node"/>
+                <explorer-tree:type-node code="CheckoutComAPMConfiguration" id="checkoutcom.apmconfig.node"/>
+                <explorer-tree:type-node code="CheckoutComPaymentEvent" id="checkoutcom.paymentevent.node"/>
+                <explorer-tree:type-node code="CheckoutComPaymentEventProcessingCronJob"
+                                         id="checkoutcom.paymentevents.processing.cronjobs.node"/>
+                <explorer-tree:type-node code="CheckoutComPaymentEventCleanupCronJob"
+                                         id="checkoutcom.paymentevents.cleanup.cronjobs.node"/>
+                <explorer-tree:type-node code="MadaBin" id="checkoutcom.madabins.node"/>
+                <explorer-tree:type-node code="AchAccountType" id="checkoutcom.achaccounttype.node"/>
+                <explorer-tree:type-node code="CheckoutComPaymentMethodComponent" id="checkoutcom.payment.cmscomponents.node"/>
+            </explorer-tree:navigation-node>
+        </explorer-tree:explorer-tree>
+    </context>
+
+    <context type="CheckoutComMerchantConfiguration">
+        <!-- Base configuration -->
+        <context component="base" merge-by="type" type="CheckoutComMerchantConfiguration">
+            <y:base>
+                <y:labels>
+                    <y:label>code</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="base" merge-by="type" type="EnvironmentType" parent="EnumerationValue">
+            <y:base>
+                <y:labels>
+                    <y:label>name</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="base" merge-by="type" type="PaymentActionType" parent="EnumerationValue">
+            <y:base>
+                <y:labels>
+                    <y:label>name</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="base" merge-by="type" type="MadaBin" parent="EnumerationValue">
+            <y:base>
+                <y:labels>
+                    <y:label>code</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="listview" type="MadaBin" parent="EnumerationValue">
+            <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+                <list-view:column qualifier="code" merge-mode="replace"/>
+                <list-view:column qualifier="name" merge-mode="remove"/>
+                <list-view:column qualifier="icon" merge-mode="remove"/>
+            </list-view:list-view>
+        </context>
+
+        <context component="base" merge-by="type" type="AchAccountType" parent="EnumerationValue">
+            <y:base>
+                <y:labels>
+                    <y:label>code</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="listview" type="AchAccountType" parent="EnumerationValue">
+            <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+                <list-view:column qualifier="code" merge-mode="replace"/>
+                <list-view:column qualifier="name" merge-mode="remove"/>
+                <list-view:column qualifier="icon" merge-mode="remove"/>
+            </list-view:list-view>
+        </context>
+
+        <context component="listview" type="CheckoutComMerchantConfiguration" merge-by="type">
+            <list-view:list-view refresh-after-object-creation="true">
+                <list-view:column qualifier="code"/>
+            </list-view:list-view>
+        </context>
+
+        <context component="simple-search" type="CheckoutComMerchantConfiguration">
+            <simple-search:simple-search>
+                <yss:field name="code"/>
+                <yss:sort-field name="code" asc="true"/>
+            </simple-search:simple-search>
+        </context>
+
+        <context type="CheckoutComMerchantConfiguration" component="advanced-search" merge-by="type"
+                 parent="GenericItem">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="code"/>
+                    <advanced-search:field name="environment"/>
+                    <advanced-search:field name="paymentAction"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+
+        <context component="editor-area" type="CheckoutComMerchantConfiguration" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential">
+                        <editorArea:attribute qualifier="code"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="tab.configuration.checkoutcom.secrets">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="publicKey"/>
+                        <editorArea:attribute qualifier="secretKey"/>
+                        <editorArea:attribute qualifier="privateSharedKey"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.global.settings">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="environment" editor="com.hybris.cockpitng.editor.defaultenum"/>
+                        <editorArea:attribute qualifier="paymentAction"
+                                              editor="com.hybris.cockpitng.editor.defaultenum"/>
+                        <editorArea:attribute qualifier="reviewTransactionsAtRisk"/>
+                        <editorArea:attribute qualifier="authorisationAmountValidationThreshold"/>
+                    </editorArea:section>
+                    <editorArea:section name="sec.configuration.checkoutcom.billingdescriptor">
+                        <editorArea:attribute qualifier="includeBillingDescriptor"/>
+                        <editorArea:attribute qualifier="billingDescriptorName"/>
+                        <editorArea:attribute qualifier="billingDescriptorCity"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.card.payments">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="threeDSEnabled"/>
+                        <editorArea:attribute qualifier="noThreeDSAttempt"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.applepay.payments">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="applePayConfiguration"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.googlepay.payments">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="googlePayConfiguration"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.klarna.payments">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="klarnaConfiguration"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.payment.event">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="checkoutComPaymentEventTypes"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
+
+    <context type="CheckoutComAPMConfiguration">
+        <!-- Base configuration -->
+        <context component="base" merge-by="type" type="CheckoutComAPMConfiguration">
+            <y:base>
+                <y:labels>
+                    <y:label>code+ ' - ' +name</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+
+        <context component="listview" type="CheckoutComAPMConfiguration" merge-by="type">
+            <list-view:list-view refresh-after-object-creation="true">
+                <list-view:column qualifier="code"/>
+                <list-view:column qualifier="name"/>
+            </list-view:list-view>
+        </context>
+
+        <context component="simple-search" type="CheckoutComAPMConfiguration">
+            <simple-search:simple-search>
+                <yss:field name="code"/>
+                <yss:sort-field name="code" asc="true"/>
+            </simple-search:simple-search>
+        </context>
+
+        <context type="CheckoutComAPMConfiguration" component="advanced-search" merge-by="type"
+                 parent="GenericItem">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="code" selected="true"/>
+                    <advanced-search:field name="name"/>
+                    <advanced-search:field name="restrictedCountries" selected="true"/>
+                    <advanced-search:field name="restrictedCurrencies" selected="true"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+
+        <context component="editor-area" type="CheckoutComAPMConfiguration" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:tab name="tab.configuration.checkoutcom.apm">
+                    <editorArea:section name="sec.configuration.checkoutcom.apm">
+                        <editorArea:attribute qualifier="code"/>
+                        <editorArea:attribute qualifier="name"/>
+                        <editorArea:attribute qualifier="restrictedCountries"/>
+                        <editorArea:attribute qualifier="restrictedCurrencies"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+
+        <context component="editor-area" type="CheckoutComFawryConfiguration" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:tab name="tab.configuration.checkoutcom.apm">
+                    <editorArea:section name="sec.configuration.checkoutcom.apm" merge-mode="append">
+                        <editorArea:attribute qualifier="productId" position="6"/>
+                        <editorArea:attribute qualifier="productDescription" position="7"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
+
+    <!-- Base configuration -->
+    <context component="base" merge-by="type" type="CheckoutComPaymentEvent">
+        <y:base>
+            <y:labels>
+                <y:label>eventId</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <context component="listview" type="CheckoutComPaymentEvent" merge-by="type">
+        <list-view:list-view refresh-after-object-creation="true">
+            <list-view:column qualifier="eventId"/>
+            <list-view:column qualifier="eventType"/>
+            <list-view:column qualifier="paymentId"/>
+            <list-view:column qualifier="paymentReference"/>
+            <list-view:column qualifier="actionId"/>
+            <list-view:column qualifier="status"/>
+            <list-view:column qualifier="creationtime"/>
+        </list-view:list-view>
+    </context>
+
+    <context component="simple-search" type="CheckoutComPaymentEvent">
+        <simple-search:simple-search>
+            <yss:field name="eventId"/>
+            <yss:sort-field name="creationtime" asc="false"/>
+        </simple-search:simple-search>
+    </context>
+
+    <context type="CheckoutComPaymentEvent" component="advanced-search" merge-by="type" parent="GenericItem">
+        <advanced-search:advanced-search>
+            <advanced-search:field-list>
+                <advanced-search:field name="eventId"/>
+                <advanced-search:field name="actionId"/>
+                <advanced-search:field name="eventType"/>
+                <advanced-search:field name="responseSummary"/>
+                <advanced-search:field name="siteId"/>
+                <advanced-search:field name="paymentId"/>
+                <advanced-search:field name="currency"/>
+                <advanced-search:field name="paymentReference" selected="true"/>
+                <advanced-search:field name="status" selected="true"/>
+            </advanced-search:field-list>
+            <advanced-search:sort-field name="creationtime" asc="false"/>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context component="editor-area" type="CheckoutComPaymentEvent" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:essentials>
+                <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute qualifier="eventId"/>
+                </editorArea:essentialSection>
+            </editorArea:essentials>
+            <editorArea:tab name="tab.checkoutcom.payment.event.properties">
+                <editorArea:section name="sec.checkoutcom.payment.event.details">
+                    <editorArea:attribute qualifier="eventType"/>
+                    <editorArea:attribute qualifier="responseCode"/>
+                    <editorArea:attribute qualifier="responseSummary"/>
+                    <editorArea:attribute qualifier="sourceType"/>
+                    <editorArea:attribute qualifier="amount">
+                        <editorArea:editor-parameter>
+                            <editorArea:name>numberFormat</editorArea:name>
+                            <editorArea:value>##0.00</editorArea:value>
+                        </editorArea:editor-parameter>
+                    </editorArea:attribute>
+                    <editorArea:attribute qualifier="siteId"/>
+                    <editorArea:attribute qualifier="riskFlag"/>
+                    <editorArea:attribute qualifier="paymentId"/>
+                    <editorArea:attribute qualifier="actionId"/>
+                    <editorArea:attribute qualifier="currency"/>
+                    <editorArea:attribute qualifier="paymentReference"/>
+                    <editorArea:attribute qualifier="status"/>
+                    <editorArea:attribute qualifier="payload"/>
+                    <editorArea:attribute qualifier="failReason"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context component="editor-area" type="CheckoutComPaymentEventProcessingCronJob" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.checkoutcom">
+                <editorArea:section name="sec.configuration.checkoutcom.details">
+                    <editorArea:attribute qualifier="checkoutComPaymentEventTypes"/>
+                    <editorArea:attribute qualifier="paymentTransactionType"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context component="editor-area" type="CheckoutComPaymentEventCleanupCronJob" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.checkoutcom">
+                <editorArea:section name="sec.configuration.checkoutcom.details">
+                    <editorArea:attribute qualifier="paymentEventStatus"/>
+                    <editorArea:attribute qualifier="ageInDaysBeforeDeletion"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context type="CMSSite">
+        <context component="editor-area" type="CMSSite" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:tab name="tab.configuration.checkoutcom">
+                    <editorArea:section name="sec.configuration.checkoutcom.merchant.section">
+                        <editorArea:attribute qualifier="checkoutComMerchantConfiguration"/>
+                    </editorArea:section>
+                    <editorArea:section name="sec.configuration.checkoutcom.payment.section">
+                        <editorArea:attribute qualifier="checkoutComSuccessRedirectUrl" readonly="true"/>
+                        <editorArea:attribute qualifier="checkoutComFailureRedirectUrl" readonly="true"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
+
+    <context type="AbstractOrder">
+        <context component="listview" type="AbstractOrder" merge-by="type" parent="GenericItem">
+            <list-view:list-view refresh-after-object-creation="true">
+                <list-view:column qualifier="checkoutComPaymentReference"/>
+            </list-view:list-view>
+        </context>
+
+        <context type="AbstractOrder" component="advanced-search" merge-by="type" parent="GenericItem">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="checkoutComPaymentReference" selected="true"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+
+        <context component="editor-area" type="AbstractOrder" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:tab name="tab.configuration.checkoutcom">
+                    <editorArea:section name="sec.abstractorder.checkoutcom.details">
+                        <editorArea:attribute qualifier="checkoutComPaymentReference"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
+
+    <context component="cseditorareaactions" type="Order" merge-by="type">
+        <y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+            <y:group qualifier="common">
+                <y:label>actiongroup.common</y:label>
+                <y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.cancelorderaction"
+                          property="currentObject" merge-mode="remove"/>
+                <y:action action-id="com.checkout.hybris.backoffice.order.checkoutcomcancelorderaction"
+                          property="currentObject"/>
+            </y:group>
+        </y:actions>
+    </context>
+
+    <context component="editor-area" type="CheckoutComPaymentMethodComponent" parent="SimpleCMSComponent" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.checkoutcom">
+                <editorArea:section name="sec.checkoutcom.apmcomponent.details">
+                    <editorArea:attribute qualifier="uid"/>
+                    <editorArea:attribute qualifier="name"/>
+                    <editorArea:attribute qualifier="media"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+
+    <context component="editor-area" type="CheckoutComAPMComponent" parent="CheckoutComPaymentMethodComponent" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:tab name="tab.configuration.checkoutcom">
+                <editorArea:section name="sec.checkoutcom.apmcomponent.details">
+                    <editorArea:attribute qualifier="uid"/>
+                    <editorArea:attribute qualifier="name"/>
+                    <editorArea:attribute qualifier="media"/>
+                    <editorArea:attribute qualifier="apmConfiguration"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+</config>

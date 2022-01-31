@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+        
+    <extension abstractclassprefix="Generated" classprefix="Checkoutfulfilmentprocess" managername="CheckoutfulfilmentprocessManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="checkoutfulfilmentprocess">
+                
+        <requires-extension name="acceleratorservices"/>
+                
+        <requires-extension name="ticketsystem"/>
+                
+        <requires-extension name="checkoutservices"/>
+                
+        <coremodule generated="true" manager="com.checkout.hybris.fulfilmentprocess.jalo.CheckoutfulfilmentprocessManager" packageroot="com.checkout.hybris.fulfilmentprocess"/>
+                
+        <meta key="modulegen-name" value="accelerator"/>
+            
+    </extension>
+    
+</extensioninfo>

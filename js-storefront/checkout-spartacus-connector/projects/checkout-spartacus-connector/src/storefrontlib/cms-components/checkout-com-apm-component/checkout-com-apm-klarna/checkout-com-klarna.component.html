@@ -1,0 +1,36 @@
+<div *ngIf="initializing$|async" class="my-3 text-center">
+  <div class="spinner-border"></div>
+</div>
+
+<ng-container *ngIf="categories$|async as categories">
+  <div class="card klarna-payment-method-category"
+       *ngFor="let category of categories"
+       [ngClass]="{'klarna-method-selected': (selectedCategory$|async)?.code === category.code}">
+    <div class="card-header d-flex justify-content-between p-4"
+         [ngClass]="{'disabled':category.disabled}"
+         (click)="selectCategory(category)">
+      <span>{{category.key|cxTranslate}}</span>
+      <span *ngIf="loadingWidget$|async" class="spinner-border-sm"></span>
+    </div>
+    <div class="card-body" *ngIf="(selectedCategory$|async)?.code === category.code">
+      <div #widget></div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="mt-3">
+  <lib-checkout-com-billing-address
+      [billingAddressForm]="billingAddressForm"
+      (sameAsShippingAddressChange)="sameAsShippingAddress$.next($event)"
+  ></lib-checkout-com-billing-address>
+</div>
+
+<!-- BUTTON SECTION -->
+<div class="cx-checkout-btns row justify-content-end my-3">
+  <div class="col-md-12 col-lg-6">
+    <button class="btn btn-block btn-primary" (click)="authorize()"
+            [disabled]="(authorizing$|async) || (loadingWidget$|async) || (initializing$|async) || !(selectedCategory$|async)">
+      {{ 'common.continue' | cxTranslate }}
+    </button>
+  </div>
+</div>

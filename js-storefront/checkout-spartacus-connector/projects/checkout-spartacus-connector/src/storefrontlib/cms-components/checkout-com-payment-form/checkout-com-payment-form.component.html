@@ -1,0 +1,103 @@
+<!-- FORM -->
+<ng-container *ngIf="!(loading$ | async).loading; else spinner">
+  <form (ngSubmit)="next()" [formGroup]="paymentForm" class="my-3">
+    <div class="row">
+      <div class="col-md-12 col-xl-10">
+        <div class="form-group">
+          <label>
+            <span class="label-content">{{
+                'paymentForm.accountHolderName.label' | cxTranslate
+              }}</span>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="{{
+                'paymentForm.accountHolderName.placeholder' | cxTranslate
+              }}"
+              formControlName="accountHolderName"
+            />
+            <cx-form-errors
+              [control]="paymentForm.get('accountHolderName')"
+            ></cx-form-errors>
+          </label>
+        </div>
+
+        <lib-checkout-com-frames-form
+            [form]="paymentForm"
+            [cardholderStream]="framesCardholder$"
+            [submitEvent]="submitEvent$"
+            [localization]="framesLocalization$ | async"
+            (paymentMethodChange)="framesPaymentMethodChanged($event)"
+            (tokenized)="tokenized($event)"
+            (tokenizationFailed)="tokenizationFailed($event)"
+        ></lib-checkout-com-frames-form>
+
+        <div class="form-group" *ngIf="canSaveCard$|async">
+          <div class="form-check">
+            <label>
+              <input
+                type="checkbox"
+                class="form-check-input"
+                formControlName="save"
+              />
+              <span class="form-check-label">{{
+                  'paymentForm.saveCard' | cxTranslate
+                }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="setAsDefaultField">
+          <div class="form-check">
+            <label>
+              <input
+                type="checkbox"
+                class="form-check-input"
+                (change)="toggleDefaultPaymentMethod()"
+              />
+              <span class="form-check-label">{{
+                'paymentForm.setAsDefault' | cxTranslate
+              }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- BILLING -->
+        <lib-checkout-com-billing-address
+            [billingAddressForm]="billingAddressForm"
+            (sameAsShippingAddressChange)="sameAsShippingAddress = $event"
+        ></lib-checkout-com-billing-address>
+      </div>
+    </div>
+
+    <!-- BUTTON SECTION -->
+    <div class="cx-checkout-btns row">
+      <div class="col-md-12 col-lg-6">
+        <button
+          *ngIf="paymentMethodsCount === 0"
+          class="btn btn-block btn-action"
+          (click)="back()"
+        >
+          {{ 'common.back' | cxTranslate }}
+        </button>
+        <button
+          *ngIf="paymentMethodsCount > 0"
+          class="btn btn-block btn-action"
+          (click)="close()"
+        >
+          {{ 'paymentForm.changePayment' | cxTranslate }}
+        </button>
+      </div>
+      <div class="col-md-12 col-lg-6">
+        <button class="btn btn-block btn-primary" type="submit" [disabled]="(submitting$|async) || (!paymentForm.valid) || processing">
+          {{ 'common.continue' | cxTranslate }}
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>
+
+<ng-template #spinner>
+  <cx-spinner></cx-spinner>
+</ng-template>
+

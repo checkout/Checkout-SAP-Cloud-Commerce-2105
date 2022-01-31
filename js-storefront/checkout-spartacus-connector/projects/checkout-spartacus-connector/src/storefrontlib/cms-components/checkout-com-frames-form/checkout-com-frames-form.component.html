@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-12 col-xl-10 mb-1">
+    <label>{{'paymentForm.cardNumber' | cxTranslate}}</label>
+  </div>
+  <div class="col-12 mb-2">
+    <lib-checkout-com-frames-input
+        [fieldName]="cardNumberInputName"
+        [form]="form"
+        [fieldType]="InputType.CardNumber"
+        [icon]="paymentIconCssClass$ | async"
+    ></lib-checkout-com-frames-input>
+    <cx-form-errors [prefix]="'paymentForm.validationErrors'" [control]="form.get(cardNumberInputName)"></cx-form-errors>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <div class="row">
+      <div class="col-12 mb-1">
+        <label>{{'paymentForm.expirationDate' | cxTranslate}}</label>
+      </div>
+      <div class="col-12 mb-2">
+        <lib-checkout-com-frames-input
+            [fieldName]="expiryDateInputName"
+            [form]="form"
+            [fieldType]="InputType.ExpiryDate"
+        ></lib-checkout-com-frames-input>
+        <cx-form-errors [prefix]="'paymentForm.validationErrors'" [control]="form.get(expiryDateInputName)"></cx-form-errors>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="row">
+      <div class="col-12 mb-1">
+        <label>{{'paymentForm.securityCode' | cxTranslate}}</label>
+      </div>
+      <div class="col-12 mb-2">
+        <lib-checkout-com-frames-input
+            [fieldName]="cvvInputName"
+            [form]="form"
+            [fieldType]="InputType.Cvv"
+        ></lib-checkout-com-frames-input>
+        <cx-form-errors [prefix]="'paymentForm.validationErrors'" [control]="form.get(cvvInputName)"></cx-form-errors>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,206 @@
+<ng-container>
+  <ng-container *ngIf="(countries$ | async)?.length > 0; else loading">
+
+
+    <form (ngSubmit)="next()" [formGroup]="sepaForm">
+      <div class="row">
+        <div class="col-md-12 col-xl-10">
+
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.firstName.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.firstName.placeholder' | cxTranslate
+              }}"
+                formControlName="firstName"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('firstName')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.lastName.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.lastName.placeholder' | cxTranslate
+              }}"
+                formControlName="lastName"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('lastName')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group" formGroupName="paymentType">
+            <ng-container *ngIf="paymentTypes$ | async as paymentTypes">
+              <div *ngIf="paymentTypes.length !== 0">
+                <label aria-required="true">
+                <span class="label-content required">{{
+                    'sepaForm.paymentType.label' | cxTranslate
+                  }}</span>
+                  <ng-select
+                    [searchable]="false"
+                    [clearable]="false"
+                    [items]="paymentTypes"
+                    bindLabel="label"
+                    bindValue="code"
+                    placeholder="{{
+                            'sepaForm.paymentType.placeholder' | cxTranslate
+                          }}"
+                    formControlName="code"
+                  >
+                  </ng-select>
+                  <cx-form-errors
+                    [control]="sepaForm.get('paymentType.code')"
+                  ></cx-form-errors>
+                </label>
+              </div>
+            </ng-container>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.accountIban.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.accountIban.placeholder' | cxTranslate
+              }}"
+                formControlName="accountIban"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('accountIban')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.addressLine1.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.addressLine1.placeholder' | cxTranslate
+              }}"
+                formControlName="addressLine1"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('addressLine1')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.addressLine2.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.addressLine2.placeholder' | cxTranslate
+              }}"
+                formControlName="addressLine2"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('addressLine2')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.city.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.city.placeholder' | cxTranslate
+              }}"
+                formControlName="city"
+              />
+              <cx-form-errors
+                [control]="sepaForm.get('city')"
+              ></cx-form-errors>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+            <span class="label-content required">{{
+                'sepaForm.postalCode.label' | cxTranslate
+              }}</span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="{{
+                'sepaForm.postalCode.placeholder' | cxTranslate
+              }}"
+                formControlName="postalCode"
+              />
+              <cx-form-errors [prefix]="'sepaForm.postalCode'"
+                [control]="sepaForm.get('postalCode')"
+              ></cx-form-errors>
+            </label>
+          </div>
+
+          <div class="form-group" formGroupName="country">
+            <ng-container *ngIf="countries$ | async as countries">
+              <div *ngIf="countries.length !== 0">
+                <label aria-required="true">
+                <span class="label-content required">{{
+                    'sepaForm.country.label' | cxTranslate
+                  }}</span>
+                  <ng-select
+                    [searchable]="true"
+                    [clearable]="false"
+                    [items]="countries"
+                    bindLabel="name"
+                    bindValue="isocode"
+                    placeholder="{{
+                            'sepaForm.country.placeholder' | cxTranslate
+                          }}"
+                    formControlName="isocode"
+                  >
+                  </ng-select>
+                  <cx-form-errors
+                    [control]="sepaForm.get('country.isocode')"
+                  ></cx-form-errors>
+                </label>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="cx-checkout-btns row justify-content-end">
+        <div class="col-md-12 col-lg-6">
+          <button class="btn btn-block btn-primary" type="submit" [disabled]="(submitting$ | async) || (sepaForm.invalid)">
+            {{ 'common.continue' | cxTranslate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="cx-spinner">
+      <cx-spinner></cx-spinner>
+    </div>
+  </ng-template>
+</ng-container>

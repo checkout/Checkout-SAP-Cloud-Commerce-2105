@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <enumtypes>
+        <!--Added to allow testing with card for which checkout.com gives back empty scheme-->
+        <enumtype code="CreditCardType" autocreate="false" generate="false">
+            <value code="undefined"/>
+        </enumtype>
+    </enumtypes>
+
+    <itemtypes>
+    </itemtypes>
+</items>

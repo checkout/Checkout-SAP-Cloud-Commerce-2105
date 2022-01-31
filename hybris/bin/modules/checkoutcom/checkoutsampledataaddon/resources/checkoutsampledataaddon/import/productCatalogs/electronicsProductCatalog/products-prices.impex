@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+#% impex.setLocale( Locale.GERMAN );
+
+$productCatalog = electronicsProductCatalog
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default='$productCatalog:Staged']
+$prices = Europe1prices[translator=de.hybris.platform.europe1.jalo.impex.Europe1PricesTranslator]
+$taxGroup = Europe1PriceFactory_PTG(code)[default=jp-vat-full]
+
+# Set product approval status to Approved only for those products that have prices.
+$approved = approvalstatus(code)[default='approved']
+
+INSERT_UPDATE PriceRow; productId[unique = true]; unit(code[unique = true, default = pieces]); currency(isocode)[unique = true]; price    ; minqtd; unitFactor; net
+                      ; 300938                  ; pieces                                     ; USD                             ; 114,12   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; JPY                             ; 12523,41 ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; BRL                             ; 493      ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; AUD                             ; 170,56   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; NZD                             ; 178,54   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; BHD                             ; 43,02    ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; KWD                             ; 34,74    ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; QAR                             ; 415,51   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; EGP                             ; 1795,39  ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; PLN                             ; 445,37   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; MXN                             ; 2142,35  ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; EUR                             ; 104,53   ; 1     ; 1         ; false
+                      ; 300938                  ; pieces                                     ; GBP                             ; 88,35    ; 1     ; 1         ; false
+                      ; 458542                  ; pieces                                     ; USD                             ; 114,13   ; 1     ; 1         ; false

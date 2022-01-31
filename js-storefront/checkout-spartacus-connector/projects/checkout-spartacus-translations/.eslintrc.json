@@ -1,0 +1,10 @@
+{
+  "extends": "../../.eslintrc.json",
+  "ignorePatterns": [
+    "!**/*",
+    "**/*.html",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/mock.*.ts"
+  ]
+}

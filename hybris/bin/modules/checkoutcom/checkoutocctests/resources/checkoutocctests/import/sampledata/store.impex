@@ -1,0 +1,5 @@
+$storeUid = wsTest
+$currencies = EUR, EGP, KWD, BHD, AUD, QAR, USD, MXN
+
+UPDATE BaseStore; uid[unique = true]; currencies(isocode); defaultCurrency(isocode)
+                ; $storeUid         ; $currencies        ; EUR
