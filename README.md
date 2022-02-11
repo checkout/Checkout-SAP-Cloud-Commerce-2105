@@ -6,7 +6,7 @@ The Connector for SAP Commerce Cloud (formerly Hybris) enables customers to impl
 This release is compatible with:
 - SAP Commerce: B2C Accelerator of SAP Commerce Cloud 2105. It is advised to install the latest patch version of SAP Commerce Cloud.
 - SAP Commerce REST API (OCC).
-- Spartacus 4
+- Spartacus 3.2.
 - Java 11.
 - Checkout.com Java SDK version 3.
 
