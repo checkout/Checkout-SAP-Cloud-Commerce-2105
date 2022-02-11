@@ -28,7 +28,7 @@ import { checkoutComTranslationChunkConfig, checkoutComTranslations } from '@che
     provideConfig({
       featureModules: {
         CheckoutComComponentsModule: {
-          module: () => import('checkout-spartacus-connector').then(m => m.CheckoutComComponentsModule),
+          module: () => import('@checkout.com/checkout-spartacus-connector').then(m => m.CheckoutComComponentsModule),
           cmsComponents: [
             'CheckoutPaymentDetails',
             'CheckoutPlaceOrder',
@@ -79,6 +79,9 @@ If you need to extend components, you can fork the repository so you are able to
 If you don't want to fork, you can `extend` components, copy the template and the Angular Component into your project. This will mean that you have to be vigilant when a new release of the library is integrated.
 
 ## Release notes
+
+### Release 4.2.3 
+Include binaries. Previous 4.2.x releases are missing binaries.
 
 ### Release 4.2.2 
 Update readme

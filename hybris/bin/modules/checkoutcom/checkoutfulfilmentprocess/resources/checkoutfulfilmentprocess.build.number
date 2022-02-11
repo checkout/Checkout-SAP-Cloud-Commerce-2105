@@ -1,11 +1,11 @@
 #Ant properties
-#Mon Jan 31 17:34:08 UTC 2022
+#Fri Feb 11 14:00:20 UTC 2022
 version.api=2105
 vendor=hybris
 group.id=de.hybris.platform
 name=checkoutfulfilmentprocess
 description=checkoutfulfilmentprocess
-builddate=20220131 1734
+builddate=20220211 1400
 releasedate=20211216 1837
 version=2105.5
 module.name=platform-module
