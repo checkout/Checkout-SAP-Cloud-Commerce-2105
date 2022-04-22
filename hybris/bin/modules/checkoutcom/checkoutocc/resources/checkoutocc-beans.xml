@@ -48,6 +48,7 @@
         <property name="orderData" type="de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO"/>
         <property name="status" type="com.checkout.hybris.facades.enums.PlaceWalletOrderStatus"/>
         <property name="errorMessage" type="java.lang.String"/>
+        <property name="redirectUrl" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.dto.order.ApplePayValidateMerchantRequestWsDTO">

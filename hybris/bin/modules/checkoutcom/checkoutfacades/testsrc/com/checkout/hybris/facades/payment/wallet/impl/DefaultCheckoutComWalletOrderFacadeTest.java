@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultCheckoutComWalletOrderFacadeTest {
 
+    private static final String REDIRECT_URL = "/redirecturl";
     private static final String AUTHORIZATION_FAILED_ERROR_MSG = "Authorization failed";
     private static final String PLACE_ORDER_FAILED_ERROR_MSG = "Place order failed";
 
@@ -79,7 +80,18 @@ public class DefaultCheckoutComWalletOrderFacadeTest {
     }
 
     @Test
-    public void placeWalletOrder_WhenAuthorizationSuccess_ShouldNotPlaceOrder() {
+    public void placeWalletOrder_WhenAuthorizationRedirectUrl_ShouldPlaceOrder() throws InvalidCartException {
+        when(authorizeResponseDataMock.getIsRedirect()).thenReturn(Boolean.TRUE);
+        when(authorizeResponseDataMock.getRedirectUrl()).thenReturn(REDIRECT_URL);
+
+        final PlaceWalletOrderDataResponse result = testObj.placeWalletOrder(walletAdditionalInfoMock, GOOGLEPAY);
+
+        assertThat(result.getRedirectUrl()).isEqualTo(REDIRECT_URL);
+        verify(checkoutFlowFacadeMock, never()).placeOrder();
+    }
+
+    @Test
+    public void placeWalletOrder_WhenAuthorizationNotSuccess_ShouldNotPlaceOrder() {
         when(authorizeResponseDataMock.getIsSuccess()).thenReturn(false);
 
         final PlaceWalletOrderDataResponse result = testObj.placeWalletOrder(walletAdditionalInfoMock, GOOGLEPAY);

@@ -5,6 +5,7 @@ import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurati
 import com.checkout.hybris.core.model.CheckoutComGooglePayPaymentInfoModel;
 import com.checkout.payments.PaymentRequest;
 import com.checkout.payments.RequestSource;
+import com.checkout.payments.ThreeDSRequest;
 import com.checkout.payments.TokenSource;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.order.CartModel;
@@ -13,6 +14,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -21,10 +23,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Optional;
 
 import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.GOOGLEPAY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +48,7 @@ public class CheckoutComGooglePayPaymentRequestStrategyTest {
     private Address addressMock;
     @Mock
     private AddressModel addressModelMock;
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationServiceMock;
 
     @Before
@@ -57,6 +57,7 @@ public class CheckoutComGooglePayPaymentRequestStrategyTest {
         when(googlePayPaymentInfoMock.getToken()).thenReturn(PAYMENT_TOKEN_VALUE);
         when(cartMock.getPaymentAddress()).thenReturn(addressModelMock);
         doReturn(addressMock).when(testObj).createAddress(addressModelMock);
+        when(checkoutComMerchantConfigurationServiceMock.getGooglePayConfiguration().getThreeDSEnabled()).thenReturn(Boolean.TRUE);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -88,5 +89,13 @@ public class CheckoutComGooglePayPaymentRequestStrategyTest {
         final Optional<Boolean> result = testObj.isCapture();
 
         assertTrue(result.get());
+    }
+
+    @Test
+    public void createThreeDSRequest_WhenThreeDSEnabled_ShouldCreateThreeDSFromConfiguration() {
+        final Optional<ThreeDSRequest> result = testObj.createThreeDSRequest();
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isEnabled());
     }
 }

@@ -24,11 +24,11 @@
         <property name="levelMapping">
             <map>
                 <entry key="BASIC"
-                       value="status,errorMessage,orderData(BASIC)"/>
+                       value="status,errorMessage,orderData(BASIC),redirectUrl"/>
                 <entry key="DEFAULT"
-                       value="status,errorMessage,orderData(DEFAULT)"/>
+                       value="status,errorMessage,orderData(DEFAULT),redirectUrl"/>
                 <entry key="FULL"
-                       value="status,errorMessage,orderData(FULL)"/>
+                       value="status,errorMessage,orderData(FULL),redirectUrl"/>
             </map>
         </property>
     </bean>

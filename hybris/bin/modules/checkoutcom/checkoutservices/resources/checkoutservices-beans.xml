@@ -31,6 +31,11 @@
         <value>GOOGLEPAY</value>
     </enum>
 
+    <enum class="com.checkout.hybris.core.google.payment.enums.TokenFormatType">
+        <value>CRYPTOGRAM_3DS</value>
+        <value>PAN_ONLY</value>
+    </enum>
+
     <bean class="com.checkout.hybris.core.merchantconfiguration.BillingDescriptor">
         <property name="includeBillingDescriptor" type="java.lang.Boolean"/>
         <property name="billingDescriptorName" type="java.lang.String"/>

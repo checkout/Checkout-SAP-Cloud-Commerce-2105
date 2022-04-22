@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, of } from 'rxjs';
 
 import * as CheckoutComActions from './checkout-com.actions';
-import { catchError, exhaustMap, map, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CheckoutComOccAdapter } from '../adapters/occ/checkout-com-occ.adapter';
 import {
   CartActions,
@@ -252,7 +252,6 @@ export class CheckoutComEffects {
         .pipe(
           switchMap((placeOrderResponse: PlaceOrderResponse) => [
             new CheckoutActions.PlaceOrderSuccess(placeOrderResponse.orderData),
-            new CartActions.RemoveCart({cartId}),
             new CheckoutComActions.AuthoriseGooglePayPaymentSuccess(
               placeOrderResponse
             ),
@@ -264,7 +263,14 @@ export class CheckoutComEffects {
             new CheckoutComActions.AuthoriseGooglePayPaymentFail(error)
           ])
         );
-    })
+    }),
+    tap((response) => {
+      // @ts-ignore
+      if(response?.payload?.redirectUrl){
+        // @ts-ignore
+        location.href = response.payload.redirectUrl;
+      }
+    }),
   );
 
 

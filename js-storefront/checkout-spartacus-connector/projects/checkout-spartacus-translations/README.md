@@ -16,6 +16,9 @@ This release is compatible with:
 
 ## Release notes
 
+### Release 4.2.3 
+Include binaries. Previous 4.2.x releases are missing binaries.
+
 ### Release 4.2.2 
 Update readme
 

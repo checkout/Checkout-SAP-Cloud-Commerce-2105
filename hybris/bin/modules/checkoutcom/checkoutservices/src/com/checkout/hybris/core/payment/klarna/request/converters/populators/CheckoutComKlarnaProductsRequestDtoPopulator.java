@@ -23,6 +23,8 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<CartModel, List<KlarnaProductRequestDto>> {
 
     protected static final String SHIPPING_FEE_VALUE = "shipping_fee";
+    protected static final String ORDER_DISCOUNT = "discount";
+    protected static final String SURCHARGE_VALUE = "surcharge";
 
     protected final CheckoutComCurrencyService checkoutComCurrencyService;
     protected final CheckoutComKlarnaDiscountAmountStrategy checkoutComKlarnaDiscountAmountStrategy;
@@ -72,7 +74,10 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
             }
         }
 
-        populateShippingLine(source, currencyCode, target, totalProductTaxes.get());
+        final double taxRate = calculateTaxRate(source);
+        populateShippingLine(source, currencyCode, target, taxRate);
+        populateOrderDiscount(source, currencyCode, target, taxRate);
+        populatePaymentCost(source, currencyCode, target, taxRate);
 
         checkoutComKlarnaDiscountAmountStrategy.applyDiscountsToKlarnaOrderLines(source, target);
     }
@@ -83,28 +88,24 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
      * @param cart                     the cart model
      * @param currencyCode             the currency code
      * @param klarnaProductRequestDtos the request to populate
-     * @param totalProductTaxes        the total tax amount
+     * @param taxRate                  the tax rate amount
      */
     protected void populateShippingLine(final CartModel cart,
                                         final String currencyCode,
                                         final List<KlarnaProductRequestDto> klarnaProductRequestDtos,
-                                        final long totalProductTaxes) {
+                                        final double taxRate) {
         if (cart.getDeliveryMode() != null && cart.getDeliveryCost() > 0) {
             final KlarnaProductRequestDto shippingLine = new KlarnaProductRequestDto();
             shippingLine.setName(cart.getDeliveryMode().getName());
             shippingLine.setQuantity(NumberUtils.LONG_ONE);
 
-            final long totalTaxAmount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getTotalTax()) - totalProductTaxes;
-            shippingLine.setTotalTaxAmount(totalTaxAmount);
+            shippingLine.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
+
+            final double totalShippingTaxes = taxRate * cart.getDeliveryCost();
+            shippingLine.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalShippingTaxes));
 
             final long totalAmount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getDeliveryCost());
             shippingLine.setTotalAmount(totalAmount);
-
-            long taxRate = 0;
-            if ((totalAmount > totalTaxAmount)){
-                taxRate = ((totalAmount * 10000) / (totalAmount - totalTaxAmount)) - 10000;
-            }
-            shippingLine.setTaxRate(taxRate);
 
             shippingLine.setUnitPrice(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getDeliveryCost()));
 
@@ -112,5 +113,75 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
             shippingLine.setTotalDiscountAmount(NumberUtils.LONG_ZERO);
             klarnaProductRequestDtos.add(shippingLine);
         }
+    }
+
+    /**
+     * Populates the order line related to the cart discounts
+     *
+     * @param cart                     the cart model
+     * @param klarnaProductRequestDtos the request to populate
+     * @param currencyCode             the currency code
+     * @param taxRate                  tha tax rate amount
+     */
+    protected void populateOrderDiscount(final CartModel cart,
+                                         final String currencyCode,
+                                         final List<KlarnaProductRequestDto> klarnaProductRequestDtos,
+                                         final double taxRate) {
+        if (cart.getDiscounts() != null && cart.getTotalDiscounts() > 0) {
+            final KlarnaProductRequestDto orderDiscount = new KlarnaProductRequestDto();
+
+            orderDiscount.setName("Order total discount");
+            orderDiscount.setQuantity(NumberUtils.LONG_ONE);
+            final long totalDiscount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getTotalDiscounts()) * -1;
+            orderDiscount.setTotalAmount(totalDiscount);
+            orderDiscount.setUnitPrice(totalDiscount);
+            orderDiscount.setType(ORDER_DISCOUNT);
+
+            orderDiscount.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
+
+            final double totalDiscountTaxes = taxRate * cart.getTotalDiscounts() * -1;
+            orderDiscount.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalDiscountTaxes));
+
+            klarnaProductRequestDtos.add(orderDiscount);
+        }
+
+    }
+
+    /**
+     * Populate the order line related to the payment cost
+     *
+     * @param cart                     the cart model
+     * @param currencyCode             the currency code
+     * @param klarnaProductRequestDtos the request to populate
+     * @param taxRate                  the tax rate amount
+     */
+    protected void populatePaymentCost(CartModel cart, String currencyCode, List<KlarnaProductRequestDto> klarnaProductRequestDtos, double taxRate) {
+        if (cart.getPaymentCost() > 0) {
+            final KlarnaProductRequestDto paymentCost = new KlarnaProductRequestDto();
+
+            paymentCost.setName("Order payment cost");
+            paymentCost.setQuantity(NumberUtils.LONG_ONE);
+            final long orderPaymentCost = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getPaymentCost());
+            paymentCost.setTotalAmount(orderPaymentCost);
+            paymentCost.setUnitPrice(orderPaymentCost);
+            paymentCost.setType(SURCHARGE_VALUE);
+
+            paymentCost.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
+
+            final double paymentCostTaxes = taxRate * cart.getPaymentCost();
+            paymentCost.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, paymentCostTaxes));
+
+            klarnaProductRequestDtos.add(paymentCost);
+        }
+    }
+
+    /**
+     * Calculate discount & shipping tax rate amount.
+     *
+     * @param cart the cart model
+     * @return tha tax rate amount
+     */
+    private double calculateTaxRate(final CartModel cart) {
+        return cart.getTotalTax() >= 0 ? cart.getTotalTax() / cart.getTotalPrice() : NumberUtils.DOUBLE_ZERO;
     }
 }

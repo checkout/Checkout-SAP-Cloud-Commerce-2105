@@ -394,7 +394,7 @@ abstract class AbstractCheckoutComPaymentsTest extends AbstractCartTest {
         //setting email address on cart makes it recognized as guest cart
         addEmailToAnonymousCart(client, cart.guid, userGuid, format)
 
-        setAddressForAnonymousCart(client, GOOD_ADDRESS_DE, cart.guid, format)
+        setAddressForAnonymousCart(client, GOOD_ADDRESS_DE_JSON, cart.guid, format)
         setDeliveryModeForCart(client, anonymous, cart.guid, DELIVERY_STANDARD, format)
         createBillingAddress(ANONYMOUS_USER.id, cart.guid)
 

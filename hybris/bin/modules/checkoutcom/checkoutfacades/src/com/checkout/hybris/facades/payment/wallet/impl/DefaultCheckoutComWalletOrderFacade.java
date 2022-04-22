@@ -68,6 +68,10 @@ public class DefaultCheckoutComWalletOrderFacade implements CheckoutComWalletOrd
             LOG.error("Error with the authorization process. Redirecting to payment method step.");
             return handleFailureProcess(response, messageSource.getMessage("checkout.error.authorization.failed", null, i18nService.getCurrentLocale()));
         }
+        if (authorizeResponseData.getIsRedirect()) {
+           response.setRedirectUrl(authorizeResponseData.getRedirectUrl());
+           return response;
+        }
 
         final OrderData orderData;
         try {

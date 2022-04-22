@@ -202,7 +202,7 @@ ACC.checkoutCom = {
 
     resetPaymentMethod: function () {
         $('.applePayButton').hide();
-        $('.gpay-button').hide();
+        $('.gpay-card-info-container').remove()
 
         $('[for="coUseDeliveryAddress"]').closest('.checkbox').show();
         $('#coBillingCountrySelector').show();
@@ -283,5 +283,9 @@ ACC.checkoutCom = {
         const orderId = order.guestCustomer ? order.guid : order.code;
 
         window.location.href = ACC.config.encodedContextPath + '/checkout/orderConfirmation/' + orderId;
+    },
+
+    redirectToGooglePay3DSUrl: function (response) {
+        window.location.href = response.redirectUrl;
     }
 }

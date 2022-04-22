@@ -124,7 +124,8 @@ class CheckoutComAPMOrdersTest extends AbstractCheckoutComPaymentsTest {
         then: "error message is thrown"
         with(response) {
             status == SC_BAD_REQUEST
-            data.errors[0].message == 'Payment authorization was not successful'
+            data.errors[0].message == 'The application has encountered an error'
+            data.errors[0].type == 'PaymentAuthorizationError'
         }
 
         where:

@@ -17,7 +17,7 @@ INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId
 INSERT_UPDATE CheckoutComApplePayConfiguration; &applePayConfigurationId; certificate[unique = true]; privateKey          ; supportedNetworks(code)                                                                                                                  ; countryCode; merchantCapabilities(code)                              ; merchantId                        ; merchantName
                                               ; applePayConfig          ; $applePayCertificate      ; $applePayPrivateKey ; amex, cartesBancaires, chinaUnionPay, discover, eftpos, electron, elo, interac, jcb, mada, maestro, masterCard, privateLabel, visa, vPay ; GB         ; supportsCredit, supportsDebit, supports3DS, supportsEMV ; merchant.com.checkout.sandbox.e2y ; e2yCheckoutCom
 
-INSERT_UPDATE CheckoutComGooglePayConfiguration; &googlePayConfigurationId; merchantId[unique = true]; merchantName   ; environment(code); type ; gateway     ; gatewayMerchantId; allowedCardNetworks(code)                      ; allowedCardAuthMethods(code)
+INSERT_UPDATE CheckoutComGooglePayConfiguration; &googlePayConfigurationId; merchantId[unique = true]; merchantName   ; environment(code); type ; gateway     ; gatewayMerchantId; allowedCardNetworks(code)                      ; allowedCardAuthMethods(code); threeDSEnabled[default = true]
                                                ; googlePayConfig          ; 01234567890123456789     ; e2yCheckoutCom ; test             ; CARD ; checkoutltd ; $publicKey       ; AMEX, DISCOVER, INTERAC, JCB, MASTERCARD, VISA ; PAN_ONLY, CRYPTOGRAM_3DS
 
 INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]               ; applePayConfiguration(&applePayConfigurationId); googlePayConfiguration(&googlePayConfigurationId); klarnaConfiguration(&klarnaConfigurationId)
@@ -28,7 +28,7 @@ INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]             
                                               ; merchantConfiguration-$spaSiteUid ; $secretKey ; $publicKey ; $privateSharedKey ; test             ; authorize_and_capture ; true                    ; klarnaConfig                               ; 0.01                                  ; true          ; true            ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled ; true                    ; $spaSiteUid          ; INTERNET
 
 # Set merchant configuration and payment redirect urls to the site
-UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code); checkoutComSuccessRedirectUrl         ; checkoutComFailureRedirectUrl
+UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code); checkoutComSuccessRedirectUrl                        ; checkoutComFailureRedirectUrl
                ; $spaSiteUid       ; merchantConfiguration-$spaSiteUid     ; $spartacusUrlPath/order-confirmation?authorized=true ; $spartacusUrlPath/order-confirmation?authorized=false
 
 #% endif:
