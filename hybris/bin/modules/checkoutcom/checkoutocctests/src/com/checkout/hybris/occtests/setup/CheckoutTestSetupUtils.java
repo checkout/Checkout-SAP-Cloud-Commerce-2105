@@ -27,6 +27,7 @@ public class CheckoutTestSetupUtils extends TestSetupUtils {
         getSetupImpexService().importImpexFile("/checkoutocctests/import/sampledata/cms-content.impex", true, false);
         getSetupImpexService().importImpexFile("/checkoutocctests/import/sampledata/store.impex", true, false);
         getSetupImpexService().importImpexFile("/checkoutocctests/import/sampledata/product-prices.impex", true, false);
+        getSetupImpexService().importImpexFile("/checkoutocctests/import/sampledata/essentialdata-OAuthClientDetails.impex", true, false);
         getSetupSyncJobService().executeCatalogSyncJob(String.format("%sProductCatalog", WS_TEST));
     }
 

@@ -369,7 +369,12 @@ describe('CheckoutComOccAdapter', () => {
         lastName: 'Doe',
       };
       const saved = false;
-      service.authoriseGooglePayPayment(userId, cartId, token, billingAddress, saved).subscribe();
+      service.authoriseGooglePayPayment(userId, cartId, token, billingAddress, saved)
+        .subscribe((response) => {
+          if(response.redirectUrl){
+            window.location.href = response.redirectUrl;
+          }
+        });
 
       const mockReq = httpMock.expectOne(req => {
         return (

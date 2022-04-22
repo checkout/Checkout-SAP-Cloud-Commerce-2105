@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreModule} from '@ngrx/store';
 import {effects} from './checkout-com.effects';
@@ -10,7 +9,6 @@ import {CHECKOUT_COM_FEATURE} from './checkout-com.state';
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule,
     EffectsModule.forFeature(effects),
     StoreModule.forFeature(CHECKOUT_COM_FEATURE, reducer)
   ],

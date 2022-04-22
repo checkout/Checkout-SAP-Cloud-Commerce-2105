@@ -3,6 +3,7 @@ package com.checkout.hybris.core.payment.request.strategies.impl;
 import com.checkout.hybris.core.address.strategies.CheckoutComPhoneNumberStrategy;
 import com.checkout.hybris.core.currency.services.CheckoutComCurrencyService;
 import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
+import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComGooglePayPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
@@ -10,6 +11,7 @@ import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentReq
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.PaymentRequest;
 import com.checkout.payments.RequestSource;
+import com.checkout.payments.ThreeDSRequest;
 import com.checkout.payments.TokenSource;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import de.hybris.platform.core.model.order.CartModel;
@@ -83,5 +85,18 @@ public class CheckoutComGooglePayPaymentRequestStrategy extends CheckoutComAbstr
     @Override
     protected Optional<Boolean> isCapture() {
         return Optional.of(checkoutComMerchantConfigurationService.isAutoCapture());
+    }
+
+    /**
+     * Create the 3d secure info object for the request.
+     *
+     * @return ThreeDSRequest the request object
+     */
+    @Override
+    protected Optional<ThreeDSRequest> createThreeDSRequest() {
+        final CheckoutComGooglePayConfigurationModel googlePayConfiguration = checkoutComMerchantConfigurationService.getGooglePayConfiguration();
+        final ThreeDSRequest threeDSRequest = new ThreeDSRequest();
+        Optional.ofNullable(googlePayConfiguration).ifPresent(enabled -> threeDSRequest.setEnabled(googlePayConfiguration.getThreeDSEnabled()));
+        return Optional.of(threeDSRequest);
     }
 }

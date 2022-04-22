@@ -181,6 +181,7 @@
     <bean class="com.checkout.hybris.facades.beans.GooglePayAuthorisationRequest">
         <property name="token" type="com.checkout.hybris.facades.beans.GooglePayPaymentToken"/>
         <property name="billingAddress" type="com.checkout.hybris.facades.beans.GooglePayPaymentContact"/>
+        <property name="tokenFormat" type="com.checkout.hybris.core.google.payment.enums.TokenFormatType"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentContact"
@@ -203,6 +204,7 @@
         <property name="orderData" type="de.hybris.platform.commercefacades.order.data.OrderData"/>
         <property name="status" type="com.checkout.hybris.facades.enums.PlaceWalletOrderStatus"/>
         <property name="errorMessage" type="java.lang.String"/>
+        <property name="redirectUrl" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.GooglePaySettingsData">

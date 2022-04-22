@@ -338,3 +338,9 @@ button#submitKlarnaForm {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+.gpay-card-info-container {
+    width: 100% !important;
+    margin: 16px 0;
+    height: 48px !important;
+}

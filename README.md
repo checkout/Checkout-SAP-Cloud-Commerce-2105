@@ -6,7 +6,7 @@ The Connector for SAP Commerce Cloud (formerly Hybris) enables customers to impl
 This release is compatible with:
 - SAP Commerce: B2C Accelerator of SAP Commerce Cloud 2105. It is advised to install the latest patch version of SAP Commerce Cloud.
 - SAP Commerce REST API (OCC).
-- Spartacus 4
+- Spartacus 4.2.
 - Java 11.
 - Checkout.com Java SDK version 3.
 
@@ -79,15 +79,9 @@ Follow [this guideline](https://help.sap.com/viewer/1be46286b36a4aa48205be5a9624
 Spartacus is a lean, Angular-based JavaScript storefront for SAP Commerce Cloud. Spartacus talks to SAP Commerce Cloud exclusively through the Commerce REST API (OCC). The Connector for SAP Commerce Cloud supports the Spartacus frontend. Check out details and release notes in the Checkout.com repository for Spartacus.  
 
 # Release Notes
-- Spartacus application support: 
-   - New: OCC extension for Spartacus
-   - New: OCC endpoint for getting merchant public key
-   - New: OCC endpoint for listing the APMs
-   - New: Klarna client token endpoint
-   - New: APIs support guess checkout
-   - New: API endpoint to set billing address and shipping address
-- New APM supported: Oxxo payment method
-- Success and Failure URLs configured for every site
+- GooglePay 3D Secure payment support for both accelerator and spartacus
+- Spartacus: Fix 3D Secure redirect issue for card and googlePay payments
+- Spartacus: fix address selector
 
 # Support
 Contact your Checkout.com team if you have any question, technical problem or feature request for the SAP Commerce Cloud Connector.

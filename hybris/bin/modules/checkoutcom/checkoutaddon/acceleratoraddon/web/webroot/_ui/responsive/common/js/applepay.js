@@ -20,6 +20,7 @@ ACC.applePay = {
         $('[for="coUseDeliveryAddress"]').closest('.checkbox').hide();
         $('#coBillingCountrySelector').hide();
         $('#coBillingAddress').hide();
+        $('.gpay-card-info-container').remove()
 
         /* hide the checkout next button */
         $('.checkout-next').hide();

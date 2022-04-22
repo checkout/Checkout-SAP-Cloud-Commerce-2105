@@ -485,6 +485,11 @@
                         <persistence type="property"/>
                         <description>Describe your site's support for the CARD payment method</description>
                     </attribute>
+                    <attribute qualifier="threeDSEnabled" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether the 3ds payment is enabled.</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 

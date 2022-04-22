@@ -25,7 +25,7 @@ INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ;
 INSERT_UPDATE CheckoutComApplePayConfiguration; &applePayConfigurationId; certificate[unique = true]; privateKey          ; supportedNetworks(code)                                                                                                                  ; countryCode; merchantCapabilities(code)                              ; merchantId                        ; merchantName
                                               ; applePayConfig          ; $applePayCertificate      ; $applePayPrivateKey ; amex, cartesBancaires, chinaUnionPay, discover, eftpos, electron, elo, interac, jcb, mada, maestro, masterCard, privateLabel, visa, vPay ; GB         ; supportsCredit, supportsDebit, supports3DS, supportsEMV ; merchant.com.checkout.sandbox.e2y ; e2yCheckoutCom
 
-INSERT_UPDATE CheckoutComGooglePayConfiguration; &googlePayConfigurationId; merchantId[unique = true]; merchantName   ; environment(code); type ; gateway     ; gatewayMerchantId; allowedCardNetworks(code)                      ; allowedCardAuthMethods(code)
+INSERT_UPDATE CheckoutComGooglePayConfiguration; &googlePayConfigurationId; merchantId[unique = true]; merchantName   ; environment(code); type ; gateway     ; gatewayMerchantId; allowedCardNetworks(code)                      ; allowedCardAuthMethods(code); threeDSEnabled[default = true]
                                                ; googlePayConfig          ; 01234567890123456789     ; e2yCheckoutCom ; test             ; CARD ; checkoutltd ; $publicKey       ; AMEX, DISCOVER, INTERAC, JCB, MASTERCARD, VISA ; PAN_ONLY, CRYPTOGRAM_3DS
 
 INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId[unique = true]
