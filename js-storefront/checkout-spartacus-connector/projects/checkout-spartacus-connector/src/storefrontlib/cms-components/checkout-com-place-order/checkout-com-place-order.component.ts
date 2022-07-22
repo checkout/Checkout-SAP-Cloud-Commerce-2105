@@ -51,7 +51,7 @@ export class CheckoutComPlaceOrderComponent extends PlaceOrderComponent implemen
             if (result.successful === false) {
               this.routingService.go(this.stepService.getPreviousCheckoutStepUrl(this.activatedRoute));
             }
-          });
+          }, err => console.error('getOrderResultFromState with error', {err}));
           break;
         }
 

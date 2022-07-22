@@ -7,8 +7,17 @@ import { Observable, of } from 'rxjs';
 import {
   AuthoriseGooglePayPayment,
   GetGooglePayMerchantConfiguration,
+  GetGooglePayPaymentDataUpdate,
+  GetGooglePayPaymentDataUpdateSuccess
 } from '../../store/checkout-com.actions';
-import { GooglePayMerchantConfiguration, GooglePayPaymentRequest } from '../../model/GooglePay';
+import {
+  GooglePayMerchantConfiguration,
+  GooglePayPaymentRequest,
+  PaymentDataRequestUpdate,
+  IntermediatePaymentData,
+  CallbackTrigger,
+  IntermediateAddress
+} from '../../model/GooglePay';
 
 class MockUserIdService {
   getUserId(): Observable<string> {
@@ -97,7 +106,7 @@ describe('CheckoutComGooglepayService', () => {
             mock: 'data'
           }
         }
-      }
+      },
     };
 
     const billingAddress = paymentRequest.paymentMethodData.info.billingAddress;
@@ -114,20 +123,24 @@ describe('CheckoutComGooglepayService', () => {
         cartId,
         billingAddress,
         token,
-        savePaymentMethod
+        savePaymentMethod,
+        shippingAddress: undefined,
+        email: undefined
       })
     );
   });
 
   it('should create initial payment request', () => {
 
-    const result = service.createInitialPaymentRequest(merchantConfiguration);
+    const result = service.createInitialPaymentRequest(merchantConfiguration, false);
     expect(result).toEqual({
       apiVersion: 2,
       apiVersionMinor: 0,
       allowedPaymentMethods: [
         merchantConfiguration.baseCardPaymentMethod
-      ]
+      ],
+
+      shippingAddressRequired: false,
     });
   });
 
@@ -157,6 +170,31 @@ describe('CheckoutComGooglepayService', () => {
         ...merchantConfiguration.transactionInfo,
       }
     })
-  })
+  });
+
+  it('should updatePayment using intermediate payment requets ', () => {
+
+    const intermediatePaymentRequest: IntermediatePaymentData = {
+      callbackTrigger: CallbackTrigger.SHIPPING_ADDRESS,
+      shippingAddress: {
+        administrativeArea: 'adminitrationArea_test',
+        countryCode: 'countryCode_test',
+        locality: 'locality_test',
+        postalCode: 'postalCode_test'
+      },
+      shippingOption: undefined
+    };
+
+    service.updatePaymentData(intermediatePaymentRequest, userId, cartId);
+
+    expect(checkoutComStore.dispatch).toHaveBeenCalledWith(
+      new GetGooglePayPaymentDataUpdate({
+        userId,
+        cartId,
+        paymentData: intermediatePaymentRequest
+      })
+    );
+
+  });
 
 });

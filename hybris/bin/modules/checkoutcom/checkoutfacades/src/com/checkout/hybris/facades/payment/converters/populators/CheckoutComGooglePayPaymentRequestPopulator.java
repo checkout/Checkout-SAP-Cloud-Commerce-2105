@@ -40,6 +40,9 @@ public class CheckoutComGooglePayPaymentRequestPopulator implements Populator<Go
         target.setMerchantName(source.getMerchantName());
         target.setMerchantId(source.getMerchantId());
         target.setTransactionInfo(checkoutComGooglePayTransactionInfoConverter.convert(cartFacade.getSessionCart()));
+        target.setEmailRequired(source.getEmailRequired());
+        target.setShippingOptionRequired(source.getShippingOptionRequired());
+        target.setCallbackIntents(source.getCallbackIntents());
     }
 
     /**

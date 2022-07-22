@@ -8,7 +8,7 @@ import com.checkout.hybris.facades.payment.CheckoutComPaymentFacade;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentInfoFacade;
 import com.checkout.hybris.occ.exceptions.NoCheckoutCartException;
 import com.checkout.hybris.occ.exceptions.PlaceOrderException;
-import com.checkout.hybris.occ.validators.impl.CheckoutComPlaceOrderCartValidator;
+import com.checkout.hybris.facades.cart.validators.impl.CheckoutComPlaceOrderCartValidator;
 import com.checkout.payments.GetPaymentResponse;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;

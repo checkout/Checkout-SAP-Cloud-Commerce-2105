@@ -64,7 +64,7 @@ export class CheckoutComApmComponent implements OnInit, OnDestroy {
       } else {
         this.paymentDetails = apm;
       }
-    });
+    },err => console.log('selectedApm with errors', {err}));
 
     this.getActiveApms();
     this.listenForCurrencyChange();
@@ -162,7 +162,7 @@ export class CheckoutComApmComponent implements OnInit, OnDestroy {
           code: PaymentType.Card
         });
       }
-    });
+    },err => console.error('listenToAvailableApmsAndProtectSelectedApm with errors', {err}));
   }
 
   protected initializeGooglePay() {
@@ -199,7 +199,7 @@ export class CheckoutComApmComponent implements OnInit, OnDestroy {
           }),
           map(([apmData, _]) => apmData)
         );
-      });
+      }, err => console.error('initializeApplePay with errors', {err}));
     }
   }
 }

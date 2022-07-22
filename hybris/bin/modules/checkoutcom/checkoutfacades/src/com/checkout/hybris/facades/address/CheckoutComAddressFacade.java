@@ -27,4 +27,8 @@ public interface CheckoutComAddressFacade {
      * @param addressId the address id
      */
     void setCartBillingDetailsByAddressId(String addressId);
+
+    void setAddressDataCountry(String countryCode, AddressData addressData);
+
+    void setAddressDataRegion(String region, String countryCode, AddressData addressData);
 }

@@ -9,6 +9,8 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.util.DiscountValue;
+import de.hybris.platform.util.TaxValue;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.List;
@@ -43,38 +45,34 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
         validateParameterNotNull(source, "CartModel cannot be null.");
         validateParameterNotNull(target, "List of KlarnaProductRequestDto cannot be null.");
         final String currencyCode = source.getCurrency() != null ? source.getCurrency().getIsocode() : null;
-
-        final AtomicLong totalProductTaxes = new AtomicLong(NumberUtils.LONG_ZERO);
+        final double taxRate = calculateTaxRate(source);
         if (isNotEmpty(source.getEntries())) {
             for (AbstractOrderEntryModel cartEntry : source.getEntries()) {
                 final KlarnaProductRequestDto productRequestDto = new KlarnaProductRequestDto();
 
+                final double discountAmount = cartEntry.getDiscountValues().stream()
+                        .map(DiscountValue::getAppliedValue)
+                        .reduce(Double::sum)
+                        .orElse(NumberUtils.DOUBLE_ZERO);
+
+                final double totalAmount =  cartEntry.getBasePrice() * cartEntry.getQuantity() - discountAmount;
+                //TaxRate calculated for Gross tax mode
+                final double totalTaxAmount = totalAmount * taxRate;
+                final double cartEntryTaxRate = totalTaxAmount / (totalAmount - totalTaxAmount);
                 final ProductModel product = cartEntry.getProduct();
+
                 productRequestDto.setName(product != null ? product.getName() : null);
                 productRequestDto.setQuantity(cartEntry.getQuantity());
-
-                final long totalTaxAmount = isNotEmpty(cartEntry.getTaxValues()) ? checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cartEntry.getTaxValues().iterator().next().getAppliedValue()) : NumberUtils.LONG_ZERO;
-                productRequestDto.setTotalTaxAmount(totalTaxAmount);
-
-                final long taxRate = isNotEmpty(cartEntry.getTaxValues()) ? checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cartEntry.getTaxValues().iterator().next().getValue()) : NumberUtils.LONG_ZERO;
-                productRequestDto.setTaxRate(taxRate);
-
+                productRequestDto.setTotalDiscountAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, discountAmount));
+                productRequestDto.setTotalAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalAmount));
+                productRequestDto.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode,totalTaxAmount));
+                productRequestDto.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode,cartEntryTaxRate * 100));
                 productRequestDto.setUnitPrice(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cartEntry.getBasePrice()));
 
-                final AtomicDouble doubleDiscountAmount = new AtomicDouble(NumberUtils.DOUBLE_ZERO);
-                cartEntry.getDiscountValues().forEach(discountValue -> doubleDiscountAmount.addAndGet(discountValue.getAppliedValue()));
-                final long totalDiscount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, doubleDiscountAmount.get());
-                productRequestDto.setTotalDiscountAmount(totalDiscount);
-
-                final long totalAmount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cartEntry.getBasePrice()) * cartEntry.getQuantity() - totalDiscount;
-                productRequestDto.setTotalAmount(totalAmount);
-
-                totalProductTaxes.addAndGet(totalTaxAmount);
                 target.add(productRequestDto);
             }
         }
 
-        final double taxRate = calculateTaxRate(source);
         populateShippingLine(source, currencyCode, target, taxRate);
         populateOrderDiscount(source, currencyCode, target, taxRate);
         populatePaymentCost(source, currencyCode, target, taxRate);
@@ -99,16 +97,17 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
             shippingLine.setName(cart.getDeliveryMode().getName());
             shippingLine.setQuantity(NumberUtils.LONG_ONE);
 
-            shippingLine.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
-
-            final double totalShippingTaxes = taxRate * cart.getDeliveryCost();
-            shippingLine.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalShippingTaxes));
-
+            if (doesCartContainsTaxes(cart)) {
+                shippingLine.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, getTotalTaxPercent(cart)));
+                final double totalShippingTaxes = taxRate * cart.getDeliveryCost();
+                shippingLine.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalShippingTaxes));
+            } else {
+                shippingLine.setTaxRate(0L);
+                shippingLine.setTotalTaxAmount(0L);
+            }
             final long totalAmount = checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getDeliveryCost());
             shippingLine.setTotalAmount(totalAmount);
-
             shippingLine.setUnitPrice(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, cart.getDeliveryCost()));
-
             shippingLine.setType(SHIPPING_FEE_VALUE);
             shippingLine.setTotalDiscountAmount(NumberUtils.LONG_ZERO);
             klarnaProductRequestDtos.add(shippingLine);
@@ -137,14 +136,16 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
             orderDiscount.setUnitPrice(totalDiscount);
             orderDiscount.setType(ORDER_DISCOUNT);
 
-            orderDiscount.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
-
-            final double totalDiscountTaxes = taxRate * cart.getTotalDiscounts() * -1;
-            orderDiscount.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalDiscountTaxes));
-
+            if (doesCartContainsTaxes(cart)) {
+                orderDiscount.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, getTotalTaxPercent(cart)));
+                final double totalDiscountTaxes = taxRate * cart.getTotalDiscounts() * -1;
+                orderDiscount.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, totalDiscountTaxes));
+            } else {
+                orderDiscount.setTaxRate(0L);
+                orderDiscount.setTotalTaxAmount(0L);
+            }
             klarnaProductRequestDtos.add(orderDiscount);
         }
-
     }
 
     /**
@@ -166,11 +167,14 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
             paymentCost.setUnitPrice(orderPaymentCost);
             paymentCost.setType(SURCHARGE_VALUE);
 
-            paymentCost.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, taxRate) * 100);
-
-            final double paymentCostTaxes = taxRate * cart.getPaymentCost();
-            paymentCost.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, paymentCostTaxes));
-
+            if (doesCartContainsTaxes(cart)) {
+                paymentCost.setTaxRate(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, getTotalTaxPercent(cart)));
+                final double paymentCostTaxes = taxRate * cart.getPaymentCost();
+                paymentCost.setTotalTaxAmount(checkoutComCurrencyService.convertAmountIntoPennies(currencyCode, paymentCostTaxes));
+            } else {
+                paymentCost.setTaxRate(0L);
+                paymentCost.setTotalTaxAmount(0L);
+            }
             klarnaProductRequestDtos.add(paymentCost);
         }
     }
@@ -181,7 +185,27 @@ public class CheckoutComKlarnaProductsRequestDtoPopulator implements Populator<C
      * @param cart the cart model
      * @return tha tax rate amount
      */
-    private double calculateTaxRate(final CartModel cart) {
+    protected double calculateTaxRate(final CartModel cart) {
         return cart.getTotalTax() >= 0 ? cart.getTotalTax() / cart.getTotalPrice() : NumberUtils.DOUBLE_ZERO;
+    }
+
+    /**
+     * Checks if there is any tax applied on the cart
+     *
+     * @param cart
+     * @return
+     */
+    protected boolean doesCartContainsTaxes(final CartModel cart) {
+        return !cart.getTotalTaxValues().isEmpty();
+    }
+
+    /**
+     * Gets all the taxes applied on the cart
+     *
+     * @param cart
+     * @return
+     */
+    protected Double getTotalTaxPercent(final CartModel cart) {
+        return cart.getTotalTaxValues().stream().map(TaxValue::getValue).reduce(Double::sum).orElse(0D);
     }
 }

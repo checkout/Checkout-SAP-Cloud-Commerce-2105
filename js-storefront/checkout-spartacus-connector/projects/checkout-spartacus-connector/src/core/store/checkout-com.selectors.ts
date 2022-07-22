@@ -2,7 +2,13 @@ import { CHECKOUT_COM_FEATURE, CheckoutComState, StateWithCheckoutCom } from './
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { ApmData } from '../model/ApmData';
 import { KlarnaInitParams } from '../interfaces';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../model/ApplePay';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate,
+  ApplePayShippingMethodUpdate
+} from '../model/ApplePay';
+import {PaymentAuthorizationResult, PaymentDataRequestUpdate} from '../model/GooglePay';
 
 // projectors
 const projectOccMerchantKey = (state: CheckoutComState) => state.occMerchantKey;
@@ -14,11 +20,17 @@ const projectSelectedApm = (state: CheckoutComState) => state.selectedApm;
 const projectKlarnaInitParams = (state: CheckoutComState) => state.klarnaInitParams;
 
 const projectGooglePayMerchantConfiguration = (state: CheckoutComState) => state.googlePayMerchantConfiguration;
+const projectGooglePayPaymentDataUpdate = (state: CheckoutComState) => state.googlePayPaymentDataUpdate;
+const projectGooglePayPaymentAuthorizationResult = (state: CheckoutComState) => state.googlePayPaymentAuthorizationResult;
+
 const projectApmLoading = (state: CheckoutComState) => state.apmLoading;
 
 const projectApplePayMerchantSession = (state: CheckoutComState) => state.applePayMerchantSession;
 const projectApplePayAuthorization = (state: CheckoutComState) => state.applePayAuthorization;
 const projectApplePayPaymentRequest = (state: CheckoutComState) => state.applePayPaymentRequest;
+
+const projectApplePayDeliveryAddressUpdate = (state: CheckoutComState) => state.applePayShippingContactUpdate;
+const projectApplePayDeliveryMethodUpdate = (state: CheckoutComState) => state.applePayShippingMethodUpdate;
 
 // feature selector
 export const getCheckoutComState: MemoizedSelector<StateWithCheckoutCom,
@@ -65,3 +77,19 @@ export const getApmLoading: MemoizedSelector<StateWithCheckoutCom, boolean> =
 
 export const getKlarnaInitParams: MemoizedSelector<
   StateWithCheckoutCom, KlarnaInitParams> = createSelector(getCheckoutComState, projectKlarnaInitParams);
+
+export const getApplePayDeliveryAddressUpdate: MemoizedSelector<
+  StateWithCheckoutCom, ApplePayShippingContactUpdate
+  > = createSelector(getCheckoutComState, projectApplePayDeliveryAddressUpdate);
+
+export const getApplePayDeliveryMethodUpdate: MemoizedSelector<
+  StateWithCheckoutCom, ApplePayShippingMethodUpdate
+  > = createSelector(getCheckoutComState, projectApplePayDeliveryMethodUpdate);
+
+export const getGooglePayPaymentDataUpdate: MemoizedSelector<
+  StateWithCheckoutCom, PaymentDataRequestUpdate
+  > = createSelector(getCheckoutComState, projectGooglePayPaymentDataUpdate);
+
+export const getGooglePayPaymentAuthorizationResult: MemoizedSelector<
+  StateWithCheckoutCom, PaymentAuthorizationResult
+  > = createSelector(getCheckoutComState, projectGooglePayPaymentAuthorizationResult);

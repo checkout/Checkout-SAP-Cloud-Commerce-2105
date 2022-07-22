@@ -2,9 +2,20 @@ import { Observable } from 'rxjs';
 import { Address, Order, PaymentDetails } from '@spartacus/core';
 import { ApmPaymentDetails, CheckoutComPaymentDetails } from '../../storefrontlib/interfaces';
 import { ApmData } from '../model/ApmData';
-import { GooglePayMerchantConfiguration, PlaceOrderResponse } from '../model/GooglePay';
+import {
+  GooglePayMerchantConfiguration,
+  IntermediatePaymentData,
+  PaymentDataRequestUpdate,
+  PlaceOrderResponse
+} from '../model/GooglePay';
 import { KlarnaInitParams } from '../interfaces';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../model/ApplePay';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentContact,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate,
+  ApplePayShippingMethod, ApplePayShippingMethodUpdate
+} from '../model/ApplePay';
 
 export abstract class CheckoutComAdapter {
 
@@ -80,18 +91,21 @@ export abstract class CheckoutComAdapter {
    * @param token tokenized payment details
    * @param billingAddress billing address
    * @param savePaymentMethod save payment method or not
+   * @param shippingAddress optional shipping address (required for GooglePay express button)
    */
   abstract authoriseGooglePayPayment(
     userId: string,
     cartId: string,
     token: string,
     billingAddress: any,
-    savePaymentMethod: boolean
+    savePaymentMethod: boolean,
+    shippingAddress: any,
   ): Observable<PlaceOrderResponse>;
 
   abstract requestApplePayPaymentRequest(
     userId: string,
-    cartId: string
+    cartId: string,
+    productCode?: string
   ): Observable<ApplePayPaymentRequest>;
 
   abstract validateApplePayMerchant(
@@ -112,4 +126,43 @@ export abstract class CheckoutComAdapter {
    * @param cartId - cart ID
    */
   abstract getKlarnaInitParams(userId: string, cartId: string): Observable<KlarnaInitParams>;
+
+  /**
+   * Set the delivery address given the shipping contact from ApplePay
+   *
+   * @param userId
+   * @param cartId
+   * @param shippingContact
+   */
+  abstract selectApplePayDeliveryAddress(
+    userId: string,
+    cartId: string,
+    shippingContact: ApplePayPaymentContact
+  ): Observable<ApplePayShippingContactUpdate>
+
+  /**
+   * Set the delivery method (Shipping Method) given the shipping Method
+   *
+   * @param userId
+   * @param cartId
+   * @param shippingMethod
+   */
+  abstract selectApplePayDeliveryMethod(
+    userId: string,
+    cartId: string,
+    shippingMethod: ApplePayShippingMethod
+  ): Observable<ApplePayShippingMethodUpdate>;
+
+  /**
+   * Set the delivery address for GooglePay and get updated order lines back
+   *
+   * @param userId
+   * @param cartId
+   * @param paymentData
+   */
+  abstract setGooglePayDeliveryInfo(
+    userId: string,
+    cartId: string,
+    paymentData: IntermediatePaymentData,
+  ): Observable<PaymentDataRequestUpdate>;
 }

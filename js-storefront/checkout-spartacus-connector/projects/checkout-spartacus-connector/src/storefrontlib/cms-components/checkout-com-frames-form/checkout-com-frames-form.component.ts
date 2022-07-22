@@ -81,7 +81,7 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
         takeUntil(this.drop)
       ).subscribe((cardholder) => {
         this.modifyFramesCardholder(cardholder);
-      });
+      }, err => console.error('listenForCardHolder with errors', {err}));
     }
   }
 
@@ -101,7 +101,8 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
           }));
       }),
       takeUntil(this.drop)
-    ).subscribe((publicKey) => this.modifyFramesPublicKey(publicKey));
+    ).subscribe((publicKey) => {this.modifyFramesPublicKey(publicKey)},
+      err => console.error('listenForMerchantKey with errors', {err}));
   }
 
   ngAfterViewInit() {
@@ -226,7 +227,7 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
           }
         });
       }
-    });
+    }, err => console.error('listenForFramesEvents with errors', {err}));
 
     this.frameActivated.pipe(takeUntil(this.drop)).subscribe((event) => {
       const ctrl = this.getElementByIdentifier(event.element);
@@ -237,7 +238,7 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
           ctrl.updateValueAndValidity();
         });
       }
-    });
+    }, err => console.error('frameActivated with errors', {err}));
 
     this.paymentMethodChanged.pipe(takeUntil(this.drop)).subscribe((event) => {
       this.ngZone.run(() => {
@@ -251,7 +252,7 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
           this.paymentMethod = ''; // reset the payment method
         }
       });
-    });
+    }, err => console.error('paymentMethodChanged with errors', {err}));
   }
 
   private getElementByIdentifier(identifier: FrameElementIdentifier) {
@@ -278,16 +279,16 @@ export class CheckoutComFramesFormComponent implements OnInit, AfterViewInit, On
       this.ngZone.run(() => {
         this.tokenized.emit(e);
       });
-    });
+    }, err => console.error('pipe cardTokenized with errors', {err}));
     this.cardTokenizationFailed.pipe(takeUntil(this.drop)).subscribe((e) => {
       this.ngZone.run(() => {
         this.tokenizationFailed.emit(e);
       });
-    });
+    }, err => console.error('pipe cardTokenizedFailed with errors', {err}));
     if (this.submitEvent) {
       this.submitEvent.pipe(takeUntil(this.drop)).subscribe(() => {
         this.submitCard();
-      });
+      }, err => console.error('submitEvent with errors', {err}));
     }
   }
 

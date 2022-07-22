@@ -3,3 +3,12 @@
 $styleVersion: 4.3;
 @import '~@spartacus/styles/index';
 @import '~@spartacus/checkout/styles';
+
+app-express-cart-totals {
+  @extend %cx-cart-totals;
+}
+
+lib-checkout-com-express-googlepay .gpay-card-info-container {
+  width: 100%;
+  height: 48px;
+}

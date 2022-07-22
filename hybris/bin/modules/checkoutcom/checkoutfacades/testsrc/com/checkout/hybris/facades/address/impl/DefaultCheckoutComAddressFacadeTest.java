@@ -3,7 +3,10 @@ package com.checkout.hybris.facades.address.impl;
 import com.checkout.hybris.core.address.services.CheckoutComAddressService;
 import com.checkout.hybris.facades.accelerator.CheckoutComCheckoutFlowFacade;
 import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.commercefacades.i18n.I18NFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commercefacades.user.data.CountryData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.commerceservices.delivery.DeliveryService;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -28,26 +31,35 @@ import static org.mockito.Mockito.*;
 public class DefaultCheckoutComAddressFacadeTest {
 
     private static final String ADDRESS_ID = "ADDRESS_ID";
+    private static final String COUNTRY_CODE = "US";
+    private static final String REGION_CODE = "Region";
 
     @InjectMocks
     private DefaultCheckoutComAddressFacade testObj;
 
     @Mock
-    private AddressData addressDataMock;
-    @Mock
     private Converter<AddressModel, AddressData> addressConverterMock;
     @Mock
     private DeliveryService deliveryServiceMock;
+    @Mock
+    private I18NFacade i18NFacadeMock;
+    @Mock
+    private CheckoutComAddressService addressServiceMock;
+    @Mock
+    private CheckoutComCheckoutFlowFacade checkoutFlowFacadeMock;
+
     @Mock
     private AddressModel addressModelMock;
     @Mock
     private CartModel cartModelMock;
     @Mock
+    private AddressData addressDataMock;
+    @Mock
     private CartService cartServiceMock;
     @Mock
-    private CheckoutComAddressService addressServiceMock;
+    private CountryData countryMock;
     @Mock
-    private CheckoutComCheckoutFlowFacade checkoutFlowFacadeMock;
+    private RegionData regionMock;
 
     @Before
     public void setUp() {
@@ -142,5 +154,23 @@ public class DefaultCheckoutComAddressFacadeTest {
         testObj.setCartBillingDetailsByAddressId(ADDRESS_ID);
 
         verify(addressServiceMock).setCartPaymentAddress(cartModelMock, addressModelMock);
+    }
+
+    @Test
+    public void setAddressDataCountry_WhenValidCountryCode_ShouldSetCountry() {
+        when(i18NFacadeMock.getCountryForIsocode(COUNTRY_CODE)).thenReturn(countryMock);
+
+        testObj.setAddressDataCountry(COUNTRY_CODE, addressDataMock);
+
+        verify(addressDataMock).setCountry(countryMock);
+    }
+
+    @Test
+    public void setAddressDataRegion_WhenValidCountryCode_ShouldSetCountry() {
+        when(i18NFacadeMock.getRegion(COUNTRY_CODE, REGION_CODE.toUpperCase())).thenReturn(regionMock);
+
+        testObj.setAddressDataRegion(REGION_CODE, COUNTRY_CODE, addressDataMock);
+
+        verify(addressDataMock).setRegion(regionMock);
     }
 }

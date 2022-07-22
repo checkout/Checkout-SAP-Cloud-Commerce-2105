@@ -1,4 +1,4 @@
-package com.checkout.hybris.occ.validators.impl;
+package com.checkout.hybris.facades.cart.validators.impl;
 
 import com.checkout.hybris.facades.accelerator.CheckoutComCheckoutFlowFacade;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentInfoFacade;
@@ -9,7 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * Checkout commerce web services cart validator. Checks if cart is calculated and if needed values are filled.
+ * Checkout cart validator. Checks if cart is calculated and if needed values are filled.
  */
 public class CheckoutComPlaceOrderCartValidator implements Validator {
 
@@ -50,7 +50,8 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates the cart pricing
-     * @param errors The errors
+     *
+     * @param errors   The errors
      * @param cartData The cart to validate
      */
     protected void validateCartPricingInvalid(final Errors errors, final CartData cartData) {
@@ -60,7 +61,8 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates if cart is calculated
-     * @param errors The errors
+     *
+     * @param errors   The errors
      * @param cartData The cart to validate
      */
     protected void validateCartNotCalculated(final Errors errors, final CartData cartData) {
@@ -72,7 +74,8 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates the cart tax values
-     * @param errors The errors
+     *
+     * @param errors   The errors
      * @param cartData The cart to validate
      */
     protected void validateHasCartInvalidTaxValues(final Errors errors, final CartData cartData) {
@@ -86,7 +89,8 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates the payment info
-     * @param errors The errors
+     *
+     * @param errors   The errors
      * @param cartData The cart to validate
      */
     protected void validateIsPaymentInfoInvalid(final Errors errors, final CartData cartData) {
@@ -98,6 +102,7 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates the delivery mode
+     *
      * @param errors The errors
      */
     protected void validateIsDeliveryModeInvalid(final Errors errors) {
@@ -109,6 +114,7 @@ public class CheckoutComPlaceOrderCartValidator implements Validator {
 
     /**
      * Validates the delivery address
+     *
      * @param errors The errors
      */
     protected void validateDeliveryAddressInvalid(final Errors errors) {

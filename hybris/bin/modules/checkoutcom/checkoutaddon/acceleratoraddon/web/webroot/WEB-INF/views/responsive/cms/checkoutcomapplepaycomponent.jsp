@@ -61,6 +61,11 @@
                 },
                 requiredBillingContactFields: [
                     'postalAddress'
+                ],
+                requiredShippingContactFields: [
+                    "postalAddress",
+                    "name",
+                    "email"
                 ]
             }
         };

@@ -3,6 +3,8 @@ package com.checkout.hybris.facades.payment.wallet;
 import com.checkout.hybris.facades.beans.PlaceWalletOrderDataResponse;
 import com.checkout.hybris.facades.beans.WalletPaymentAdditionalAuthInfo;
 import com.checkout.hybris.facades.enums.WalletPaymentType;
+import de.hybris.platform.order.InvalidCartException;
+import org.springframework.validation.Validator;
 
 /**
  * Facade to place order using wallet payments
@@ -19,4 +21,11 @@ public interface CheckoutComWalletOrderFacade {
     PlaceWalletOrderDataResponse placeWalletOrder(WalletPaymentAdditionalAuthInfo walletPaymentAdditionalAuthInfo,
                                                   WalletPaymentType walletPaymentType);
 
+    /**
+     * Validates the wallet cart before place order
+     *
+     * @param checkoutComPlaceOrderCartValidator the custom validator
+     * @throws InvalidCartException throws exception in case of validation failure
+     */
+    void validateCartForPlaceOrder(Validator checkoutComPlaceOrderCartValidator) throws InvalidCartException;
 }

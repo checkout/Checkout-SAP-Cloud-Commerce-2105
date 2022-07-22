@@ -57,5 +57,16 @@ INSERT_UPDATE CheckoutComGooglePayComponent; uid[unique = true] ; $contentCV[uni
 INSERT_UPDATE CheckoutComApplePayComponent; uid[unique = true]; $contentCV[unique = true]; name        ; $picture[lang = $lang]
                                           ; applePayComponent ;                          ; "Apple Pay" ; apple-pay-icon
 
+INSERT_UPDATE CheckoutComGooglePayExpressComponent; uid[unique = true] ; $contentCV[unique = true]; name         ;
+                                                  ; googleExpressComponent ;                          ; "Google Pay Express " ;
+
+INSERT_UPDATE CheckoutComApplePayExpressComponent; uid[unique = true]; $contentCV[unique = true]; name        ;
+                                                 ; applePayExpressComponent ;                          ; "Apple Pay Express" ;
+
+
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name              ; cmsComponents(uid, $contentCV)
                          ;                          ; CheckoutComPaymentButtonsSlot ; "Payment Buttons" ; cardComponent,sofortComponent,payPalComponent,poliComponent,idealComponent,klarnaComponent,alipayComponent,benefitpayComponent,googlePayComponent,applePayComponent,bancontactComponent,giropayComponent,epsComponent,knetComponent,qpayComponent,fawryComponent,multibancoComponent,sepaComponent,p24Component,oxxoComponent,achComponent
+
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]         ; cmsComponents(uid, $contentCV)
+                         ;                          ; AddToCartSlot              ; AddToCart,applePayExpressComponent,googleExpressComponent
+                         ;                          ; BottomContentSlot-cartPage ; CheckoutComponent,applePayExpressComponent,googleExpressComponent,CartSuggestions

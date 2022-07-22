@@ -33,6 +33,12 @@
 
             <itemtype code="CheckoutComGooglePayComponent" extends="CheckoutComPaymentMethodComponent"
                       jaloclass="com.checkout.hybris.addon.jalo.CheckoutComGooglePayComponent"/>
+
+            <itemtype code="CheckoutComApplePayExpressComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComApplePayExpressComponent"/>
+
+            <itemtype code="CheckoutComGooglePayExpressComponent" extends="CheckoutComPaymentMethodComponent"
+                      jaloclass="com.checkout.hybris.addon.jalo.CheckoutComGooglePayExpressComponent"/>
         </typegroup>
 
     </itemtypes>

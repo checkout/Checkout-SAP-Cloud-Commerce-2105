@@ -16,8 +16,20 @@ import {
 import { CheckoutActions } from '@spartacus/checkout/core';
 import { CheckoutComRedirect } from '../interfaces';
 import { ApmData } from '../model/ApmData';
-import { GooglePayMerchantConfiguration, PlaceOrderResponse } from '../model/GooglePay';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../model/ApplePay';
+import {
+  GooglePayMerchantConfiguration,
+  IntermediatePaymentData,
+  PaymentAuthorizationResult,
+  PaymentDataRequestUpdate,
+  PlaceOrderResponse
+} from '../model/GooglePay';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate,
+  ApplePayShippingMethodUpdate
+} from '../model/ApplePay';
+import {Action} from "@ngrx/store";
 
 @Injectable()
 export class CheckoutComEffects {
@@ -122,6 +134,7 @@ export class CheckoutComEffects {
                 // redirect the user to the checkout.com validation service
                 actions.push(new CheckoutComActions.PlaceOrderRedirect(redirect));
                 redirected = true;
+
               }
             } catch (e) {
             }
@@ -237,39 +250,51 @@ export class CheckoutComEffects {
     | CartActions.RemoveCart
     | GlobalMessageActions.AddMessage
     | CheckoutComActions.AuthoriseGooglePayPaymentSuccess
+    | CheckoutComActions.GetGooglePayPaymentAuthorizeSuccess
+    | CheckoutComActions.GetGooglePayPaymentAuthorizeFail
     | CheckoutComActions.AuthoriseGooglePayPaymentFail> = this.actions$.pipe(
     ofType(CheckoutComActions.AUTHORISE_GOOGLE_PAY_PAYMENT),
     map((action: any) => action.payload),
-    mergeMap(({userId, cartId, token, billingAddress, savePaymentMethod}) => {
+    mergeMap(({userId, cartId, token, billingAddress, savePaymentMethod, shippingAddress,email}) => {
       return this.checkoutComAdapter
         .authoriseGooglePayPayment(
           userId,
           cartId,
           token,
           billingAddress,
-          savePaymentMethod
+          savePaymentMethod,
+          shippingAddress,
+          email
         )
         .pipe(
-          switchMap((placeOrderResponse: PlaceOrderResponse) => [
-            new CheckoutActions.PlaceOrderSuccess(placeOrderResponse.orderData),
-            new CheckoutComActions.AuthoriseGooglePayPaymentSuccess(
-              placeOrderResponse
-            ),
-          ]),
+          switchMap((placeOrderResponse: PlaceOrderResponse) => {
+            let actions: (CheckoutActions.SetPaymentDetailsSuccess
+              | CheckoutActions.PlaceOrderSuccess
+              | CartActions.RemoveCart
+              | GlobalMessageActions.AddMessage
+              | CheckoutComActions.AuthoriseGooglePayPaymentSuccess
+              | CheckoutComActions.GetGooglePayPaymentAuthorizeSuccess
+              | CheckoutComActions.GetGooglePayPaymentAuthorizeFail
+              | CheckoutComActions.AuthoriseGooglePayPaymentFail
+              )[] = [];
+            if(placeOrderResponse.redirectUrl){
+              location.href = placeOrderResponse.redirectUrl;
+              return actions;
+            }
+            actions.push(new CheckoutActions.PlaceOrderSuccess(placeOrderResponse.orderData));
+            actions.push(new CartActions.RemoveCart({cartId}));
+            actions.push(new CheckoutComActions.AuthoriseGooglePayPaymentSuccess(placeOrderResponse));
+            actions.push(new CheckoutComActions.GetGooglePayPaymentAuthorizeSuccess({transactionState :"SUCCESS"}));
+            return actions;
+          }),
           catchError(error => [
             createPaymentFailAction(
               'paymentForm.googlepay.authorisationFailed'
             ),
-            new CheckoutComActions.AuthoriseGooglePayPaymentFail(error)
+            new CheckoutComActions.AuthoriseGooglePayPaymentFail(error),
+            new CheckoutComActions.GetGooglePayPaymentAuthorizeFail({transactionState :"ERROR"})
           ])
         );
-    }),
-    tap((response) => {
-      // @ts-ignore
-      if(response?.payload?.redirectUrl){
-        // @ts-ignore
-        location.href = response.payload.redirectUrl;
-      }
     }),
   );
 
@@ -364,6 +389,87 @@ export class CheckoutComEffects {
         catchError(error => [new CheckoutComActions.SetKlarnaInitParamsFail(error)])
       )
     )
+  );
+
+  @Effect()
+  applePaySetDeliveryAddress: Observable<| CheckoutComActions.SelectApplePayDeliveryAddressSuccess
+    | CheckoutComActions.SelectApplePayDeliveryAddressFail
+    | GlobalMessageActions.AddMessage> = this.actions$.pipe(
+    ofType(CheckoutComActions.SELECT_APPLEPAY_DELIVERY_ADDRESS),
+    map((action: any) => action.payload),
+    mergeMap(payload => {
+      return this.checkoutComAdapter
+        .selectApplePayDeliveryAddress(
+          payload.userId,
+          payload.cartId,
+          payload.shippingContact
+        )
+        .pipe(
+          switchMap((response: ApplePayShippingContactUpdate) => [
+            new CheckoutComActions.SelectApplePayDeliveryAddressSuccess(response)
+          ]),
+          catchError(error => [
+            createPaymentFailAction(
+              'paymentForm.applePay.setDeliveryAddressFailed'
+            ),
+            new CheckoutComActions.SelectApplePayDeliveryAddressFail(error)
+          ])
+        );
+    })
+  );
+
+  @Effect()
+  applePaySetDeliveryMethod: Observable<| CheckoutComActions.SelectApplePayShippingMethodSuccess
+    | CheckoutComActions.SelectApplePayShippingMethodFail
+    | GlobalMessageActions.AddMessage> = this.actions$.pipe(
+    ofType(CheckoutComActions.SELECT_APPLEPAY_DELIVERY_METHOD),
+    map((action: any) => action.payload),
+    mergeMap(payload => {
+      return this.checkoutComAdapter
+        .selectApplePayDeliveryMethod(
+          payload.userId,
+          payload.cartId,
+          payload.shippingMethod
+        )
+        .pipe(
+          switchMap((response: ApplePayShippingMethodUpdate) => [
+            new CheckoutComActions.SelectApplePayShippingMethodSuccess(response)
+          ]),
+          catchError(error => [
+            createPaymentFailAction(
+              'paymentForm.applePay.setDeliveryMethodFailed'
+            ),
+            new CheckoutComActions.SelectApplePayShippingMethodFail(error)
+          ])
+        );
+    })
+  );
+
+  @Effect()
+  googlePaySetDeliveryInfo: Observable<| CheckoutComActions.GetGooglePayPaymentDataUpdateFail
+    | CheckoutComActions.GetGooglePayPaymentDataUpdateSuccess
+    | GlobalMessageActions.AddMessage> = this.actions$.pipe(
+    ofType(CheckoutComActions.GET_GOOGLE_PAY_PAYMENT_UPDATE),
+    map((action: any) => action.payload),
+    mergeMap(payload => {
+      return this.checkoutComAdapter
+        .setGooglePayDeliveryInfo(
+          payload.userId,
+          payload.cartId,
+          payload.paymentData
+        )
+        .pipe(
+          switchMap((response: PaymentDataRequestUpdate) => [
+            new CheckoutComActions.GetGooglePayPaymentDataUpdateSuccess(response)
+          ]),
+          catchError(error => [
+            createPaymentFailAction(
+              'paymentForm.googlePay.setDeliveryInfoFailed'
+            ),
+            new CheckoutComActions.GetGooglePayPaymentDataUpdateFail(error)
+          ])
+        );
+    })
   );
 
 }

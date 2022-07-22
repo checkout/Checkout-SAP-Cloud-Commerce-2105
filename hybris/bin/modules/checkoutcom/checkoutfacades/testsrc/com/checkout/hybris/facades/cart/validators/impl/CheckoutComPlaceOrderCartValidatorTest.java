@@ -1,4 +1,4 @@
-package com.checkout.hybris.occ.validators.impl;
+package com.checkout.hybris.facades.cart.validators.impl;
 
 import com.checkout.hybris.facades.accelerator.CheckoutComCheckoutFlowFacade;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentInfoFacade;

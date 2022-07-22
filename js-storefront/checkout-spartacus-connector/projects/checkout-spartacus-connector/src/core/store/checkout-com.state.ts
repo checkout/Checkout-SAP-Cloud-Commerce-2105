@@ -1,9 +1,20 @@
-import { Address, PaymentDetails, Order, HttpErrorModel } from '@spartacus/core';
+import { Address, HttpErrorModel, Order, PaymentDetails } from '@spartacus/core';
 import { CheckoutComRedirect, KlarnaInitParams } from '../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { ApmData } from '../model/ApmData';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../model/ApplePay';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate,
+  ApplePayShippingMethodUpdate
+} from '../model/ApplePay';
+import {
+  GooglePayPaymentRequest,
+  IntermediatePaymentData,
+  PaymentAuthorizationResult,
+  PaymentDataRequestUpdate
+} from '../model/GooglePay';
 
 export interface CheckoutComState {
   occMerchantKey?: string;
@@ -14,6 +25,9 @@ export interface CheckoutComState {
   availableApms?: ApmData[];
   selectedApm: ApmData;
   googlePayMerchantConfiguration?: any;
+  googlePayAuth?: GooglePayPaymentRequest;
+  googlePayPaymentDataUpdate?: PaymentDataRequestUpdate;
+  googlePayPaymentAuthorizationResult?: PaymentAuthorizationResult;
 
   apmLoading?: boolean;
 
@@ -22,6 +36,8 @@ export interface CheckoutComState {
   applePayPaymentRequest?: ApplePayPaymentRequest;
   applePayMerchantSession?: any;
   applePayAuthorization?: ApplePayAuthorization;
+  applePayShippingContactUpdate?: ApplePayShippingContactUpdate;
+  applePayShippingMethodUpdate?: ApplePayShippingMethodUpdate;
 }
 
 export const CHECKOUT_COM_FEATURE = 'CheckoutCom';
