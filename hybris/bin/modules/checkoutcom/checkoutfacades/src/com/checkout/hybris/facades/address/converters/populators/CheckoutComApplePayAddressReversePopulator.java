@@ -1,14 +1,13 @@
 package com.checkout.hybris.facades.address.converters.populators;
 
+import com.checkout.hybris.facades.address.CheckoutComAddressFacade;
 import com.checkout.hybris.facades.beans.ApplePayPaymentContact;
-import de.hybris.platform.commercefacades.i18n.I18NFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
-import de.hybris.platform.commercefacades.user.data.CountryData;
-import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+
+import java.util.Optional;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
@@ -17,11 +16,12 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
  */
 public class CheckoutComApplePayAddressReversePopulator implements Populator<ApplePayPaymentContact, AddressData> {
 
-    protected final I18NFacade i18NFacade;
+    protected final CheckoutComAddressFacade checkoutComAddressFacade;
 
-    public CheckoutComApplePayAddressReversePopulator(final I18NFacade i18NFacade) {
-        this.i18NFacade = i18NFacade;
+    public CheckoutComApplePayAddressReversePopulator(final CheckoutComAddressFacade checkoutComAddressFacade) {
+        this.checkoutComAddressFacade = checkoutComAddressFacade;
     }
+
 
     /**
      * {@inheritDoc}
@@ -31,23 +31,21 @@ public class CheckoutComApplePayAddressReversePopulator implements Populator<App
         validateParameterNotNull(source, "ApplePayPaymentContact cannot be null.");
         validateParameterNotNull(target, "AddressData cannot be null.");
 
-        target.setFirstName(source.getGivenName());
-        target.setLastName(source.getFamilyName());
-        target.setLine1(CollectionUtils.isNotEmpty(source.getAddressLines()) ? source.getAddressLines().get(0) : null);
-        target.setLine2(source.getAddressLines().size() == 2 ? source.getAddressLines().get(1) : null);
-        target.setTown(source.getLocality());
-        target.setPostalCode(source.getPostalCode());
+        Optional.ofNullable(source.getGivenName()).ifPresent(target::setFirstName);
+        Optional.ofNullable(source.getFamilyName()).ifPresent(target::setLastName);
+        Optional.ofNullable(source.getFamilyName()).ifPresent(target::setLastName);
+        Optional.ofNullable(source.getAddressLines()).filter(CollectionUtils::isNotEmpty)
+                .ifPresent(addressLines -> target.setLine1(addressLines.get(0)));
+        Optional.ofNullable(source.getAddressLines()).filter(CollectionUtils::isNotEmpty)
+                .filter(addressLines -> addressLines.size() >= 2)
+                .ifPresent(addressLines -> target.setLine2(addressLines.get(1)));
+        Optional.ofNullable(source.getLocality()).ifPresent(target::setTown);
+        Optional.ofNullable(source.getPostalCode()).ifPresent(target::setPostalCode);
+        Optional.ofNullable(source.getPhoneNumber()).ifPresent(target::setPhone);
+        Optional.ofNullable(source.getEmailAddress()).ifPresent(target::setEmail);
+        String countryCode = source.getCountryCode();
+        checkoutComAddressFacade.setAddressDataCountry(countryCode, target);
+        checkoutComAddressFacade.setAddressDataRegion(source.getAdministrativeArea(), countryCode, target);
         target.setBillingAddress(true);
-        target.setPhone(source.getPhoneNumber());
-        target.setEmail(source.getEmailAddress());
-
-        if (StringUtils.isNotBlank(source.getCountryCode())) {
-            final CountryData countryData = i18NFacade.getCountryForIsocode(source.getCountryCode().toUpperCase());
-            target.setCountry(countryData);
-        }
-        if (StringUtils.isNotBlank(source.getAdministrativeArea())) {
-            final RegionData regionData = i18NFacade.getRegion(source.getCountryCode().toUpperCase(), source.getAdministrativeArea());
-            target.setRegion(regionData);
-        }
     }
 }

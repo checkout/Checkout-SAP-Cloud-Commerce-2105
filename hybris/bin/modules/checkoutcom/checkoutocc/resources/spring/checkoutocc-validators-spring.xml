@@ -64,13 +64,6 @@
     <bean id="defaultCheckoutComOxxoPaymentDetailsWsDTOValidator"
           class="com.checkout.hybris.occ.validators.paymentdetailswsdto.CheckoutComOxxoPaymentDetailsWsDTOValidator"/>
 
-    <alias name="defaultCheckoutComPlaceOrderCartValidator" alias="checkoutComPlaceOrderCartValidator"/>
-    <bean id="defaultCheckoutComPlaceOrderCartValidator"
-          class="com.checkout.hybris.occ.validators.impl.CheckoutComPlaceOrderCartValidator">
-        <constructor-arg name="checkoutFlowFacade" ref="checkoutFlowFacade"/>
-        <constructor-arg name="checkoutComPaymentInfoFacade" ref="checkoutComPaymentInfoFacade"/>
-    </bean>
-
     <alias name="defaultDeliveryAddressValidator" alias="checkoutDeliveryAddressValidator"/>
     <bean id="defaultDeliveryAddressValidator"
           class="com.checkout.hybris.occ.validators.impl.CheckoutDeliveryAddressValidator">

@@ -448,6 +448,22 @@
         <constructor-arg name="i18NFacade" ref="i18NFacade"/>
     </bean>
 
+    <alias name="defaultCheckoutComGooglePayDeliveryModeDataToSelectionOptionPopulator"
+           alias="checkoutComGooglePayDeliveryModeDataToSelectionOptionPopulator"/>
+    <bean id="defaultCheckoutComGooglePayDeliveryModeDataToSelectionOptionPopulator"
+          class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComGooglePayDeliveryModeDataToSelectionOptionPopulator"/>
+
+    <alias name="defaultCheckoutComGooglePayDeliveryModeToSelectionOptionConverter"
+           alias="checkoutComGooglePayDeliveryModeToSelectionOptionConverter"/>
+    <bean id="defaultCheckoutComGooglePayDeliveryModeToSelectionOptionConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.GooglePaySelectionOption"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComGooglePayDeliveryModeDataToSelectionOptionPopulator"/>
+            </list>
+        </property>
+    </bean>
 
     <alias name="defaultDheckoutComApplePayToValidateMerchantConverter"
            alias="checkoutComApplePayToValidateMerchantConverter"/>
@@ -466,6 +482,23 @@
     <bean id="defaultCheckoutComApplePayToValidateMerchantPopulator"
           class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComApplePayToValidateMerchantPopulator">
         <constructor-arg name="checkoutComUrlService" ref="checkoutComUrlService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComDeliveryModeDataToApplePayShippingMethodPopulator"
+           alias="checkoutComDeliveryModeDataToApplePayShippingMethodPopulator"/>
+    <bean id="defaultCheckoutComDeliveryModeDataToApplePayShippingMethodPopulator"
+          class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComDeliveryModeDataToApplePayShippingMethodPopulator"/>
+
+    <alias name="defaultCheckoutComApplePayDeliveryModeToApplePayShippingMethodConverter"
+           alias="checkoutComApplePayDeliveryModeToApplePayShippingMethodConverter"/>
+    <bean id="defaultCheckoutComApplePayDeliveryModeToApplePayShippingMethodConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.ApplePayShippingMethod"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComDeliveryModeDataToApplePayShippingMethodPopulator"/>
+            </list>
+        </property>
     </bean>
 
     <alias name="defaultCheckoutComGooglePayTransactionInfoConverter"

@@ -10,12 +10,18 @@ import com.checkout.hybris.facades.enums.WalletPaymentType;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentFacade;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentInfoFacade;
 import com.checkout.hybris.facades.payment.wallet.CheckoutComWalletOrderFacade;
+import de.hybris.platform.commercefacades.order.CartFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.order.InvalidCartException;
-import de.hybris.platform.servicelayer.i18n.I18NService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.MessageSource;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import java.util.Objects;
 
 import static com.checkout.hybris.facades.enums.PlaceWalletOrderStatus.FAILURE;
 import static com.checkout.hybris.facades.enums.PlaceWalletOrderStatus.SUCCESS;
@@ -28,21 +34,18 @@ public class DefaultCheckoutComWalletOrderFacade implements CheckoutComWalletOrd
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComWalletOrderFacade.class);
 
     protected final CheckoutComPaymentFacade checkoutComPaymentFacade;
-    protected final MessageSource messageSource;
     protected final CheckoutComPaymentInfoFacade checkoutComPaymentInfoFacade;
     protected final CheckoutComCheckoutFlowFacade checkoutFlowFacade;
-    protected final I18NService i18nService;
+    protected final CartFacade cartFacade;
 
     public DefaultCheckoutComWalletOrderFacade(final CheckoutComPaymentFacade checkoutComPaymentFacade,
-                                               final MessageSource messageSource,
                                                final CheckoutComPaymentInfoFacade checkoutComPaymentInfoFacade,
                                                final CheckoutComCheckoutFlowFacade checkoutFlowFacade,
-                                               final I18NService i18nService) {
+                                               final CartFacade cartFacade) {
         this.checkoutComPaymentFacade = checkoutComPaymentFacade;
-        this.messageSource = messageSource;
         this.checkoutComPaymentInfoFacade = checkoutComPaymentInfoFacade;
         this.checkoutFlowFacade = checkoutFlowFacade;
-        this.i18nService = i18nService;
+        this.cartFacade = cartFacade;
     }
 
     /**
@@ -58,15 +61,15 @@ public class DefaultCheckoutComWalletOrderFacade implements CheckoutComWalletOrd
             paymentInfoData = checkoutComPaymentFacade.createCheckoutComWalletPaymentToken(walletPaymentAdditionalAuthInfo, walletPaymentType);
         } catch (final CheckoutComPaymentIntegrationException e) {
             LOG.error("Exception when trying to get the [{}] request token from checkout.com", walletPaymentType.name(), e);
-            return handleFailureProcess(response, messageSource.getMessage("checkout.error.authorization.failed", null, i18nService.getCurrentLocale()));
+            return handleFailureProcess(response, "checkout.error.authorization.failed");
         }
 
         checkoutComPaymentInfoFacade.addPaymentInfoToCart(paymentInfoData);
         final AuthorizeResponseData authorizeResponseData = checkoutFlowFacade.authorizePayment();
 
-        if (!authorizeResponseData.getIsSuccess()) {
+        if (Boolean.FALSE.equals(authorizeResponseData.getIsSuccess())) {
             LOG.error("Error with the authorization process. Redirecting to payment method step.");
-            return handleFailureProcess(response, messageSource.getMessage("checkout.error.authorization.failed", null, i18nService.getCurrentLocale()));
+            return handleFailureProcess(response, "checkout.error.authorization.failed");
         }
         if (authorizeResponseData.getIsRedirect()) {
            response.setRedirectUrl(authorizeResponseData.getRedirectUrl());
@@ -78,7 +81,7 @@ public class DefaultCheckoutComWalletOrderFacade implements CheckoutComWalletOrd
             orderData = checkoutFlowFacade.placeOrder();
         } catch (final InvalidCartException e) {
             LOG.error("Failed to place Order", e);
-            return handleFailureProcess(response, messageSource.getMessage("checkout.placeOrder.failed", null, i18nService.getCurrentLocale()));
+            return handleFailureProcess(response,"checkout.placeOrder.failed");
         }
 
         response.setStatus(SUCCESS);
@@ -86,6 +89,24 @@ public class DefaultCheckoutComWalletOrderFacade implements CheckoutComWalletOrd
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateCartForPlaceOrder(final Validator checkoutComPlaceOrderCartValidator) throws InvalidCartException {
+        final CartData cartData = cartFacade.getSessionCart();
+        final Errors errors = new BeanPropertyBindingResult(cartData, "sessionCart");
+        checkoutComPlaceOrderCartValidator.validate(cartData, errors);
+        if (errors.hasErrors()) {
+            throw new InvalidCartException(
+                    errors.getAllErrors()
+                            .stream()
+                            .map(DefaultMessageSourceResolvable::getCode)
+                            .filter(Objects::nonNull)
+                            .reduce((errorCodes, errorCode) -> errorCodes.concat(",").concat(errorCode))
+                            .orElse("Error during place Order on express checkout"));
+        }
+    }
     /**
      * Handles the wallet failure scenario
      *

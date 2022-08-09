@@ -192,7 +192,7 @@ export class CheckoutComKlarnaComponent implements OnInit, OnDestroy {
       filter(values => values?.country?.isocode), distinctUntilChanged(), takeUntil(this.drop)
     ).subscribe((values) => {
       this.currentCountryCode.next(values?.country?.isocode);
-    });
+    }, err => console.error('listenForCountrySelection with errors', {err}));
   }
 
   private klarnaIsReady() {
@@ -274,7 +274,7 @@ export class CheckoutComKlarnaComponent implements OnInit, OnDestroy {
       if (this.widget?.nativeElement) {
         this.loadWidget(category, this.widget.nativeElement);
       }
-    });
+    }, err => console.error('listenForCategorySelection with errors', {err}));
   }
 
   private getKlarnaCountryParams(): { purchase_country: string } {

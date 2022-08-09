@@ -12,7 +12,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
  */
 public class CheckoutComGooglePayTransactionInfoPopulator implements Populator<CartData, GooglePayTransactionInfoData> {
 
-    protected static final String TOTAL_PRICE_STATUS = "FINAL";
+    protected static final String TOTAL_PRICE_STATUS = "ESTIMATED";
 
     /**
      * {@inheritDoc}

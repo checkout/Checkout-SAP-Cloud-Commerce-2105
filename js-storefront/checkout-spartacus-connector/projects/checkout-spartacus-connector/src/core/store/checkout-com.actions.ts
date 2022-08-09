@@ -1,11 +1,22 @@
 import { Action } from '@ngrx/store';
-import { Address, PROCESS_FEATURE, StateUtils, PaymentDetails, Order, HttpErrorModel } from '@spartacus/core';
+import { Address, HttpErrorModel, Order, PaymentDetails, PROCESS_FEATURE, StateUtils } from '@spartacus/core';
 import { ApmPaymentDetails, CheckoutComPaymentDetails } from '../../storefrontlib/interfaces';
 import { CheckoutComRedirect, KlarnaInitParams } from '../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApmData } from '../model/ApmData';
-import { GooglePayMerchantConfiguration, PlaceOrderResponse } from '../model/GooglePay';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../model/ApplePay';
+import {
+  GooglePayMerchantConfiguration,
+  IntermediatePaymentData,
+  PaymentAuthorizationResult,
+  PaymentDataRequestUpdate,
+  PlaceOrderResponse
+} from '../model/GooglePay';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentContact,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate, ApplePayShippingMethod, ApplePayShippingMethodUpdate
+} from '../model/ApplePay';
 import { PLACED_ORDER_PROCESS_ID } from '@spartacus/checkout/core';
 
 export const SET_OCC_MERCHANT_KEY = 'Requesting OCC merchant key';
@@ -72,6 +83,19 @@ export const AUTHORISE_APPLE_PAY_PAYMENT_FAIL =
 export const AUTHORISE_APPLE_PAY_PAYMENT_SUCCESS =
   '[ApplePay] Authorise payment Success';
 
+export const SELECT_APPLEPAY_DELIVERY_ADDRESS = '[ApplePay] Select Delivery Address';
+export const SELECT_APPLEPAY_DELIVERY_ADDRESS_FAIL = '[ApplePay] Select Delivery Address Fail';
+export const SELECT_APPLEPAY_DELIVERY_ADDRESS_SUCCESS = '[ApplePay] Select Delivery Address Success';
+
+export const SELECT_APPLEPAY_DELIVERY_METHOD = '[ApplePay] Select Delivery Method';
+export const SELECT_APPLEPAY_DELIVERY_METHOD_FAIL = '[ApplePay] Select Delivery Method Fail';
+export const SELECT_APPLEPAY_DELIVERY_METHOD_SUCCESS = '[ApplePay] Select Delivery Method Success';
+
+export const GET_GOOGLE_PAY_PAYMENT_UPDATE = '[GooglePay] Update Payment Data';
+export const GET_GOOGLE_PAY_PAYMENT_UPDATE_FAIL = '[GooglePay] Update Payment Data Fail';
+export const GET_GOOGLE_PAY_PAYMENT_UPDATE_SUCCESS = '[GooglePay] Update Payment Data Success';
+export const GET_GOOGLE_PAY_PAYMENT_AUTHORISE_SUCCESS = '[GooglePay] Authorise Payment Data Success';
+export const GET_GOOGLE_PAY_PAYMENT_AUTHORISE_FAIL = '[GooglePay] Authorise Payment Data Fail';
 
 export class SetOccMerchantKey implements Action {
   readonly type = SET_OCC_MERCHANT_KEY;
@@ -257,7 +281,9 @@ export class AuthoriseGooglePayPayment implements Action {
       cartId: string;
       token: any;
       billingAddress: any;
+      shippingAddress?: any;
       savePaymentMethod: boolean;
+      email?:string;
     }
   ) {}
 }
@@ -295,7 +321,10 @@ export class SetKlarnaInitParamsFail {
 export class RequestApplePayPaymentRequest implements Action {
   readonly type = REQUEST_APPLE_PAY_PAYMENT_REQUEST;
 
-  constructor(public payload: { userId: string; cartId: string }) {}
+  constructor(public payload: {
+    userId: string;
+    cartId: string;
+  }) {}
 }
 
 export class RequestApplePayPaymentRequestFail implements Action {
@@ -356,6 +385,78 @@ export class AuthoriseApplePayPaymentSuccess implements Action {
   constructor(public payload: ApplePayAuthorization) {}
 }
 
+export class SelectApplePayDeliveryAddress implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_ADDRESS;
+
+  constructor(
+    public payload: { userId: string; cartId: string; shippingContact: ApplePayPaymentContact }
+  ) {}
+}
+
+export class SelectApplePayDeliveryAddressFail implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_ADDRESS_FAIL;
+
+  constructor(public payload: string) {}
+}
+
+export class SelectApplePayDeliveryAddressSuccess implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_ADDRESS_SUCCESS;
+
+  constructor(public payload: ApplePayShippingContactUpdate) {}
+}
+
+export class SelectApplePayShippingMethod implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_METHOD;
+
+  constructor(
+    public payload: { userId: string; cartId: string; shippingMethod: ApplePayShippingMethod }
+  ) {}
+}
+
+export class SelectApplePayShippingMethodFail implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_METHOD_FAIL;
+
+  constructor(public payload: string) {}
+}
+
+export class SelectApplePayShippingMethodSuccess implements Action {
+  readonly type = SELECT_APPLEPAY_DELIVERY_METHOD_SUCCESS;
+
+  constructor(public payload: ApplePayShippingMethodUpdate) {}
+}
+
+export class GetGooglePayPaymentDataUpdate implements Action {
+  readonly type = GET_GOOGLE_PAY_PAYMENT_UPDATE;
+  constructor(public payload: {
+    userId: string;
+    cartId: string;
+    paymentData: IntermediatePaymentData,
+  }) {}
+}
+
+export class GetGooglePayPaymentDataUpdateFail implements Action {
+  readonly type = GET_GOOGLE_PAY_PAYMENT_UPDATE_FAIL;
+  constructor(public payload: string) {}
+}
+
+export class GetGooglePayPaymentDataUpdateSuccess implements Action {
+  readonly type = GET_GOOGLE_PAY_PAYMENT_UPDATE_SUCCESS;
+
+  constructor(public payload: PaymentDataRequestUpdate) {}
+}
+
+export class GetGooglePayPaymentAuthorizeSuccess implements Action {
+  readonly type = GET_GOOGLE_PAY_PAYMENT_AUTHORISE_SUCCESS;
+
+  constructor(public payload: PaymentAuthorizationResult) {}
+}
+
+export class GetGooglePayPaymentAuthorizeFail implements Action {
+  readonly type = GET_GOOGLE_PAY_PAYMENT_AUTHORISE_FAIL;
+
+  constructor(public payload: PaymentAuthorizationResult) {}
+}
+
 export type CheckoutComAction =
   | SetSelectedApm
   | RequestAvailableApms
@@ -397,4 +498,15 @@ export type CheckoutComAction =
   | SetKlarnaInitParams
   | SetKlarnaInitParamsSuccess
   | SetKlarnaInitParamsFail
+  | SelectApplePayDeliveryAddress
+  | SelectApplePayDeliveryAddressFail
+  | SelectApplePayDeliveryAddressSuccess
+  | SelectApplePayShippingMethod
+  | SelectApplePayShippingMethodFail
+  | SelectApplePayShippingMethodSuccess
+  | GetGooglePayPaymentDataUpdate
+  | GetGooglePayPaymentDataUpdateFail
+  | GetGooglePayPaymentDataUpdateSuccess
+  | GetGooglePayPaymentAuthorizeFail
+  | GetGooglePayPaymentAuthorizeSuccess
   ;

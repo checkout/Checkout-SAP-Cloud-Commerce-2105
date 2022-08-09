@@ -9,7 +9,7 @@ import com.checkout.hybris.facades.payment.CheckoutComPaymentFacade;
 import com.checkout.hybris.facades.payment.CheckoutComPaymentInfoFacade;
 import com.checkout.hybris.occ.exceptions.NoCheckoutCartException;
 import com.checkout.hybris.occ.exceptions.PlaceOrderException;
-import com.checkout.hybris.occ.validators.impl.CheckoutComPlaceOrderCartValidator;
+import com.checkout.hybris.facades.cart.validators.impl.CheckoutComPlaceOrderCartValidator;
 import com.checkout.payments.GetPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
@@ -55,7 +55,6 @@ public class CheckoutComOrdersController {
     protected static final String DEFAULT_FIELD_SET = FieldSetLevelHelper.DEFAULT_LEVEL;
     protected static final String API_COMPATIBILITY_B2C_CHANNELS = "api.compatibility.b2c.channels";
     protected static final String CHECKOUTCOM_OCC_PLACE_ORDER_FAILED = "Failed to place the order";
-    protected static final String PARAM_CKO_SESSION_ID = "cko-session-id";
 
     private static final Logger LOG = LogManager.getLogger(CheckoutComOrdersController.class);
 

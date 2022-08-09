@@ -43,7 +43,7 @@ export class CheckoutComCheckoutService extends CheckoutService {
             })
           );
         }
-      });
+      }, err => console.error('placeOrder with errors', {err}));
     }
   }
 

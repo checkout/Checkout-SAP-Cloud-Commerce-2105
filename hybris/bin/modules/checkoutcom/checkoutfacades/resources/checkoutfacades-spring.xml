@@ -5,6 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="spring/checkoutfacades-validators-spring.xml"/>
     <import resource="spring/checkoutfacades-facades-spring.xml"/>
     <import resource="spring/checkoutfacades-converters-spring.xml"/>
     <import resource="spring/checkoutfacades-strategies-spring.xml"/>

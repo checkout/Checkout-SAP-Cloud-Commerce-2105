@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CheckoutComGooglePayTransactionInfoPopulatorTest {
 
     private static final String CURRENCY_ISO_CODE = "EUR";
+    private static final String TOTAL_PRICE_STATUS = "ESTIMATED";
     private static final BigDecimal TOTAL_PRICE = BigDecimal.valueOf(123.23);
-    private static final String TOTAL_PRICE_STATUS = "FINAL";
 
     private final CheckoutComGooglePayTransactionInfoPopulator testObj = new CheckoutComGooglePayTransactionInfoPopulator();
 

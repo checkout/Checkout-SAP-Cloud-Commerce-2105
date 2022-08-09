@@ -1,8 +1,8 @@
 package com.checkout.hybris.facades.address.converters.populators;
 
+import com.checkout.hybris.facades.address.CheckoutComAddressFacade;
 import com.checkout.hybris.facades.beans.ApplePayPaymentContact;
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.commercefacades.i18n.I18NFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @UnitTest
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +37,7 @@ public class CheckoutComApplePayAddressReversePopulatorTest {
     private CheckoutComApplePayAddressReversePopulator testObj;
 
     @Mock
-    private I18NFacade i18NFacadeMock;
+    private CheckoutComAddressFacade checkoutComAddressFacadeMock;
     @Mock
     private CountryData countryMock;
     @Mock
@@ -56,8 +56,6 @@ public class CheckoutComApplePayAddressReversePopulatorTest {
         source.setPostalCode(POSTAL_CODE);
         source.setEmailAddress(EMAIL_ADDRESS);
         source.setLocality(LOCALITY);
-        when(i18NFacadeMock.getCountryForIsocode(COUNTRY_CODE.toUpperCase())).thenReturn(countryMock);
-        when(i18NFacadeMock.getRegion(COUNTRY_CODE.toUpperCase(), ADMINISTRATIVE_AREA)).thenReturn(regionDataMock);
     }
 
     @Test
@@ -66,14 +64,14 @@ public class CheckoutComApplePayAddressReversePopulatorTest {
 
         assertEquals(GIVEN_NAME, target.getFirstName());
         assertEquals(FAMILY_NAME, target.getLastName());
-        assertEquals(countryMock, target.getCountry());
         assertEquals(EMAIL_ADDRESS, target.getEmail());
         assertTrue(target.isBillingAddress());
         assertEquals(ADDRESS_LINE_1, target.getLine1());
         assertEquals(ADDRESS_LINE_2, target.getLine2());
         assertEquals(POSTAL_CODE, target.getPostalCode());
         assertEquals(LOCALITY, target.getTown());
-        assertEquals(regionDataMock, target.getRegion());
+        verify(checkoutComAddressFacadeMock).setAddressDataCountry(COUNTRY_CODE, target);
+        verify(checkoutComAddressFacadeMock).setAddressDataRegion(ADMINISTRATIVE_AREA, COUNTRY_CODE, target);
     }
 
     @Test(expected = IllegalArgumentException.class)

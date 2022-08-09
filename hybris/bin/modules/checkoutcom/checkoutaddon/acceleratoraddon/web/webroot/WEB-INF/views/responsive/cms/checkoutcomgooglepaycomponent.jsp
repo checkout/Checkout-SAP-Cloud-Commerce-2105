@@ -4,6 +4,7 @@
 
 <c:set var="hasAvailablePaymentMethods" value="${hasAvailablePaymentMethods or isAvailable}" scope="session"/>
 
+<script async src="https://pay.google.com/gp/p/js/pay.js"></script>
 <form:radiobutton id="paymentMethod_${button.uid}" path="paymentMethod" disabled="${!isAvailable}"
                   value="${button.uid}" cssClass="available-${isAvailable}" data-required="${dataRequired}"
                   data-redirect="${redirect}"/>

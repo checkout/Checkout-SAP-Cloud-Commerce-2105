@@ -18,7 +18,8 @@ export const checkoutComTranslations = {
         googlepay: {
           authorisationFailed: 'Your GooglePay payment could not be processed',
           help:
-            'When you press the Google Pay button you can pay your order in an instance.'
+            'When you press the Google Pay button you can pay your order in an instance.',
+          setDeliveryInfoFailed: 'Your GooglePay address is not valid',
         },
 
         applePay: {
@@ -29,7 +30,9 @@ export const checkoutComTranslations = {
             'Your Apple Pay Payment could not be processed. Please contact customer service at 555....',
           authorisationFailed:
             'Your payment could be authorized. Please try another time.',
-          cancelled: 'Your payment was cancelled by Apple Pay'
+          cancelled: 'Your payment was cancelled by Apple Pay',
+          setDeliveryAdddresFailed: 'An error occurred while processing your delivery address',
+          setDeliveryMethodFailed: 'An error occurred while processing your selected delivery method',
         },
 
         klarna: {
@@ -63,7 +66,10 @@ export const checkoutComTranslations = {
 
         apmChanged: 'The previously selected payment option is not available, please select another one.'
       },
-
+      paymentPdp: {
+        payDirectly: 'Pay Directly',
+        or: 'OR',
+      },
       paymentCard: {
         apm: 'Payment with {{ apm }}'
       },
@@ -151,5 +157,6 @@ export const checkoutComTranslationChunkConfig = {
     'paymentTypes',
     'sepaForm',
     'idealForm',
+    'paymentPdp',
   ]
 };

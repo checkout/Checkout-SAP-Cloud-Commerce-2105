@@ -95,6 +95,29 @@
         <property name="shippingContact" type="com.checkout.hybris.facades.beans.ApplePayPaymentContact"/>
     </bean>
 
+    <bean class="com.checkout.hybris.facades.beans.ApplePayShippingMethod">
+        <property name="label" type="java.lang.String"/>
+        <property name="detail" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+        <property name="identifier" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayLineItem">
+        <property name="label" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayShippingContactUpdate">
+        <property name="newTotal" type="com.checkout.hybris.facades.beans.ApplePayLineItem"/>
+        <property name="newShippingMethods"
+                  type="java.util.List&lt;com.checkout.hybris.facades.beans.ApplePayShippingMethod&gt;"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.ApplePayShippingMethodUpdate">
+        <property name="newTotal" type="com.checkout.hybris.facades.beans.ApplePayLineItem"/>
+    </bean>
+
     <bean class="com.checkout.hybris.facades.beans.ApplePayPaymentToken">
         <property name="paymentData" type="com.checkout.hybris.facades.beans.ApplePayAdditionalAuthInfo"/>
     </bean>
@@ -181,6 +204,8 @@
     <bean class="com.checkout.hybris.facades.beans.GooglePayAuthorisationRequest">
         <property name="token" type="com.checkout.hybris.facades.beans.GooglePayPaymentToken"/>
         <property name="billingAddress" type="com.checkout.hybris.facades.beans.GooglePayPaymentContact"/>
+        <property name="shippingAddress" type="com.checkout.hybris.facades.beans.GooglePayPaymentContact"/>
+        <property name="email" type="java.lang.String"/>
         <property name="tokenFormat" type="com.checkout.hybris.core.google.payment.enums.TokenFormatType"/>
     </bean>
 
@@ -191,6 +216,7 @@
         <property name="address3" type="java.lang.String"/>
         <property name="name" type="java.lang.String"/>
         <property name="sortingCode" type="java.lang.String"/>
+        <property name="email" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentToken"
@@ -218,6 +244,9 @@
                   type="java.util.Set&lt;java.lang.String&gt;"/>
         <property name="allowedCardNetworks"
                   type="java.util.Set&lt;java.lang.String&gt;"/>
+        <property name="emailRequired" type="java.lang.Boolean"/>
+        <property name="shippingOptionRequired" type="java.lang.Boolean"/>
+        <property name="callbackIntents" type="java.util.List&lt;java.lang.String&gt;"/>
     </bean>
 
     <enum class="com.checkout.hybris.facades.enums.PlaceWalletOrderStatus">
@@ -270,6 +299,9 @@
         <property name="merchantName" type="java.lang.String"/>
         <property name="merchantId" type="java.lang.String"/>
         <property name="transactionInfo" type="com.checkout.hybris.facades.beans.GooglePayTransactionInfoData"/>
+        <property name="emailRequired" type="java.lang.Boolean"/>
+        <property name="shippingOptionRequired" type="java.lang.Boolean"/>
+        <property name="callbackIntents" type="java.util.List&lt;java.lang.String&gt;"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.BaseCardPaymentMethodData">
@@ -281,7 +313,8 @@
         <property name="allowedAuthMethods" type="java.util.Set&lt;java.lang.String&gt;"/>
         <property name="allowedCardNetworks" type="java.util.Set&lt;java.lang.String&gt;"/>
         <property name="billingAddressRequired" type="java.lang.Boolean"/>
-        <property name="billingAddressParameters" type="com.checkout.hybris.facades.beans.GooglePayBillingAddressParametersFormatData"/>
+        <property name="billingAddressParameters"
+                  type="com.checkout.hybris.facades.beans.GooglePayBillingAddressParametersFormatData"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.GooglePayBillingAddressParametersFormatData">
@@ -297,4 +330,43 @@
         <property name="totalPrice" type="java.lang.String"/>
         <property name="totalPriceStatus" type="java.lang.String"/>
     </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayIntermediateAddress"
+          extends="com.checkout.hybris.facades.beans.GooglePayPaymentContact"/>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePaySelectionOptionData">
+        <property name="id" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayIntermediatePaymentData">
+        <property name="callbackTrigger" type="java.lang.String"/>
+        <property name="shippingAddress" type="com.checkout.hybris.facades.beans.GooglePayIntermediateAddress"/>
+        <property name="shippingOptionData" type="com.checkout.hybris.facades.beans.GooglePaySelectionOptionData"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentDataRequestUpdate">
+        <property name="newTransactionInfo" type="com.checkout.hybris.facades.beans.GooglePayTransactionInfoData"/>
+        <property name="newShippingOptionParameters"
+                  type="com.checkout.hybris.facades.beans.GooglePayShippingOptionParameters"/>
+        <property name="error" type="com.checkout.hybris.facades.beans.GooglePayPaymentDataError"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayShippingOptionParameters">
+        <property name="shippingOptions"
+                  type="java.util.List&lt;com.checkout.hybris.facades.beans.GooglePaySelectionOption&gt;"/>
+        <property name="defaultSelectedOptionId" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePaySelectionOption">
+        <property name="id" type="java.lang.String"/>
+        <property name="label" type="java.lang.String"/>
+        <property name="description" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.GooglePayPaymentDataError">
+        <property name="reason" type="java.lang.String"/>
+        <property name="message" type="java.lang.String"/>
+        <property name="intent" type="java.lang.String"/>
+    </bean>
+
 </beans>

@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +33,7 @@ public class CheckoutComGooglePayPaymentRequestPopulatorTest {
     private static final String GATEWAY_MERCHANT_ID = "gatewayMerchantId";
     private static final String MERCHANT_NAME = "merchantName";
     private static final String MERCHANT_ID = "merchantId";
+    private static final String CALLBACK_INTENT_TEST = "CALLBACK_INTENT_TEST";
 
     @InjectMocks
     private CheckoutComGooglePayPaymentRequestPopulator testObj;
@@ -70,6 +72,9 @@ public class CheckoutComGooglePayPaymentRequestPopulatorTest {
         source.setGatewayMerchantId(GATEWAY_MERCHANT_ID);
         source.setMerchantName(MERCHANT_NAME);
         source.setMerchantId(MERCHANT_ID);
+        source.setEmailRequired(Boolean.TRUE);
+        source.setShippingOptionRequired(Boolean.TRUE);
+        source.setCallbackIntents(List.of(CALLBACK_INTENT_TEST));
 
         testObj.populate(source, target);
 
@@ -86,5 +91,8 @@ public class CheckoutComGooglePayPaymentRequestPopulatorTest {
         assertThat(target.getMerchantName()).isEqualTo(MERCHANT_NAME);
         assertThat(target.getMerchantId()).isEqualTo(MERCHANT_ID);
         assertThat(target.getGatewayMerchantId()).isEqualTo(GATEWAY_MERCHANT_ID);
+        assertThat(target.getEmailRequired()).isEqualTo(Boolean.TRUE);
+        assertThat(target.getShippingOptionRequired()).isEqualTo(Boolean.TRUE);
+        assertThat(target.getCallbackIntents()).isEqualTo(List.of(CALLBACK_INTENT_TEST));
     }
 }

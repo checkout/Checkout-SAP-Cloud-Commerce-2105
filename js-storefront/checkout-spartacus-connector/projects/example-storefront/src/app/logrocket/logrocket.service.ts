@@ -25,6 +25,6 @@ export class LogrocketService {
       } catch (err) {
         console.log('Failed to identify logrocket error tracking', err);
       }
-    });
+    }, err => console.log('getActive with errors', {err}));
   }
 }

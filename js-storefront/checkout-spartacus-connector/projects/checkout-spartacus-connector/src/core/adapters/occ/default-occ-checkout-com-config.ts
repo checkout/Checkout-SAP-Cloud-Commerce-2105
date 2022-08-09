@@ -17,6 +17,9 @@ declare module '@spartacus/core' {
     applePayPaymentRequest?: string | OccEndpoint;
     applePayRequestSession?: string | OccEndpoint;
     applePayPlaceOrder?: string | OccEndpoint;
+    applePaySetDeliveryAddress?: string | OccEndpoint;
+    applePaySetDeliveryMethod?: string | OccEndpoint;
+    googlePaySetDeliveryInfo?: string | OccEndpoint;
   }
 }
 
@@ -40,12 +43,15 @@ export const defaultOccCheckoutComConfig: OccConfig = {
 
         googlePayMerchantConfig: 'users/${userId}/carts/${cartId}/google/merchant-configuration',
         googlePayPlaceOrder: 'users/${userId}/carts/${cartId}/google/placeOrder',
+        googlePaySetDeliveryInfo: 'users/${userId}/carts/${cartId}/google/deliveryInfo',
 
         klarnaClientToken: 'users/${userId}/carts/${cartId}/klarna/clientToken',
 
         applePayPaymentRequest: 'users/${userId}/carts/${cartId}/applepay/paymentRequest',
         applePayRequestSession: 'users/${userId}/carts/${cartId}/applepay/requestSession',
         applePayPlaceOrder: 'users/${userId}/carts/${cartId}/applepay/placeOrder',
+        applePaySetDeliveryAddress: 'users/${userId}/carts/${cartId}/applepay/deliveryAddress',
+        applePaySetDeliveryMethod: 'users/${userId}/carts/${cartId}/applepay/deliveryMethod',
       },
     },
   },

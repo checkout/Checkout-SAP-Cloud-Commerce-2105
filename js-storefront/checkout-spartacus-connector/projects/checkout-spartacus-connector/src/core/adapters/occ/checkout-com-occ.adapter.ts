@@ -1,28 +1,40 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   Address,
   ConverterService,
+  InterceptorUtil,
+  Occ,
+  OCC_USER_ID_ANONYMOUS,
   OccEndpointsService,
   Order,
-  OCC_USER_ID_ANONYMOUS,
-  InterceptorUtil,
-  USE_CLIENT_TOKEN,
-  Occ,
   ORDER_NORMALIZER,
-  PaymentDetails,
   PAYMENT_DETAILS_NORMALIZER,
+  PaymentDetails,
+  USE_CLIENT_TOKEN,
 } from '@spartacus/core';
-import { PAYMENT_DETAILS_SERIALIZER } from '@spartacus/checkout/core';
-import { CheckoutComAdapter } from '../checkout-com.adapter';
-import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ApmPaymentDetails, CheckoutComPaymentDetails } from '../../../storefrontlib/interfaces';
-import { map, pluck } from 'rxjs/operators';
-import { ApmData, AvailableApmResponseData } from '../../model/ApmData';
-import { APM_NORMALIZER, APM_PAYMENT_DETAILS_NORMALIZER } from '../converters';
-import { GooglePayMerchantConfiguration, PlaceOrderResponse } from '../../model/GooglePay';
-import { KlarnaInitParams } from '../../interfaces';
-import { ApplePayAuthorization, ApplePayPaymentRequest } from '../../model/ApplePay';
+import {PAYMENT_DETAILS_SERIALIZER} from '@spartacus/checkout/core';
+import {CheckoutComAdapter} from '../checkout-com.adapter';
+import {Observable} from 'rxjs';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {ApmPaymentDetails, CheckoutComPaymentDetails} from '../../../storefrontlib/interfaces';
+import {map, pluck} from 'rxjs/operators';
+import {ApmData, AvailableApmResponseData} from '../../model/ApmData';
+import {APM_NORMALIZER, APM_PAYMENT_DETAILS_NORMALIZER} from '../converters';
+import {
+  GooglePayMerchantConfiguration,
+  IntermediatePaymentData,
+  PaymentDataRequestUpdate,
+  PlaceOrderResponse
+} from '../../model/GooglePay';
+import {KlarnaInitParams} from '../../interfaces';
+import {
+  ApplePayAuthorization,
+  ApplePayPaymentContact,
+  ApplePayPaymentRequest,
+  ApplePayShippingContactUpdate,
+  ApplePayShippingMethod,
+  ApplePayShippingMethodUpdate
+} from '../../model/ApplePay';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +44,8 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
   constructor(protected http: HttpClient,
               protected occEndpoints: OccEndpointsService,
               protected converter: ConverterService,
-  ) { }
+  ) {
+  }
 
   getMerchantKey(userId: string): Observable<string> {
     return this.http.get<string>(
@@ -82,14 +95,14 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
       .set('termsChecked', termsChecked.toString());
 
     return this.http
-               .post<Occ.Order>(
-                 this.occEndpoints.buildUrl('directPlaceOrder', {
-                   urlParams: {cartId, userId},
-                 }),
-                 {},
-                 {headers: this.getHeadersForUserId(userId), params}
-               )
-               .pipe(this.converter.pipeable(ORDER_NORMALIZER));
+      .post<Occ.Order>(
+        this.occEndpoints.buildUrl('directPlaceOrder', {
+          urlParams: {cartId, userId},
+        }),
+        {},
+        {headers: this.getHeadersForUserId(userId), params}
+      )
+      .pipe(this.converter.pipeable(ORDER_NORMALIZER));
   }
 
   authorizeRedirectPlaceOrder(userId: string, cartId: string, sessionId: string): Observable<Order> {
@@ -123,7 +136,8 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
         {
           urlParams: {cartId, userId},
         },
-      )
+      ),
+      {headers: this.getHeadersForUserId(userId)}
     );
   }
 
@@ -132,18 +146,22 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
     cartId: string,
     token: string,
     billingAddress: any,
-    saved: boolean
+    saved: boolean,
+    shippingAddress?: any,
+    email?: string
   ): Observable<PlaceOrderResponse> {
     return this.http.post<PlaceOrderResponse>(
-      this.occEndpoints.buildUrl('googlePayPlaceOrder',{
+      this.occEndpoints.buildUrl('googlePayPlaceOrder', {
         urlParams: {userId, cartId},
       }),
       {
         token,
         billingAddress,
-        saved
+        saved,
+        shippingAddress,
+        email
       },
-      {}
+      {headers: this.getHeadersForUserId(userId)}
     );
   }
 
@@ -157,12 +175,13 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
 
   public requestApplePayPaymentRequest(
     userId: string,
-    cartId: string
+    cartId: string,
   ): Observable<ApplePayPaymentRequest> {
     return this.http.get<ApplePayPaymentRequest>(
       this.occEndpoints.buildUrl('applePayPaymentRequest', {
-        urlParams: {cartId, userId},
-      })
+        urlParams: {cartId, userId}
+      }),
+      {headers: this.getHeadersForUserId(userId)},
     );
   }
 
@@ -178,7 +197,7 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
       {
         validationURL
       },
-      {}
+      {headers: this.getHeadersForUserId(userId)}
     );
   }
 
@@ -194,7 +213,43 @@ export class CheckoutComOccAdapter implements CheckoutComAdapter {
       {
         ...request
       },
-      {}
+      {headers: this.getHeadersForUserId(userId)}
+    );
+  }
+
+  selectApplePayDeliveryAddress(userId: string, cartId: string, shippingContact: ApplePayPaymentContact): Observable<ApplePayShippingContactUpdate> {
+    return this.http.post<ApplePayShippingContactUpdate>(
+      this.occEndpoints.buildUrl('applePaySetDeliveryAddress', {
+        urlParams: {cartId, userId},
+      }),
+      {
+        ...shippingContact
+      },
+      {headers: this.getHeadersForUserId(userId)}
+    );
+  }
+
+  selectApplePayDeliveryMethod(userId: string, cartId: string, shippingMethod: ApplePayShippingMethod): Observable<ApplePayShippingMethodUpdate> {
+    return this.http.post<ApplePayShippingMethodUpdate>(
+      this.occEndpoints.buildUrl('applePaySetDeliveryMethod', {
+        urlParams: {cartId, userId},
+      }),
+      {
+        ...shippingMethod
+      },
+      {headers: this.getHeadersForUserId(userId)}
+    );
+  }
+
+  setGooglePayDeliveryInfo(userId: string, cartId: string, paymentData: IntermediatePaymentData): Observable<PaymentDataRequestUpdate> {
+    return this.http.post<PaymentDataRequestUpdate>(
+      this.occEndpoints.buildUrl('googlePaySetDeliveryInfo', {
+        urlParams: {cartId, userId},
+      }),
+      {
+        ...paymentData
+      },
+      {headers: this.getHeadersForUserId(userId)}
     );
   }
 

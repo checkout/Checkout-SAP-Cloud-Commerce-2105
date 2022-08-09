@@ -45,7 +45,7 @@ class CheckoutComGooglePayTest extends AbstractCheckoutComPaymentsTest {
 
             isNotEmpty(data.transactionInfo)
             data.transactionInfo.currencyCode == 'EUR'
-            data.transactionInfo.totalPriceStatus == 'FINAL'
+            data.transactionInfo.totalPriceStatus == 'ESTIMATED'
 
             data.gateway == 'checkoutltd'
             isNotEmpty(data.gatewayMerchantId)

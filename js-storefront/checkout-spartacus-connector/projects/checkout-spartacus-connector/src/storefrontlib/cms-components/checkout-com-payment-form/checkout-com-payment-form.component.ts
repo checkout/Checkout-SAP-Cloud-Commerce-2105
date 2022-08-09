@@ -81,13 +81,14 @@ export class CheckoutComPaymentFormComponent extends PaymentFormComponent implem
     this.checkoutPaymentService.getCardTypes().pipe(
       filter(types => types != null && types?.length > 0),
       takeUntil(this.drop)
-    ).subscribe((cardTypes) => this.spartacusCardTypes = cardTypes);
+    ).subscribe((cardTypes) => {this.spartacusCardTypes = cardTypes},
+      err => console.error('getCardTypes with errors', {err}));
 
     this.userIdService.getUserId().pipe(takeUntil(this.drop)).subscribe((userId) => {
       this.canSaveCard$.next(
         this.checkoutComPaymentService.canSaveCard(userId)
       );
-    });
+    }, err => console.error('getUserId with errors', {err}));
 
     this.framesLocalization$ = this.getFramesLocalization();
 
@@ -102,7 +103,7 @@ export class CheckoutComPaymentFormComponent extends PaymentFormComponent implem
       this.framesCardholder$.emit({
         name: accountHolderName
       });
-    })
+    }, err => console.log('valueChanges with erorrs', {err}))
   }
 
   next() {

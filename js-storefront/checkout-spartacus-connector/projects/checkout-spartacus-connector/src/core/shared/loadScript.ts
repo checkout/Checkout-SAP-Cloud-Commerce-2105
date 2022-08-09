@@ -1,6 +1,6 @@
 import { WindowRef } from '@spartacus/core';
 
-export const loadScript = (windowRef: WindowRef, script: string, onloadCallback?: any): void => {
+export const loadScript = (windowRef: WindowRef, script: string, onloadCallback?: any, idScript?: string): void => {
   let isFound = false;
   const scripts = windowRef.document.getElementsByTagName('script');
   /* tslint:disable */
@@ -17,6 +17,7 @@ export const loadScript = (windowRef: WindowRef, script: string, onloadCallback?
   if (!isFound) {
     const node = windowRef.document.createElement('script');
     node.src = script;
+    node.id = idScript
     node.type = 'text/javascript';
     node.async = true;
     if (onloadCallback) {

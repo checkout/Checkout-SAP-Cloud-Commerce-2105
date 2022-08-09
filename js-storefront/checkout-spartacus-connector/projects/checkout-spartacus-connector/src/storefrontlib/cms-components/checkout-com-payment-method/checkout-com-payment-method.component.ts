@@ -78,15 +78,15 @@ export class CheckoutComPaymentMethodComponent extends PaymentMethodComponent im
 
     this.activeCartService.getActiveCartId().pipe(take(1), takeUntil(this.drop)).subscribe((cartId) => {
       this.activeCartId = cartId;
-    });
+    }, err => console.error('getActiveCartId with errors', {err}));
 
     this.userIdService.getUserId().pipe(take(1), takeUntil(this.drop)).subscribe((userId) => {
       this.userId = userId;
-    });
+    }, err => console.error('getUserId with errors', {err}));
 
     this.selectedApm$.pipe(takeUntil(this.drop)).subscribe((apm: ApmData) => {
       this.isCardPayment = apm.code === PaymentType.Card;
-    });
+    }, err => console.error('selectedApm with errors', {err}));
 
     this.checkoutDeliveryService.getDeliveryAddress()
       .pipe(
@@ -94,7 +94,7 @@ export class CheckoutComPaymentMethodComponent extends PaymentMethodComponent im
         takeUntil(this.drop)
       ).subscribe(deliveryAddress => {
         this.deliveryAddress = deliveryAddress;
-      });
+      }, err => console.error('getDeliveryAddress with errors', {err}));
   }
 
   selectPaymentMethod(paymentDetails: PaymentDetails): void {
@@ -198,7 +198,7 @@ export class CheckoutComPaymentMethodComponent extends PaymentMethodComponent im
         takeUntil(this.drop)
       ).subscribe((newPaymentDetails) => {
         this.shouldRedirect = true;
-      });
+      }, err => console.error('UpdatePaymentAddress with errors', {err}));
     }
   }
 

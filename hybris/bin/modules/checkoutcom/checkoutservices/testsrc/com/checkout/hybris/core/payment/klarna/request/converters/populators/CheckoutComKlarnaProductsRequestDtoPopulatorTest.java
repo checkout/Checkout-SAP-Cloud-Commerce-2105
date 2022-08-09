@@ -45,6 +45,10 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
     private static final String DELIVERY_NAME = "Delivery name";
     private static final String DISCOUNT_NAME = "Order total discount";
     private static final String PAYMENT_COST_NAME = "Order payment cost";
+    private static final double CHECKOUTCOM_TAXPERCENT_AMOUNT_DOUBLE = 18.189339321593195D;
+    private static final Long CHECKOUTCOM_TAXPERCENT_AMOUNT_LONG = 1819L;
+    private static final double CHECKOUTCOM_TAXAMOUNT_DOUBLE = 18.948168000000003D;
+    private static final Long CHECKOUTCOM_TAXAMOUNT_LONG = 1895L;
 
     @InjectMocks
     private CheckoutComKlarnaProductsRequestDtoPopulator testObj;
@@ -80,6 +84,9 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
         when(checkoutComCurrencyServiceMock.convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_DISCOUNT_AMOUNT_DOUBLE)).thenReturn(CHECKOUTCOM_DISCOUNT_AMOUNT_LONG);
         when(checkoutComCurrencyServiceMock.convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TOTAL_PRICE_AMOUNT_DOUBLE)).thenReturn(CHECKOUTCOM_TOTAL_PRICE_AMOUNT_LONG);
         when(checkoutComCurrencyServiceMock.convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_PAYMENT_COST_AMOUNT_DOUBLE)).thenReturn(CHECKOUTCOM_PAYMENT_COST_AMOUNT_LONG);
+        when(checkoutComCurrencyServiceMock.convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TAXPERCENT_AMOUNT_DOUBLE)).thenReturn(0L).thenReturn(CHECKOUTCOM_TAXPERCENT_AMOUNT_LONG);
+        when(checkoutComCurrencyServiceMock.convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TAXAMOUNT_DOUBLE)).thenReturn(0L).thenReturn(CHECKOUTCOM_TAXAMOUNT_LONG);
+
         when(sourceMock.getTotalTax()).thenReturn(CHECKOUTCOM_AMOUNT_DOUBLE);
         when(sourceMock.getEntries()).thenReturn(Arrays.asList(entry1Mock, entry2Mock));
         when(entry1Mock.getBasePrice()).thenReturn(CHECKOUTCOM_AMOUNT_DOUBLE);
@@ -119,8 +126,8 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
 
         assertEquals(PRODUCT_NAME, target.get(1).getName());
         assertEquals(Long.valueOf(1), target.get(1).getQuantity());
-        assertEquals(CHECKOUTCOM_AMOUNT_LONG, target.get(1).getTaxRate());
-        assertEquals(CHECKOUTCOM_AMOUNT_LONG, target.get(1).getTotalTaxAmount());
+        assertEquals(CHECKOUTCOM_TAXPERCENT_AMOUNT_LONG, target.get(1).getTaxRate());
+        assertEquals(CHECKOUTCOM_TAXAMOUNT_LONG, target.get(1).getTotalTaxAmount());
         assertEquals(CHECKOUTCOM_AMOUNT_LONG, target.get(1).getUnitPrice());
         assertEquals(CHECKOUTCOM_AMOUNT_LONG, target.get(1).getTotalAmount());
 
@@ -192,6 +199,7 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
         final List<KlarnaProductRequestDto> productRequestDtos = new ArrayList<>();
 
         doReturn(50L).when(checkoutComCurrencyServiceMock).convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TAX_RATE_DOUBLE);
+        when(sourceMock.getTotalTaxValues()).thenReturn(List.of(taxValueMock));
 
         testObj.populateShippingLine(sourceMock, CURRENCY_CODE, productRequestDtos, CHECKOUTCOM_TAX_RATE_DOUBLE);
 
@@ -232,6 +240,7 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
 
         doReturn(50L).when(checkoutComCurrencyServiceMock).convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TAX_RATE_DOUBLE);
 
+        when(sourceMock.getTotalTaxValues()).thenReturn(List.of(taxValueMock));
         testObj.populateOrderDiscount(sourceMock, CURRENCY_CODE, productRequestDtos, CHECKOUTCOM_TAX_RATE_DOUBLE);
 
         assertThat(productRequestDtos).isNotEmpty();
@@ -285,13 +294,12 @@ public class CheckoutComKlarnaProductsRequestDtoPopulatorTest {
         final List<KlarnaProductRequestDto> productRequestDtos = new ArrayList<>();
 
         doReturn(50L).when(checkoutComCurrencyServiceMock).convertAmountIntoPennies(CURRENCY_CODE, CHECKOUTCOM_TAX_RATE_DOUBLE);
+        when(sourceMock.getTotalTaxValues()).thenReturn(List.of(taxValueMock));
 
         testObj.populatePaymentCost(sourceMock, CURRENCY_CODE, productRequestDtos, CHECKOUTCOM_TAX_RATE_DOUBLE);
 
         assertThat(productRequestDtos).isNotEmpty();
-
         final KlarnaProductRequestDto paymentCostRequestDto = productRequestDtos.get(0);
-
         assertThat(paymentCostRequestDto.getTaxRate()).isNotZero();
     }
 

@@ -12,5 +12,12 @@ public interface CheckoutComWalletAddressFacade {
      *
      * @param billingContact the billing contact from the form
      */
-    void handleAndSaveAddresses(WalletPaymentContact billingContact);
+    void handleAndSaveBillingAddress(WalletPaymentContact billingContact);
+
+    /**
+     * Populate the address data based on the walletContact and set the shipping address into the cart
+     *
+     * @param shippingContact the shipping contact from the form
+     */
+    void handleAndSaveShippingAddress(WalletPaymentContact shippingContact);
 }
