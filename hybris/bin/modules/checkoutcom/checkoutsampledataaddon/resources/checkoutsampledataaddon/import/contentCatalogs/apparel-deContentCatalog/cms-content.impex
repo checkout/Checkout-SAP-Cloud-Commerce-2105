@@ -70,3 +70,6 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]         ; cmsComponents(uid, $contentCV)
                          ;                          ; AddToCartSlot              ; AddToCart,applePayExpressComponent,googleExpressComponent
                          ;                          ; BottomContentSlot-cartPage ; CheckoutComponent,applePayExpressComponent,googleExpressComponent,CartSuggestions
+
+INSERT_UPDATE SearchRestriction; code[unique = true]           ; principal(uid); query                                                                        ; restrictedType(code)              ; active; generate
+                               ; HideCheckoutPaymentComponents ; customergroup ; {catalogVersion} IN ( ?session.catalogversions ) OR {catalogVersion} IS NULL ; CheckoutComPaymentMethodComponent ; true  ; true

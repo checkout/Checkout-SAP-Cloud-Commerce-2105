@@ -21,12 +21,42 @@ public interface CheckoutComMerchantConfigurationService {
     String getSecretKey();
 
     /**
-     * Returns the secret key from the merchant configuration of the given site
+     * Returns the secret key from the merchant configuration of the current site
      *
-     * @param siteId the site id for which to get the secret
      * @return the secret key
      */
-    String getSecretKeyForSite(String siteId);
+    String getSignatureKey();
+
+    /**
+     * Returns the authorization key from the merchant configuration of the current site. This value
+     * is validated on incoming Notification/Events
+     *
+     * @return the authorization key
+     */
+    String getAuthorizationKey();
+
+    /**
+     * Returns whether Nas is used on the merchant configuration of the current site
+     *
+     * @return the activated value
+     */
+    boolean isNasUsed();
+
+    /**
+     * Returns whether Nas authorisation header is used on the merchant configuration of the current site to validate
+     * incoming notifications
+     *
+     * @return the activated value
+     */
+    boolean isNasAuthorisationHeaderUsedOnNotificationValidation();
+
+    /**
+     * Returns whether Nas authorisation header is used on the merchant configuration of the current site to validate
+     * incoming notifications
+     *
+     * @return the activated value
+     */
+    boolean isNasSignatureKeyUsedOnNotificationValidation();
 
     /**
      * Returns the secret key from the merchant configuration of the current site

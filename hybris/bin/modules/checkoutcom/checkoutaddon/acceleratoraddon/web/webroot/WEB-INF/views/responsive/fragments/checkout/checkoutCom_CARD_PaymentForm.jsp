@@ -32,7 +32,7 @@
             </label>
         </div>
     </sec:authorize>
-    <label for="card-holder-name"><spring:theme code="checkoutcom.multi.cardholdername.label" text="Card number"/></label>
+    <label for="card-holder-name"><spring:theme code="checkoutcom.multi.cardholdername.label" text="Card holder name"/></label>
     <div class="input-container card-holder">
         <input type="text" value="${fn:trim(fn:escapeXml(billingAddress.firstName).concat(' ').concat(fn:escapeXml(billingAddress.lastName)))}" id="cardholdername" required>
     </div>
