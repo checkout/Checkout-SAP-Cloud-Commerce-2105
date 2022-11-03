@@ -90,6 +90,7 @@ public class CheckoutComPaymentMethodCheckoutStepController extends CheckoutComA
 
         if (bindingResult.hasErrors()) {
             GlobalMessages.addErrorMessage(model, "checkoutcom.error.payment.form.invalid");
+            bindingResult.getAllErrors().forEach(error -> GlobalMessages.addErrorMessage(model, error.getCode()));
             model.addAttribute(PAYMENT_DATA_FORM, paymentDataForm);
             setUpPaymentMethodStep(model);
             return getViewForPage(model);

@@ -18,13 +18,14 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckoutComCardPaymentDetailsWsDTOValidatorTest {
 
-    private static final String PAYMENT_TOKEN_KEY = "paymentToken";
-    private static final String CARD_NUMBER_KEY = "cardNumber";
-    private static final String CARD_BIN_KEY = "cardBin";
-    private static final String EXPIRY_MONTH_KEY = "expiryMonth";
-    private static final String EXPIRY_YEAR_KEY = "expiryYear";
-    private static final String CARD_TYPE = "cardType.code";
     private static final String BLANK_STRING = "   ";
+    private static final String CARD_BIN_KEY = "cardBin";
+    private static final String CARD_TYPE = "cardType.code";
+    private static final String CARD_NUMBER_KEY = "cardNumber";
+    private static final String EXPIRY_YEAR_KEY = "expiryYear";
+    private static final String EXPIRY_MONTH_KEY = "expiryMonth";
+    private static final String PAYMENT_TOKEN_KEY = "paymentToken";
+    private static final String CARTES_BANCAIRES = "cartes_bancaires";
 
     @InjectMocks
     private CheckoutComCardPaymentDetailsWsDTOValidator testObj;
@@ -124,6 +125,20 @@ public class CheckoutComCardPaymentDetailsWsDTOValidatorTest {
     @Test
     public void validate_WhenCardTypeIsBlank_ShouldReturnError() {
         paymentDetailsWsDTO.setCardType(null);
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(CARD_TYPE, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenCartesBancairesIsUsedAsCardType_ShouldReturnError() {
+        final CardTypeWsDTO cardTypeWsDTO = new CardTypeWsDTO();
+        cardTypeWsDTO.setCode(CARTES_BANCAIRES);
+        cardTypeWsDTO.setName(CARTES_BANCAIRES);
+        paymentDetailsWsDTO.setCardType(cardTypeWsDTO);
 
         testObj.validate(paymentDetailsWsDTO, errors);
 

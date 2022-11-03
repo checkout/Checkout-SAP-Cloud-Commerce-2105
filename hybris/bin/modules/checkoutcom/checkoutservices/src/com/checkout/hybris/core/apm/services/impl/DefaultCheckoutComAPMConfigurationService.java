@@ -5,12 +5,14 @@ import com.checkout.hybris.addon.model.CheckoutComPaymentMethodComponentModel;
 import com.checkout.hybris.core.apm.configuration.CheckoutComAPMConfigurationSettings;
 import com.checkout.hybris.core.apm.services.CheckoutComAPMConfigurationService;
 import com.checkout.hybris.core.model.CheckoutComAPMConfigurationModel;
+import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
 import com.google.common.collect.ImmutableMap;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
+import de.hybris.platform.site.BaseSiteService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,19 +32,22 @@ public class DefaultCheckoutComAPMConfigurationService implements CheckoutComAPM
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComAPMConfigurationService.class);
     protected static final String APM_CONFIGURATION_CODE_CANNOT_BE_NULL = "APM configuration code cannot be null.";
 
-    protected final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao;
-    protected final GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDao;
-    protected final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings;
     protected final CartService cartService;
+    protected final BaseSiteService baseSiteService;
+    protected final GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDao;
+    protected final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao;
+    protected final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings;
 
-    public DefaultCheckoutComAPMConfigurationService(final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao,
+    public DefaultCheckoutComAPMConfigurationService(final CartService cartService,
+                                                     final BaseSiteService baseSiteService,
                                                      final GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDao,
-                                                     final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings,
-                                                     final CartService cartService) {
-        this.checkoutComApmConfigurationDao = checkoutComApmConfigurationDao;
-        this.checkoutComApmComponentDao = checkoutComApmComponentDao;
-        this.checkoutComAPMConfigurationSettings = checkoutComAPMConfigurationSettings;
+                                                     final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao,
+                                                     final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings) {
         this.cartService = cartService;
+        this.baseSiteService = baseSiteService;
+        this.checkoutComApmComponentDao = checkoutComApmComponentDao;
+        this.checkoutComApmConfigurationDao = checkoutComApmConfigurationDao;
+        this.checkoutComAPMConfigurationSettings = checkoutComAPMConfigurationSettings;
     }
 
     /**
@@ -56,6 +61,12 @@ public class DefaultCheckoutComAPMConfigurationService implements CheckoutComAPM
         if (apmConfiguration == null) {
             LOG.warn("The apm is not defined, the apm component is not restricted.");
             return true;
+        }
+
+        final CheckoutComMerchantConfigurationModel checkoutMerchantConfig = baseSiteService.getCurrentBaseSite().getCheckoutComMerchantConfiguration();
+
+        if (checkoutMerchantConfig.getUseNas() && !apmConfiguration.getEnabledInNAS()) {
+            return false;
         }
 
         final boolean countryMatch = isEmpty(apmConfiguration.getRestrictedCountries()) ||

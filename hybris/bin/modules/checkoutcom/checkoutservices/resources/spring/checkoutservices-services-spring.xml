@@ -48,10 +48,10 @@
     <bean id="defaultCheckoutComPaymentService"
           class="com.checkout.hybris.core.payment.services.impl.DefaultCheckoutComPaymentService"
           parent="defaultPaymentService">
-        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
-        <constructor-arg ref="checkoutComPaymentResponseStrategyMapper"/>
         <constructor-arg ref="checkoutComPaymentTypeResolver"/>
         <constructor-arg ref="checkoutComPaymentTransactionService"/>
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="checkoutComPaymentResponseStrategyMapper"/>
     </bean>
 
     <alias name="defaultCheckoutComPaymentTransactionService" alias="checkoutComPaymentTransactionService"/>
@@ -110,10 +110,11 @@
     <alias name="defaultCheckoutComAPMConfigurationService" alias="checkoutComAPMConfigurationService"/>
     <bean id="defaultCheckoutComAPMConfigurationService"
           class="com.checkout.hybris.core.apm.services.impl.DefaultCheckoutComAPMConfigurationService">
-        <constructor-arg ref="checkoutComApmConfigurationDao"/>
-        <constructor-arg ref="checkoutComApmComponentDao"/>
-        <constructor-arg ref="checkoutComAPMConfigurationSettings"/>
         <constructor-arg ref="cartService"/>
+        <constructor-arg ref="baseSiteService"/>
+        <constructor-arg ref="checkoutComApmComponentDao"/>
+        <constructor-arg ref="checkoutComApmConfigurationDao"/>
+        <constructor-arg ref="checkoutComAPMConfigurationSettings"/>
     </bean>
 
     <alias name="defaultApmConfigurationDao" alias="checkoutComApmConfigurationDao"/>

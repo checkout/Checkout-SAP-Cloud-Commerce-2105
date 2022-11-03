@@ -121,6 +121,13 @@
                         <editorArea:attribute qualifier="publicKey"/>
                         <editorArea:attribute qualifier="secretKey"/>
                         <editorArea:attribute qualifier="privateSharedKey"/>
+                        <editorArea:attribute qualifier="useNas"/>
+                        <editorArea:attribute qualifier="nasPublicKey"/>
+                        <editorArea:attribute qualifier="nasSecretKey"/>
+                        <editorArea:attribute qualifier="nasSignatureKey"/>
+                        <editorArea:attribute qualifier="nasAuthorisationHeaderKey"/>
+                        <editorArea:attribute qualifier="useNasAuthorisationKeyOnNotifications"/>
+                        <editorArea:attribute qualifier="useNasSignatureKeyOnNotifications"/>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="tab.configuration.checkoutcom.global.settings">

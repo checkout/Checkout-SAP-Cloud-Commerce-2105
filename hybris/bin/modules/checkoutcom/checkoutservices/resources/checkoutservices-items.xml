@@ -527,6 +527,42 @@
                         <persistence type="property"/>
                         <description>Your private shared key. You can find it in the Hub.</description>
                     </attribute>
+                    <attribute qualifier="nasSecretKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Use the valid secret key of your NAS Checkout.com account. You can find this in the
+                            Hub.
+                        </description>
+                    </attribute>
+                    <attribute qualifier="nasPublicKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS public key. You can find it in the Hub.</description>
+                    </attribute>
+                    <attribute qualifier="nasSignatureKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS signature key. You can find it in the Hub.</description>
+                    </attribute>
+                    <attribute qualifier="nasAuthorisationHeaderKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS Authorisation header key. You can find it in the Hub, Notifications settings.</description>
+                    </attribute>
+                    <attribute qualifier="useNas" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use NAS or ABC.</description>
+                    </attribute>
+                    <attribute qualifier="useNasAuthorisationKeyOnNotifications" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use signature key to verify NAS Notifications</description>
+                    </attribute>
+                    <attribute qualifier="useNasSignatureKeyOnNotifications" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use signature key to verify NAS Notifications</description>
+                    </attribute>
                     <attribute qualifier="environment" type="EnvironmentType">
                         <persistence type="property"/>
                         <description>The Checkout.com environment to which we is integrated.</description>
@@ -606,6 +642,12 @@
                         <modifiers write="true" search="true" read="true" optional="true"/>
                         <persistence type="property"/>
                         <description>Contains the name of the APM</description>
+                    </attribute>
+                    <attribute qualifier="enabledInNAS" type="java.lang.Boolean">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>Whether the APM is enabled in NAS or not</description>
                     </attribute>
                 </attributes>
                 <indexes>

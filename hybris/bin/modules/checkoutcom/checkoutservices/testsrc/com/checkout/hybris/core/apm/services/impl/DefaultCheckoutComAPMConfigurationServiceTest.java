@@ -4,9 +4,11 @@ import com.checkout.hybris.addon.model.CheckoutComAPMComponentModel;
 import com.checkout.hybris.core.apm.configuration.CheckoutComAPMConfigurationSettings;
 import com.checkout.hybris.core.model.CheckoutComAPMConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComFawryConfigurationModel;
+import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.media.MediaModel;
@@ -14,10 +16,14 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
+import de.hybris.platform.site.BaseSiteService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.Answers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
@@ -32,7 +38,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Locale.FRANCE;
 import static java.util.Locale.UK;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -50,16 +56,28 @@ public class DefaultCheckoutComAPMConfigurationServiceTest {
     private DefaultCheckoutComAPMConfigurationService testObj;
 
     @Mock
-    private Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettingsMock;
+    private CartService cartServiceMock;
     @Mock
-    private GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDaoMock;
+    private BaseSiteService baseSiteServiceMock;
     @Mock
     private GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDaoMock;
     @Mock
-    private CartService cartServiceMock;
-
+    private GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDaoMock;
     @Mock
-    private CheckoutComAPMConfigurationModel apmConfiguration1Mock, apmConfiguration2Mock;
+    private Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettingsMock;
+
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private CartModel cartMock;
+    @Mock
+    private MediaModel mediaMock;
+    @Mock
+    private BaseSiteModel baseSiteModelMock;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private AddressModel paymentAddressMock, shippingAddressMock;
+    @Mock
+    private CheckoutComAPMComponentModel component1Mock, component2Mock;
+    @Mock
+    private CheckoutComMerchantConfigurationModel checkoutComMerchantConfigurationModelMock;
     @Mock
     private CountryModel restrictedCountryMock;
     @Mock
@@ -68,18 +86,12 @@ public class DefaultCheckoutComAPMConfigurationServiceTest {
     private CheckoutComFawryConfigurationModel fawryConfigurationModelMock;
     @Mock
     private CheckoutComAPMConfigurationSettings apmConfigurationSettingsMock;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private CartModel cartMock;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private AddressModel paymentAddressMock, shippingAddressMock;
     @Mock
-    private CheckoutComAPMComponentModel component1Mock, component2Mock;
-    @Mock
-    private MediaModel mediaMock;
+    private CheckoutComAPMConfigurationModel apmConfiguration1Mock, apmConfiguration2Mock;
 
     @Before
     public void setUp() {
-        testObj = Mockito.spy(new DefaultCheckoutComAPMConfigurationService(checkoutComApmConfigurationDaoMock, checkoutComApmComponentDaoMock, checkoutComAPMConfigurationSettingsMock, cartServiceMock));
+        testObj = Mockito.spy(new DefaultCheckoutComAPMConfigurationService(cartServiceMock, baseSiteServiceMock, checkoutComApmComponentDaoMock, checkoutComApmConfigurationDaoMock, checkoutComAPMConfigurationSettingsMock));
 
         when(restrictedCountryMock.getIsocode()).thenReturn(FRANCE.getCountry());
         when(restrictedCurrencyMock.getIsocode()).thenReturn(EUR);
@@ -100,6 +112,10 @@ public class DefaultCheckoutComAPMConfigurationServiceTest {
         when(component2Mock.getApmConfiguration()).thenReturn(apmConfiguration2Mock);
         when(component1Mock.getVisible()).thenReturn(Boolean.TRUE);
         when(component2Mock.getVisible()).thenReturn(Boolean.TRUE);
+        when(baseSiteServiceMock.getCurrentBaseSite()).thenReturn(baseSiteModelMock);
+        when(baseSiteModelMock.getCheckoutComMerchantConfiguration()).thenReturn(checkoutComMerchantConfigurationModelMock);
+        when(checkoutComMerchantConfigurationModelMock.getUseNas()).thenReturn(true);
+        when(apmConfiguration1Mock.getEnabledInNAS()).thenReturn(true);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,7 +134,24 @@ public class DefaultCheckoutComAPMConfigurationServiceTest {
     }
 
     @Test
-    public void isApmAvailable_WhenApmConfigurationDoesNotHaveRestrictions_ShouldReturnTrue() {
+    public void isApmAvailable_WhenSiteConfigurationIsEnabledForNAS_andAPMIsNot_ShouldReturnFalse() {
+        when(apmConfiguration1Mock.getEnabledInNAS()).thenReturn(false);
+
+        assertFalse(testObj.isApmAvailable(apmConfiguration1Mock, UK.getCountry(), GBP));
+    }
+
+    @Test
+    public void isApmAvailable_WhenSiteConfigurationAndAPMAreNotEnabledForNAS_andAPMOrBaseSiteDoNotHaveRestrictions_ShouldReturnTrue() {
+        when(checkoutComMerchantConfigurationModelMock.getUseNas()).thenReturn(false);
+        when(apmConfiguration1Mock.getEnabledInNAS()).thenReturn(false);
+        when(apmConfiguration1Mock.getRestrictedCountries()).thenReturn(emptySet());
+        when(apmConfiguration1Mock.getRestrictedCurrencies()).thenReturn(emptySet());
+
+        assertTrue(testObj.isApmAvailable(apmConfiguration1Mock, UK.getCountry(), GBP));
+    }
+
+    @Test
+    public void isApmAvailable_WhenSiteConfigurationAndAPMAreEnabledForNAS_andApmConfigurationDoesNotHaveRestrictions_andBaseSite_ShouldReturnTrue() {
         when(apmConfiguration1Mock.getRestrictedCountries()).thenReturn(emptySet());
         when(apmConfiguration1Mock.getRestrictedCurrencies()).thenReturn(emptySet());
 

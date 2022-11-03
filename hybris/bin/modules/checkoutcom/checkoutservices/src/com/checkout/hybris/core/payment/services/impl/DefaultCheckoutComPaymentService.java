@@ -13,6 +13,8 @@ import com.checkout.hybris.core.payment.services.CheckoutComPaymentTransactionSe
 import com.checkout.hybris.events.enums.CheckoutComPaymentEventType;
 import com.checkout.hybris.events.model.CheckoutComPaymentEventModel;
 import com.checkout.payments.PaymentPending;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -40,19 +42,19 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
 
     protected static final String ORDER_MODEL_CANNOT_BE_NULL = "OrderModel cannot be null";
 
-    protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
-    protected final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper;
     protected final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver;
     protected final CheckoutComPaymentTransactionService checkoutComPaymentTransactionService;
+    protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
+    protected final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper;
 
-    public DefaultCheckoutComPaymentService(final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
-                                            final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper,
-                                            final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver,
-                                            final CheckoutComPaymentTransactionService checkoutComPaymentTransactionService) {
-        this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
-        this.checkoutComPaymentResponseStrategyMapper = checkoutComPaymentResponseStrategyMapper;
+    public DefaultCheckoutComPaymentService(final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver,
+                                            final CheckoutComPaymentTransactionService checkoutComPaymentTransactionService,
+                                            final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                            final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper) {
         this.checkoutComPaymentTypeResolver = checkoutComPaymentTypeResolver;
         this.checkoutComPaymentTransactionService = checkoutComPaymentTransactionService;
+        this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
+        this.checkoutComPaymentResponseStrategyMapper = checkoutComPaymentResponseStrategyMapper;
     }
 
     /**
@@ -147,11 +149,14 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
                 transactionStatus = PENDING.name();
                 transactionStatusDetails = SUCCESFULL.name();
             } else {
-                final String siteId = transaction.getOrder().getSite().getUid();
+                final AbstractOrderModel order = transaction.getOrder();
+                final String siteId = order.getSite().getUid();
                 final boolean shouldPutTransactionInReview = paymentEvent.getRiskFlag() && checkoutComMerchantConfigurationService.isReviewTransactionsAtRisk(siteId);
 
                 transactionStatus = shouldPutTransactionInReview ? REVIEW.name() : ACCEPTED.name();
                 transactionStatusDetails = shouldPutTransactionInReview ? REVIEW_NEEDED.name() : SUCCESFULL.name();
+                order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+                getModelService().save(order);
             }
 
             LOG.debug("Creating a new transaction entry of type [{}] based on event with id [{}]", transactionType.toString(), paymentEvent.getEventId());
@@ -193,7 +198,16 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
      */
     @Override
     public boolean isAutoCapture(final OrderModel order) {
-        return order != null && order.getPaymentInfo() instanceof CheckoutComCreditCardPaymentInfoModel && ((CheckoutComCreditCardPaymentInfoModel) order.getPaymentInfo()).getAutoCapture();
+        if (order == null) {
+            return false;
+        }
+
+        final PaymentInfoModel paymentInfo = order.getPaymentInfo();
+        if (paymentInfo instanceof CheckoutComCreditCardPaymentInfoModel) {
+            return ((CheckoutComCreditCardPaymentInfoModel) order.getPaymentInfo()).getAutoCapture();
+        } else {
+            return order.getSite().getCheckoutComMerchantConfiguration().getUseNas();
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.checkout.hybris.events.validators;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,13 +10,12 @@ import java.security.NoSuchAlgorithmException;
 public interface CheckoutComRequestEventValidator {
 
     /**
-     * Validates the ckoSignature
+     * Validates the event signature/Headers
      *
-     * @param ckoSignature the received signature
      * @param eventBody    the event body
      * @return true if valid, false otherwise
      * @throws InvalidKeyException      secret key invalid
      * @throws NoSuchAlgorithmException algorithm not found
      */
-    boolean isCkoSignatureValid(String ckoSignature, String eventBody) throws InvalidKeyException, NoSuchAlgorithmException;
+    boolean isRequestEventValid(final HttpServletRequest request, final String eventBody) throws NoSuchAlgorithmException, InvalidKeyException;
 }

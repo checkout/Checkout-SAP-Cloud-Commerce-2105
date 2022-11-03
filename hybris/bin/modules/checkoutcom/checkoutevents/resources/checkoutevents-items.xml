@@ -10,6 +10,7 @@
             <value code="payment_void_declined"/>
             <value code="payment_captured"/>
             <value code="payment_capture_declined"/>
+            <value code="payment_capture_pending"/>
             <value code="payment_refunded"/>
             <value code="payment_refund_declined"/>
             <value code="payment_pending"/>
