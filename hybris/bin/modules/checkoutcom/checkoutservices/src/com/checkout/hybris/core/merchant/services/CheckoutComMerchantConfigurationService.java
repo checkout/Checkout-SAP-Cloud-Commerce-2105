@@ -4,6 +4,7 @@ package com.checkout.hybris.core.merchant.services;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.enums.PaymentActionType;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
+import com.checkout.hybris.core.model.CheckoutComACHConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComApplePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComKlarnaConfigurationModel;
@@ -21,12 +22,50 @@ public interface CheckoutComMerchantConfigurationService {
     String getSecretKey();
 
     /**
-     * Returns the secret key from the merchant configuration of the given site
+     * Returns the secret key from the merchant configuration of the current site
      *
-     * @param siteId the site id for which to get the secret
      * @return the secret key
      */
-    String getSecretKeyForSite(String siteId);
+    String getSignatureKey();
+
+    /**
+     * Returns the authorization key from the merchant configuration of the current site. This value
+     * is validated on incoming Notification/Events
+     *
+     * @return the authorization key
+     */
+    String getAuthorizationKey();
+
+    /**
+     * Returns whether Nas is used on the merchant configuration of the current site
+     *
+     * @return the activated value
+     */
+    boolean isNasUsed();
+
+    /**
+     * Returns whether Nas authorisation header is used on the merchant configuration of the current site to validate
+     * incoming notifications
+     *
+     * @return the activated value
+     */
+    boolean isNasAuthorisationHeaderUsedOnNotificationValidation();
+
+    /**
+     * Returns whether the NAS signature key is used on the merchant configuration of the current site to validate
+     * incoming notifications
+     *
+     * @return {@code True} if enabled, {@code False} otherwise
+     */
+    boolean isNasSignatureKeyUsedOnNotificationValidation();
+
+    /**
+     * Returns whether the ABC signature key is used on the merchant configuration of the current site to validate
+     * incoming notifications
+     *
+     * @return {@code True} if enabled, {@code False} otherwise
+     */
+    boolean isAbcSignatureKeyUsedOnNotificationValidation();
 
     /**
      * Returns the secret key from the merchant configuration of the current site
@@ -122,6 +161,13 @@ public interface CheckoutComMerchantConfigurationService {
      * @return a {@link CheckoutComGooglePayConfigurationModel}
      */
     CheckoutComGooglePayConfigurationModel getGooglePayConfiguration();
+
+    /**
+     * Returns the CheckoutComACHConfigurationModel configuration for the current site
+     *
+     * @return a {@link CheckoutComACHConfigurationModel}
+     */
+    CheckoutComACHConfigurationModel getACHConfiguration();
 
     /**
      * Returns the threshold used to decide whether an authorisation amount is valid or not

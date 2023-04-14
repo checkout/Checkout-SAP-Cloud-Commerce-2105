@@ -1,0 +1,19 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+                               ; InboundCart        ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code)  ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCart                           ; Cart               ; Cart        ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundCart                           ; User               ; User        ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundCart                           ; PaymentInfo        ; PaymentInfo ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundCart:Cart                                                   ; paymentInfo                 ; Cart:paymentInfo                                   ; InboundCart:PaymentInfo                                   ; true                   ;
+                                            ; InboundCart:Cart                                                   ; user                        ; Cart:user                                          ; InboundCart:User                                          ;                        ;
+                                            ; InboundCart:Cart                                                   ; code                        ; Cart:code                                          ;                                                           ; true                   ;
+                                            ; InboundCart:Cart                                                   ; totalPrice                  ; Cart:totalPrice                                    ;                                                           ; true                   ;
+                                            ; InboundCart:Cart                                                   ; checkoutComPaymentReference ; Cart:checkoutComPaymentReference                   ;                                                           ; true                   ;
+                                            ; InboundCart:User                                                   ; uid                         ; User:uid                                           ;                                                           ; true                   ;
+                                            ; InboundCart:PaymentInfo                                            ; code                        ; PaymentInfo:code                                   ;                                                           ; true                   ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundCart                           ; BASIC

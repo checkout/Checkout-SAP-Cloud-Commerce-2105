@@ -2,6 +2,7 @@ package com.checkout.hybris.facades.payment.converters.populators;
 
 import com.checkout.hybris.core.enums.AchAccountType;
 import com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel;
+import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.facades.beans.AchPaymentInfoData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -21,11 +22,14 @@ public class CheckoutComAchPaymentInfoReversePopulator implements Populator<AchP
         Assert.notNull(source, "Parameter AchPaymentInfoData cannot be null.");
         Assert.notNull(target, "Parameter CheckoutComAchPaymentInfoModel cannot be null.");
 
-        target.setUserDataRequired(true);
         target.setAccountHolderName(source.getAccountHolderName());
         target.setAccountNumber(source.getAccountNumber());
         target.setAccountType(StringUtils.isNotBlank(source.getAccountType()) ? AchAccountType.valueOf(source.getAccountType()) : null);
+        target.setPaymentMethod(source.getPaymentMethod());
+        target.setBankCode(source.getBankCode());
         target.setRoutingNumber(source.getRoutingNumber());
+        target.setType(CheckoutComPaymentType.ACH.name());
         target.setCompanyName(source.getCompanyName());
+        target.setMask(source.getMask());
     }
 }

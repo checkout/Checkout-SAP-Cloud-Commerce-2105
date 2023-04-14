@@ -1,5 +1,6 @@
 package com.checkout.hybris.facades.payment.impl;
 
+import com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
 import com.checkout.hybris.core.payment.details.mappers.CheckoutComUpdatePaymentInfoStrategyMapper;
 import com.checkout.hybris.core.payment.details.strategies.CheckoutComUpdatePaymentInfoStrategy;
@@ -34,19 +35,22 @@ public class DefaultCheckoutComPaymentInfoFacade implements CheckoutComPaymentIn
     protected final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver;
     protected final CheckoutComApmMappedPaymentInfoReverseConverter checkoutComApmMappedPaymentInfoReverseConverter;
     protected final CheckoutComUpdatePaymentInfoStrategyMapper checkoutComUpdatePaymentInfoStrategyMapper;
+    protected final Converter<AchPaymentInfoData, CheckoutComAchPaymentInfoModel> checkoutComAchPaymentInfoReverseConverter;
 
     public DefaultCheckoutComPaymentInfoFacade(final CartService cartService,
                                                final CheckoutComPaymentInfoService paymentInfoService,
                                                final Converter<CCPaymentInfoData, CheckoutComCreditCardPaymentInfoModel> checkoutComCCPaymentInfoReverseConverter,
                                                final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver,
                                                final CheckoutComApmMappedPaymentInfoReverseConverter checkoutComApmMappedPaymentInfoReverseConverter,
-                                               final CheckoutComUpdatePaymentInfoStrategyMapper checkoutComUpdatePaymentInfoStrategyMapper) {
+                                               final CheckoutComUpdatePaymentInfoStrategyMapper checkoutComUpdatePaymentInfoStrategyMapper,
+                                               final Converter<AchPaymentInfoData, CheckoutComAchPaymentInfoModel> checkoutComAchPaymentInfoReverseConverter) {
         this.cartService = cartService;
         this.paymentInfoService = paymentInfoService;
         this.checkoutComCCPaymentInfoReverseConverter = checkoutComCCPaymentInfoReverseConverter;
         this.checkoutComPaymentTypeResolver = checkoutComPaymentTypeResolver;
         this.checkoutComApmMappedPaymentInfoReverseConverter = checkoutComApmMappedPaymentInfoReverseConverter;
         this.checkoutComUpdatePaymentInfoStrategyMapper = checkoutComUpdatePaymentInfoStrategyMapper;
+        this.checkoutComAchPaymentInfoReverseConverter = checkoutComAchPaymentInfoReverseConverter;
     }
 
     /**
@@ -62,6 +66,9 @@ public class DefaultCheckoutComPaymentInfoFacade implements CheckoutComPaymentIn
             PaymentInfoModel paymentInfoModel;
             if (paymentInfoData instanceof CCPaymentInfoData && StringUtils.isNotBlank(((CCPaymentInfoData) paymentInfoData).getCardType())) {
                 paymentInfoModel = checkoutComCCPaymentInfoReverseConverter.convert((CCPaymentInfoData) paymentInfoData);
+                paymentInfoService.createPaymentInfo(paymentInfoModel, sessionCart);
+            } else if (paymentInfoData instanceof AchPaymentInfoData) {
+                paymentInfoModel = checkoutComAchPaymentInfoReverseConverter.convert((AchPaymentInfoData) paymentInfoData);
                 paymentInfoService.createPaymentInfo(paymentInfoModel, sessionCart);
             } else if (paymentInfoData instanceof APMPaymentInfoData) {
                 final APMPaymentInfoData apmPaymentInfoData = (APMPaymentInfoData) paymentInfoData;
@@ -90,7 +97,6 @@ public class DefaultCheckoutComPaymentInfoFacade implements CheckoutComPaymentIn
                 return idealPaymentInfoData;
             case ACH:
                 final AchPaymentInfoData achPaymentInfoData = new AchPaymentInfoData();
-                achPaymentInfoData.setType(ACH.name());
                 return achPaymentInfoData;
             case SEPA:
                 final SepaPaymentInfoData sepaPaymentInfoData = new SepaPaymentInfoData();

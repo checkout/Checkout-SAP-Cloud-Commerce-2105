@@ -35,48 +35,9 @@ public class MockProcess2WarehouseAdapter implements Process2WarehouseAdapter
 		}
 		consignment.setStatus(ConsignmentStatus.READY);
 		getModelService().save(consignment);
-		final Runnable runnable = new Warehouse(Registry.getCurrentTenant().getTenantID(), consignment.getPk().getLongValue());
-		new Thread(runnable).start();
 
-		try
-		{
-			Thread.sleep(3000);
-		}
-		catch (final InterruptedException e)
-		{
-			//nothing to do
-		}
+		getWarehouse2ProcessAdapter().receiveConsignmentStatus(consignment, WarehouseConsignmentStatus.COMPLETE);
 	}
-
-	public class Warehouse implements Runnable
-	{
-		private final long consignment;
-		private final String tenant;
-
-		public Warehouse(final String tenant, final long consignment)
-		{
-			super();
-
-			this.consignment = consignment;
-			this.tenant = tenant;
-		}
-
-		@Override
-		public void run()
-		{
-			Registry.setCurrentTenant(Registry.getTenantByID(tenant));
-			try
-			{
-				final ConsignmentModel model = getModelService().get(PK.fromLong(consignment));
-				getWarehouse2ProcessAdapter().receiveConsignmentStatus(model, WarehouseConsignmentStatus.COMPLETE);
-			}
-			finally
-			{
-				Registry.unsetCurrentTenant();
-			}
-		}
-	}
-
 
 	@Override
 	public void shipConsignment(final ConsignmentModel consignment)

@@ -4,6 +4,7 @@ import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.enums.PaymentActionType;
 import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
+import com.checkout.hybris.core.model.CheckoutComACHConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComApplePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComKlarnaConfigurationModel;
@@ -30,15 +31,56 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
      */
     @Override
     public String getSecretKey() {
-        return getCurrentConfiguration().getSecretKey();
+        final CheckoutComMerchantConfigurationModel currentConfiguration = getCurrentConfiguration();
+        return currentConfiguration.getUseNas() ? currentConfiguration.getNasSecretKey() : currentConfiguration.getSecretKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getSecretKeyForSite(final String siteId) {
-        return getConfigurationForSiteId(siteId).getSecretKey();
+    public String getSignatureKey() {
+        return getCurrentConfiguration().getNasSignatureKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAuthorizationKey() {
+        return getCurrentConfiguration().getNasAuthorisationHeaderKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNasUsed() {
+        return getCurrentConfiguration().getUseNas();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNasAuthorisationHeaderUsedOnNotificationValidation() {
+        return getCurrentConfiguration().getUseNasAuthorisationKeyOnNotifications();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNasSignatureKeyUsedOnNotificationValidation() {
+        return getCurrentConfiguration().getUseNasSignatureKeyOnNotifications();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isAbcSignatureKeyUsedOnNotificationValidation() {
+        return getCurrentConfiguration().getUseAbcSignatureKeyOnNotifications();
     }
 
     /**
@@ -46,7 +88,8 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
      */
     @Override
     public String getPublicKey() {
-        return getCurrentConfiguration().getPublicKey();
+        final CheckoutComMerchantConfigurationModel currentConfiguration = getCurrentConfiguration();
+        return currentConfiguration.getUseNas() ? currentConfiguration.getNasPublicKey() : currentConfiguration.getPublicKey();
     }
 
     /**
@@ -54,7 +97,8 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
      */
     @Override
     public String getPublicKeyForSite(final String siteId) {
-        return getConfigurationForSiteId(siteId).getPublicKey();
+        final CheckoutComMerchantConfigurationModel currentConfiguration = getConfigurationForSiteId(siteId);
+        return currentConfiguration.getUseNas() ? currentConfiguration.getNasPublicKey() : currentConfiguration.getPublicKey();
     }
 
     /**
@@ -62,7 +106,8 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
      */
     @Override
     public String getPrivateSharedKey() {
-        return getCurrentConfiguration().getPrivateSharedKey();
+        final CheckoutComMerchantConfigurationModel currentConfiguration = getCurrentConfiguration();
+        return currentConfiguration.getUseNas() ? currentConfiguration.getNasSignatureKey() : currentConfiguration.getPrivateSharedKey();
     }
 
     /**
@@ -156,9 +201,27 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
      * {@inheritDoc}
      */
     @Override
+    public CheckoutComACHConfigurationModel getACHConfiguration() {
+        final CheckoutComMerchantConfigurationModel configuration = getCurrentConfiguration();
+        return configuration.getAchConfiguration();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public CheckoutComKlarnaConfigurationModel getKlarnaConfiguration() {
         final CheckoutComMerchantConfigurationModel configuration = getCurrentConfiguration();
         return configuration.getKlarnaConfiguration();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Double getAuthorisationAmountValidationThreshold(final String siteId) {
+        final Double authorisationAmountValidationTolerance = getConfigurationForSiteId(siteId).getAuthorisationAmountValidationThreshold();
+        return authorisationAmountValidationTolerance != null ? authorisationAmountValidationTolerance : Double.valueOf(0.0d);
     }
 
     protected CheckoutComMerchantConfigurationModel getCurrentConfiguration() {
@@ -174,15 +237,6 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
         checkArgument(baseSite != null, "Base site is null for id " + siteId);
 
         return baseSite.getCheckoutComMerchantConfiguration();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Double getAuthorisationAmountValidationThreshold(final String siteId) {
-        final Double authorisationAmountValidationTolerance = getConfigurationForSiteId(siteId).getAuthorisationAmountValidationThreshold();
-        return authorisationAmountValidationTolerance != null ? authorisationAmountValidationTolerance : Double.valueOf(0.0d);
     }
 
 }

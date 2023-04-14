@@ -1,18 +1,18 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-; InboundOxxoPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]    ; integrationType(code)
+                               ; InboundOxxoPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-; InboundOxxoPaymentInfo	; CheckoutComOxxoPaymentInfo	; CheckoutComOxxoPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundOxxoPaymentInfo	; User                      	; User                      	; 	; ALL_SUB_AND_SUPER_TYPES	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]        ; type(code)                 ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundOxxoPaymentInfo                ; CheckoutComOxxoPaymentInfo ; CheckoutComOxxoPaymentInfo ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundOxxoPaymentInfo                ; User                       ; User                       ;                      ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo	; user        	; CheckoutComOxxoPaymentInfo:user        	; InboundOxxoPaymentInfo:User	; 	;
-; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo	; code        	; CheckoutComOxxoPaymentInfo:code        	;                            	; 	;
-; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo	; type        	; CheckoutComOxxoPaymentInfo:type        	;                            	; 	;
-; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo	; creationtime	; CheckoutComOxxoPaymentInfo:creationtime	;                            	; true	;
-; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo	; paymentId   	; CheckoutComOxxoPaymentInfo:paymentId   	;                            	; 	;
-; InboundOxxoPaymentInfo:User                      	; uid         	; User:uid                               	;                            	; true	;
+                                            ; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo                  ; user                        ; CheckoutComOxxoPaymentInfo:user                    ; InboundOxxoPaymentInfo:User                               ;                        ;
+                                            ; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo                  ; code                        ; CheckoutComOxxoPaymentInfo:code                    ;                                                           ;                        ;
+                                            ; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo                  ; type                        ; CheckoutComOxxoPaymentInfo:type                    ;                                                           ;                        ;
+                                            ; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo                  ; creationtime                ; CheckoutComOxxoPaymentInfo:creationtime            ;                                                           ; true                   ;
+                                            ; InboundOxxoPaymentInfo:CheckoutComOxxoPaymentInfo                  ; paymentId                   ; CheckoutComOxxoPaymentInfo:paymentId               ;                                                           ;                        ;
+                                            ; InboundOxxoPaymentInfo:User                                        ; uid                         ; User:uid                                           ;                                                           ; true                   ;
 
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundOxxoPaymentInfo                          ; BASIC
+                                         ; InboundOxxoPaymentInfo                ; BASIC

@@ -1,15 +1,20 @@
 INSERT_UPDATE ServicelayerJob; code[unique = true]                  ; springId[unique = true]
                              ; checkoutComPaymentEventProcessingJob ; checkoutComPaymentEventProcessingJob
                              ; checkoutComPaymentEventCleanupJob    ; checkoutComPaymentEventCleanupJob
+                             ; checkoutComCleanupJob                ; checkoutComCleanupJob
 
-INSERT_UPDATE CheckoutComPaymentEventProcessingCronJob; code[unique = true]                     ; job(code)                            ; checkoutComPaymentEventTypes(code)                                                     ; paymentTransactionType(code); sessionLanguage(isoCode)[default = en]
-                                                      ; checkoutComAuthorisePaymentEventCronJob ; checkoutComPaymentEventProcessingJob ; payment_approved, payment_pending, payment_declined, payment_expired, payment_canceled ; AUTHORIZATION               ;
-                                                      ; checkoutComCapturePaymentEventCronJob   ; checkoutComPaymentEventProcessingJob ; payment_captured, payment_capture_declined                                             ; CAPTURE                     ;
-                                                      ; checkoutComRefundPaymentEventCronJob    ; checkoutComPaymentEventProcessingJob ; payment_refunded, payment_refund_declined                                              ; REFUND_FOLLOW_ON            ;
-                                                      ; checkoutComVoidPaymentEventCronJob      ; checkoutComPaymentEventProcessingJob ; payment_voided, payment_void_declined, payment_canceled                                ; CANCEL                      ;
+INSERT_UPDATE CheckoutComPaymentEventProcessingCronJob; code[unique = true]                     ; job(code)                            ; checkoutComPaymentEventTypes(code)                                                                              ; paymentTransactionType(code); sessionLanguage(isoCode)[default = en]
+                                                      ; checkoutComAuthorisePaymentEventCronJob ; checkoutComPaymentEventProcessingJob ; payment_approved, payment_pending, payment_declined, payment_expired, payment_canceled, payment_capture_pending ; AUTHORIZATION               ;
+                                                      ; checkoutComCapturePaymentEventCronJob   ; checkoutComPaymentEventProcessingJob ; payment_captured, payment_capture_declined                                                                      ; CAPTURE                     ;
+                                                      ; checkoutComRefundPaymentEventCronJob    ; checkoutComPaymentEventProcessingJob ; payment_refunded, payment_refund_declined                                                                       ; REFUND_FOLLOW_ON            ;
+                                                      ; checkoutComVoidPaymentEventCronJob      ; checkoutComPaymentEventProcessingJob ; payment_voided, payment_void_declined, payment_canceled                                                         ; CANCEL                      ;
+                                                      ; checkoutComReturnPaymentEventCronJob    ; checkoutComPaymentEventProcessingJob ; payment_returned                                                                                                ; RETURN                      ;
 
 INSERT_UPDATE CheckoutComPaymentEventCleanupCronJob; code[unique = true]                            ; job(code)                         ; paymentEventStatus(code); ageInDaysBeforeDeletion; sessionLanguage(isoCode)[default = en]
                                                    ; checkoutComCompletedPaymentEventCleanupCronJob ; checkoutComPaymentEventCleanupJob ; COMPLETED               ; 5                      ;
                                                    ; checkoutComPendingPaymentEventCleanupCronJob   ; checkoutComPaymentEventCleanupJob ; PENDING                 ; 30                     ;
                                                    ; checkoutComFailedPaymentEventCleanupCronJob    ; checkoutComPaymentEventCleanupJob ; FAILED                  ; 30                     ;
                                                    ; checkoutComIgnoredPaymentEventCleanupCronJob   ; checkoutComPaymentEventCleanupJob ; IGNORED                 ; 5                      ;
+
+INSERT_UPDATE CheckoutComCleanupCronJob; code[unique = true]                 ; job(code)             ; itemTypeCode          ; itemRemovalAge; batchSize[default = 5000]; sessionLanguage(isoCode)[default = en]
+                                       ; checkoutComCleanupACHConsentCronJob ; checkoutComCleanupJob ; CheckoutComACHConsent ; 63072000      ;                          ;

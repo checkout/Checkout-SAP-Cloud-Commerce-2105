@@ -3,10 +3,7 @@ package com.checkout.hybris.core.merchant.services.impl;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.enums.PaymentActionType;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
-import com.checkout.hybris.core.model.CheckoutComApplePayConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComKlarnaConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
+import com.checkout.hybris.core.model.*;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.site.BaseSiteService;
@@ -17,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +25,10 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
     private static final String SECRET_KEY = "secretKey";
     private static final String PUBLIC_KEY = "publicKey";
     private static final String PRIVATE_SHARED_KEY = "privateSharedKey";
+    private static final String NAS_SECRET_KEY = "nasSecretKey";
+    private static final String NAS_PUBLIC_KEY = "nasPublicKey";
+    private static final String NAS_AUTH_HEADER_KEY = "nasAuthHeaderKey";
+    private static final String NAS_SIGNATURE_KEY = "signatureKey";
     private static final String TEST = "test";
     private static final String AUTHORIZE = "authorize";
     private static final String BASE_SITE_ID = "base-site-id";
@@ -38,16 +40,19 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
 
     @Mock
     private BaseSiteService baseSiteServiceMock;
+
     @Mock
     private BaseSiteModel baseSiteMock;
     @Mock
-    private CheckoutComMerchantConfigurationModel merchantConfigurationMock;
+    private CheckoutComKlarnaConfigurationModel klarnaConfigMock;
     @Mock
     private CheckoutComApplePayConfigurationModel applePayConfigMock;
     @Mock
     private CheckoutComGooglePayConfigurationModel googlePayConfigMock;
     @Mock
-    private CheckoutComKlarnaConfigurationModel klarnaConfigMock;
+    private CheckoutComMerchantConfigurationModel merchantConfigurationMock;
+    @Mock
+    private CheckoutComACHConfigurationModel achConfigurationMock;
 
     @Before
     public void setUp() {
@@ -63,15 +68,6 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
         when(merchantConfigurationMock.getSecretKey()).thenReturn(SECRET_KEY);
 
         final String result = testObj.getSecretKey();
-
-        assertEquals(SECRET_KEY, result);
-    }
-
-    @Test
-    public void getSecretKeyForSite_ShouldReturnTheValueAsExpected() {
-        when(merchantConfigurationMock.getSecretKey()).thenReturn(SECRET_KEY);
-
-        final String result = testObj.getSecretKeyForSite(BASE_SITE_ID);
 
         assertEquals(SECRET_KEY, result);
     }
@@ -101,6 +97,46 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
         final String result = testObj.getPrivateSharedKey();
 
         assertEquals(PRIVATE_SHARED_KEY, result);
+    }
+
+    @Test
+    public void getSecretKey_WhenNASEnabled_ShouldReturnTheValueAsExpected() {
+        when(merchantConfigurationMock.getUseNas()).thenReturn(Boolean.TRUE);
+        when(merchantConfigurationMock.getNasSecretKey()).thenReturn(NAS_SECRET_KEY);
+
+        final String result = testObj.getSecretKey();
+
+        assertEquals(NAS_SECRET_KEY, result);
+    }
+
+    @Test
+    public void getPublicKey_WhenNASEnabled_ShouldReturnTheValueAsExpected() {
+        when(merchantConfigurationMock.getUseNas()).thenReturn(Boolean.TRUE);
+        when(merchantConfigurationMock.getNasPublicKey()).thenReturn(NAS_PUBLIC_KEY);
+
+        final String result = testObj.getPublicKey();
+
+        assertEquals(NAS_PUBLIC_KEY, result);
+    }
+
+    @Test
+    public void getPublicKeyForSite_WhenNASEnabled_ShouldReturnTheValueAsExpected() {
+        when(merchantConfigurationMock.getUseNas()).thenReturn(Boolean.TRUE);
+        when(merchantConfigurationMock.getNasPublicKey()).thenReturn(NAS_PUBLIC_KEY);
+
+        final String result = testObj.getPublicKeyForSite(BASE_SITE_ID);
+
+        assertEquals(NAS_PUBLIC_KEY, result);
+    }
+
+    @Test
+    public void getPrivateSharedKey_WhenNASEnabled_ShouldReturnTheValueAsExpected() {
+        when(merchantConfigurationMock.getUseNas()).thenReturn(Boolean.TRUE);
+        when(merchantConfigurationMock.getNasSignatureKey()).thenReturn(NAS_SIGNATURE_KEY);
+
+        final String result = testObj.getPrivateSharedKey();
+
+        assertEquals(NAS_SIGNATURE_KEY, result);
     }
 
     @Test
@@ -262,5 +298,60 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
         final CheckoutComKlarnaConfigurationModel result = testObj.getKlarnaConfiguration();
 
         assertEquals(klarnaConfigMock, result);
+    }
+
+    @Test
+    public void getSignatureKey_shouldReturnNASSignatureKey() {
+        when(merchantConfigurationMock.getNasSignatureKey()).thenReturn(NAS_SIGNATURE_KEY);
+
+        final String result = testObj.getSignatureKey();
+
+        assertEquals(NAS_SIGNATURE_KEY, result);
+    }
+
+    @Test
+    public void getNasAuthorizationKey_shouldReturnNASAuthorizationKey() {
+        when(merchantConfigurationMock.getNasAuthorisationHeaderKey()).thenReturn(NAS_AUTH_HEADER_KEY);
+
+        final String result = testObj.getAuthorizationKey();
+
+        assertEquals(NAS_AUTH_HEADER_KEY, result);
+    }
+
+    @Test
+    public void isNasUsed_shouldReturnConfigurationNASFlag() {
+        when(merchantConfigurationMock.getUseNas()).thenReturn(true);
+
+        assertTrue(testObj.isNasUsed());
+    }
+
+    @Test
+    public void isNasAuthorisationHeaderUsedOnNotificationValidation_shouldReturnConfigurationFlag() {
+        when(merchantConfigurationMock.getUseNasAuthorisationKeyOnNotifications()).thenReturn(true);
+
+        assertTrue(testObj.isNasAuthorisationHeaderUsedOnNotificationValidation());
+    }
+
+    @Test
+    public void isNasSignatureKeyUsedOnNotificationValidation_shouldReturnConfigurationFlag() {
+        when(merchantConfigurationMock.getUseNasSignatureKeyOnNotifications()).thenReturn(true);
+
+        assertTrue(testObj.isNasSignatureKeyUsedOnNotificationValidation());
+    }
+
+    @Test
+    public void isAbcSignatureKeyUsedOnNotificationValidation_shouldReturnConfigurationFlag() {
+        when(merchantConfigurationMock.getUseAbcSignatureKeyOnNotifications()).thenReturn(true);
+
+        assertTrue(testObj.isAbcSignatureKeyUsedOnNotificationValidation());
+    }
+
+    @Test
+    public void getAchConfiguration_shouldReturnAchConfiguration() {
+        when(merchantConfigurationMock.getAchConfiguration()).thenReturn(achConfigurationMock);
+
+        final CheckoutComACHConfigurationModel result = testObj.getACHConfiguration();
+
+        assertThat(result).isSameAs(achConfigurationMock);
     }
 }

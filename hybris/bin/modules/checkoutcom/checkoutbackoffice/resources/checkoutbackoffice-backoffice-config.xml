@@ -23,6 +23,7 @@
                 <explorer-tree:type-node code="MadaBin" id="checkoutcom.madabins.node"/>
                 <explorer-tree:type-node code="AchAccountType" id="checkoutcom.achaccounttype.node"/>
                 <explorer-tree:type-node code="CheckoutComPaymentMethodComponent" id="checkoutcom.payment.cmscomponents.node"/>
+                <explorer-tree:type-node code="CheckoutComAchConsent" id="checkoutcom.achconsent.node"/>
             </explorer-tree:navigation-node>
         </explorer-tree:explorer-tree>
     </context>
@@ -121,6 +122,14 @@
                         <editorArea:attribute qualifier="publicKey"/>
                         <editorArea:attribute qualifier="secretKey"/>
                         <editorArea:attribute qualifier="privateSharedKey"/>
+                        <editorArea:attribute qualifier="useNas"/>
+                        <editorArea:attribute qualifier="nasPublicKey"/>
+                        <editorArea:attribute qualifier="nasSecretKey"/>
+                        <editorArea:attribute qualifier="nasSignatureKey"/>
+                        <editorArea:attribute qualifier="nasAuthorisationHeaderKey"/>
+                        <editorArea:attribute qualifier="useNasAuthorisationKeyOnNotifications"/>
+                        <editorArea:attribute qualifier="useNasSignatureKeyOnNotifications"/>
+                        <editorArea:attribute qualifier="useAbcSignatureKeyOnNotifications"/>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="tab.configuration.checkoutcom.global.settings">
@@ -156,6 +165,11 @@
                 <editorArea:tab name="tab.configuration.checkoutcom.klarna.payments">
                     <editorArea:section name="sec.configuration.checkoutcom.details">
                         <editorArea:attribute qualifier="klarnaConfiguration"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="tab.configuration.checkoutcom.achpay.payments">
+                    <editorArea:section name="sec.configuration.checkoutcom.details">
+                        <editorArea:attribute qualifier="achConfiguration"/>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="tab.configuration.checkoutcom.payment.event">
@@ -364,6 +378,7 @@
                 <editorArea:tab name="tab.configuration.checkoutcom">
                     <editorArea:section name="sec.abstractorder.checkoutcom.details">
                         <editorArea:attribute qualifier="checkoutComPaymentReference"/>
+                        <editorArea:attribute qualifier="achConsent"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
@@ -403,6 +418,66 @@
                     <editorArea:attribute qualifier="name"/>
                     <editorArea:attribute qualifier="media"/>
                     <editorArea:attribute qualifier="apmConfiguration"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <!-- ACH Consent -->
+    <context component="base" merge-by="type" type="CheckoutComAchConsent">
+        <y:base>
+            <y:labels>
+                <y:label>order</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <context component="listview" type="CheckoutComAchConsent" merge-by="type">
+        <list-view:list-view refresh-after-object-creation="true">
+            <list-view:column qualifier="order"/>
+            <list-view:column qualifier="payer"/>
+            <list-view:column qualifier="email"/>
+            <list-view:column qualifier="accountType"/>
+            <list-view:column qualifier="bankName"/>
+            <list-view:column qualifier="accountNumber"/>
+            <list-view:column qualifier="routingNumber"/>
+        </list-view:list-view>
+    </context>
+
+    <context component="simple-search" type="CheckoutComAchConsent">
+        <simple-search:simple-search>
+            <yss:field name="order"/>
+            <yss:sort-field name="creationtime" asc="false"/>
+        </simple-search:simple-search>
+    </context>
+
+    <context type="CheckoutComAchConsent" component="advanced-search" merge-by="type" parent="GenericItem">
+        <advanced-search:advanced-search>
+            <advanced-search:field-list>
+                <advanced-search:field name="order"/>
+                <advanced-search:field name="payer"/>
+                <advanced-search:field name="email"/>
+            </advanced-search:field-list>
+            <advanced-search:sort-field name="creationtime" asc="false"/>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context component="editor-area" type="CheckoutComAchConsent" merge-by="type">
+        <editorArea:editorArea>
+            <editorArea:essentials>
+                <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute qualifier="order"/>
+                </editorArea:essentialSection>
+            </editorArea:essentials>
+            <editorArea:tab name="tab.checkoutcom.achconsent.properties">
+                <editorArea:section name="sec.checkoutcom.achconsent.details">
+                    <editorArea:attribute qualifier="order"/>
+                    <editorArea:attribute qualifier="payer"/>
+                    <editorArea:attribute qualifier="email"/>
+                    <editorArea:attribute qualifier="accountType"/>
+                    <editorArea:attribute qualifier="bankName"/>
+                    <editorArea:attribute qualifier="accountNumber"/>
+                    <editorArea:attribute qualifier="routingNumber"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>

@@ -5,6 +5,10 @@ UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.Co
 $secretKey = $config-checkout.secret.key
 $publicKey = $config-checkout.public.key
 $privateSharedKey = $config-checkout.private.shared.key
+$nasSecretKey = Bearer $config-checkout.nas.secret.key
+$nasPublicKey = Bearer $config-checkout.nas.public.key
+$nasSignatureKey = $config-checkout.nas.signature.key
+$nasAuthorizationHeaderKey = $config-checkout.nas.authorization.header.key
 $applePayCertificate = $config-checkout.applepay.certificate
 $applePayPrivateKey = $config-checkout.applepay.privatekey
 
@@ -22,12 +26,13 @@ INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ;
                                               ; merchantConfiguration-$siteUid ; applePayConfig                                 ; googlePayConfig                                  ; klarnaConfig
 
 # Merchant configuration
-INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; environment(code); paymentAction(code)   ; reviewTransactionsAtRisk; klarnaConfiguration(&klarnaConfigurationId); authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)                                                                                                                                                                                   ; includeBillingDescriptor; billingDescriptorName; billingDescriptorCity
-                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; test             ; authorize_and_capture ; true                    ; klarnaConfig                               ; 0.01                                  ; false         ; true            ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled ; true                    ; $siteUid             ; INTERNET
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; nasSecretKey  ; nasPublicKey  ; nasSignatureKey  ; nasAuthorisationHeaderKey  ; environment(code); paymentAction(code)   ; reviewTransactionsAtRisk; klarnaConfiguration(&klarnaConfigurationId); authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)                                                                                                                                                                                   ; includeBillingDescriptor; billingDescriptorName; billingDescriptorCity
+                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; $nasSecretKey ; $nasPublicKey ; $nasSignatureKey ; $nasAuthorisationHeaderKey ; test ; authorize_and_capture ; true ; klarnaConfig ; 0.01 ; false ; true ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled, payment_returned ; true ; $siteUid ; INTERNET
 
 # Set merchant configuration and payment redirect urls to the site
-UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code); checkoutComSuccessRedirectUrl; checkoutComFailureRedirectUrl
-               ; $siteUid          ; merchantConfiguration-$siteUid        ;                              ; "/order-confirmation?authorized=true" ; "/order-confirmation?authorized=false"
+INSERT_UPDATE BaseSite        ; uid[unique = true]; checkoutComMerchantConfiguration(code);
+checkoutComSuccessRedirectUrl ; checkoutComFailureRedirectUrl
+                              ; $siteUid          ; merchantConfiguration-$siteUid        ; ; "/order-confirmation?authorized=true" ; "/order-confirmation?authorized=false"
 
 INSERT_UPDATE MadaBin; code[unique = true]
                      ; 538530

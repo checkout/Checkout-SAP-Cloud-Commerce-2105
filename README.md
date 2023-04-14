@@ -79,9 +79,7 @@ Follow [this guideline](https://help.sap.com/viewer/1be46286b36a4aa48205be5a9624
 Spartacus is a lean, Angular-based JavaScript storefront for SAP Commerce Cloud. Spartacus talks to SAP Commerce Cloud exclusively through the Commerce REST API (OCC). The Connector for SAP Commerce Cloud supports the Spartacus frontend. Check out details and release notes in the Checkout.com repository for Spartacus.  
 
 # Release Notes
-- GooglePay 3D Secure payment support for both accelerator and spartacus
-- Spartacus: Fix 3D Secure redirect issue for card and googlePay payments
-- Spartacus: fix address selector
+- Added support for environments using NAS flows.
 
 # Support
 Contact your Checkout.com team if you have any question, technical problem or feature request for the SAP Commerce Cloud Connector.

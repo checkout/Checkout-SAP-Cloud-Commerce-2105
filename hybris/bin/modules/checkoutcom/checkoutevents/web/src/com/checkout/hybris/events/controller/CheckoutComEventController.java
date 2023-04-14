@@ -27,9 +27,9 @@ public class CheckoutComEventController {
     protected static final Logger LOG = LogManager.getLogger(CheckoutComEventController.class);
 
     @Resource
-    private CheckoutComRequestEventValidator checkoutComRequestEventValidator;
-    @Resource
     private CheckoutComEventFacade checkoutComEventFacade;
+    @Resource
+    private CheckoutComRequestEventValidator checkoutComRequestEventValidator;
 
     /**
      * Controller method to receives the checkout.com webhook events
@@ -40,25 +40,15 @@ public class CheckoutComEventController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping
     public void receiveEvent(final HttpServletRequest request, @RequestBody final String eventBody) {
-        final String ckoSignature = request.getHeader("cko-signature");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received event signature: [{}]; ", ckoSignature);
-            LOG.debug("Received event body: [{}]", eventBody);
-        }
-
-        boolean isCkoSignatureValid;
-
         try {
-            isCkoSignatureValid = checkoutComRequestEventValidator.isCkoSignatureValid(ckoSignature, eventBody);
+            if (checkoutComRequestEventValidator.isRequestEventValid(request, eventBody)) {
+                checkoutComEventFacade.publishPaymentEvent(eventBody);
+            } else {
+                LOG.error("The cko-signature/auth header is not valid.");
+            }
         } catch (final InvalidKeyException | NoSuchAlgorithmException e) {
             LOG.error("Exception while validating the event body.", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception while converting the event body to hmac.", e);
-        }
-
-        if (isCkoSignatureValid) {
-            checkoutComEventFacade.publishPaymentEvent(eventBody);
-        } else {
-            LOG.error("The cko-signature [{}] is not valid.", ckoSignature);
         }
 
     }

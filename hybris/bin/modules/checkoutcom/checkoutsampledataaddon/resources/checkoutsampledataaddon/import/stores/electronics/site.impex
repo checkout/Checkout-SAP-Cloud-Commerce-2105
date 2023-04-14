@@ -16,11 +16,16 @@ UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.Co
 $secretKey = $config-checkout.secret.key
 $publicKey = $config-checkout.public.key
 $privateSharedKey = $config-checkout.private.shared.key
+$nasSecretKey = Bearer $config-checkout.nas.secret.key
+$nasPublicKey = Bearer $config-checkout.nas.public.key
+$nasSignatureKey = $config-checkout.nas.signature.key
+$nasAuthorizationHeaderKey = $config-checkout.nas.authorization.header.key
 $applePayCertificate = $config-checkout.applepay.certificate
 $applePayPrivateKey = $config-checkout.applepay.privatekey
 
-INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; environment(code); paymentAction(code); reviewTransactionsAtRisk; authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)                                                                                                                                                                                   ; includeBillingDescriptor; billingDescriptorName; billingDescriptorCity
-                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; test             ; authorize          ; true                    ; 0.01                                  ; true          ; true            ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled ; true                    ; $siteUid             ; INTERNET
+# Merchant configuration
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; nasSecretKey  ; nasPublicKey  ; nasSignatureKey  ; nasAuthorisationHeaderKey  ; environment(code); paymentAction(code); reviewTransactionsAtRisk; authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)                                                                                                                                                                                                            ; includeBillingDescriptor; billingDescriptorName; billingDescriptorCity
+                                              ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; $nasSecretKey ; $nasPublicKey ; $nasSignatureKey ; $nasAuthorizationHeaderKey ; test ; authorize ; true ; 0.01 ; true ; true ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled, payment_capture_pending, payment_returned ; true ; $siteUid ; INTERNET
 
 INSERT_UPDATE CheckoutComApplePayConfiguration; &applePayConfigurationId; certificate[unique = true]; privateKey          ; supportedNetworks(code)                                                                                                                  ; countryCode; merchantCapabilities(code)                              ; merchantId                        ; merchantName
                                               ; applePayConfig          ; $applePayCertificate      ; $applePayPrivateKey ; amex, cartesBancaires, chinaUnionPay, discover, eftpos, electron, elo, interac, jcb, mada, maestro, masterCard, privateLabel, visa, vPay ; GB         ; supportsCredit, supportsDebit, supports3DS, supportsEMV ; merchant.com.checkout.sandbox.e2y ; e2yCheckoutCom
@@ -33,6 +38,12 @@ INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId
 
 INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; applePayConfiguration(&applePayConfigurationId); googlePayConfiguration(&googlePayConfigurationId); klarnaConfiguration(&klarnaConfigurationId)
                                               ; merchantConfiguration-$siteUid ; applePayConfig                                 ; googlePayConfig                                  ; klarnaConfig
+
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; useNas; useNasAuthorisationKeyOnNotifications; useNasSignatureKeyOnNotifications; useAbcSignatureKeyOnNotifications; achConfiguration(code)
+                                              ; merchantConfiguration-$siteUid ; true  ; true                                 ; true                             ; true                             ; checkoutComACHConfiguration
+
+INSERT_UPDATE CheckoutComACHConfiguration; code[unique = true]         ; clientId                 ; clientName ; linkCustomizationName ; redirectUri ; name ; language(isocode); secret                         ; webhook
+                                         ; checkoutComACHConfiguration ; 639a5791eb85d80013b0a14f ; clientName ; linkCustomizationName ; redirectUri ; name ; en               ; a829b3a6e0b2d927287e28fb11af2b ; webhook
 
 # SiteMap Language Currencies
 INSERT_UPDATE SiteMapLanguageCurrency; &siteMapLanguageCurrency; language(isoCode)[unique = true]; currency(isocode)[unique = true];
@@ -63,5 +74,5 @@ INSERT_UPDATE SiteMapConfig; &siteMapConfigId      ; configId[unique = true]; si
 INSERT_UPDATE CMSSite; uid[unique = true]; siteMapConfig(&siteMapConfigId);
                      ; $siteUid          ; $siteUidSiteMapConfig          ;
 
-UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code)
-               ; $siteUid          ; merchantConfiguration-$siteUid
+UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code);
+               ; $siteUid          ; merchantConfiguration-$siteUid        ;

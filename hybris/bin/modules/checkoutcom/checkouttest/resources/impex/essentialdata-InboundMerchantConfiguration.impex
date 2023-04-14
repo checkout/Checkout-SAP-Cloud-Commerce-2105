@@ -1,0 +1,18 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]                     ; integrationType(code)
+                               ; InboundCheckoutComMerchantConfiguration ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]  ; code[unique = true]              ; type(code)                       ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCheckoutComMerchantConfiguration ; CheckoutComMerchantConfiguration ; CheckoutComMerchantConfiguration ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]      ; attributeName[unique = true]          ; attributeDescriptor(enclosingType(code), qualifier)                    ; returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; secretKey                             ; CheckoutComMerchantConfiguration:secretKey                             ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; noThreeDSAttempt                      ; CheckoutComMerchantConfiguration:noThreeDSAttempt                      ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; useAbcSignatureKeyOnNotifications     ; CheckoutComMerchantConfiguration:useAbcSignatureKeyOnNotifications     ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; useNasSignatureKeyOnNotifications     ; CheckoutComMerchantConfiguration:useNasSignatureKeyOnNotifications     ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; useNasAuthorisationKeyOnNotifications ; CheckoutComMerchantConfiguration:useNasAuthorisationKeyOnNotifications ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; code                                  ; CheckoutComMerchantConfiguration:code                                  ;                                                           ; true                   ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; useNas                                ; CheckoutComMerchantConfiguration:useNas                                ;                                                           ;                        ;
+                                            ; InboundCheckoutComMerchantConfiguration:CheckoutComMerchantConfiguration ; threeDSEnabled                        ; CheckoutComMerchantConfiguration:threeDSEnabled                        ;                                                           ;                        ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]  ; authenticationType(code)
+                                         ; InboundCheckoutComMerchantConfiguration ; BASIC

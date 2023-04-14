@@ -36,16 +36,6 @@ public class SubprocessEndAction extends AbstractProceduralAction<ConsignmentPro
 	{
 		LOG.info(PROCESS_MSG + process.getCode() + " in step " + getClass());
 
-		try
-		{
-			// simulate different ending times
-			Thread.sleep((long) (Math.random() * 2000));
-		}
-		catch (final InterruptedException e)
-		{
-			// can't help it
-		}
-
 		process.setDone(true);
 
 		save(process);

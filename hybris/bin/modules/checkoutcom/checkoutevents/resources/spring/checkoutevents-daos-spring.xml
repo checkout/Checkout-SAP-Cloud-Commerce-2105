@@ -17,4 +17,10 @@
         <constructor-arg ref="flexibleSearchService"/>
     </bean>
 
+    <alias name="defaultCheckoutComCleanupDao" alias="checkoutComCleanupDao"/>
+    <bean id="defaultCheckoutComCleanupDao"
+          class="com.checkout.hybris.events.daos.impl.DefaultCheckoutComCleanupDao">
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
 </beans>

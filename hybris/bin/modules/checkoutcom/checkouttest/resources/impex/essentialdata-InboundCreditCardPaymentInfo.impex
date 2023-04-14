@@ -1,27 +1,61 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-; InboundCreditCardPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]          ; integrationType(code)
+                               ; InboundCreditCardPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-; InboundCreditCardPaymentInfo	; CheckoutComCreditCardPaymentInfo	; CheckoutComCreditCardPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundCreditCardPaymentInfo	; User                            	; User                            	; 	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundCreditCardPaymentInfo	; CreditCardType                  	; CreditCardType                  	; 	; ALL_SUBTYPES           	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]              ; type(code)                       ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCreditCardPaymentInfo          ; CheckoutComCreditCardPaymentInfo ; CheckoutComCreditCardPaymentInfo ; true                 ; RESTRICT_TO_ITEM_TYPE   ;
+                                   ; InboundCreditCardPaymentInfo          ; User                             ; User                             ;                      ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; cardBin       	; CheckoutComCreditCardPaymentInfo:cardBin       	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; creationtime  	; CheckoutComCreditCardPaymentInfo:creationtime  	;                                            	; true	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validFromMonth	; CheckoutComCreditCardPaymentInfo:validFromMonth	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; type          	; CheckoutComCreditCardPaymentInfo:type          	; InboundCreditCardPaymentInfo:CreditCardType	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validToMonth  	; CheckoutComCreditCardPaymentInfo:validToMonth  	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validToYear   	; CheckoutComCreditCardPaymentInfo:validToYear   	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; code          	; CheckoutComCreditCardPaymentInfo:code          	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; paymentId     	; CheckoutComCreditCardPaymentInfo:paymentId     	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; validFromYear 	; CheckoutComCreditCardPaymentInfo:validFromYear 	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo	; user          	; CheckoutComCreditCardPaymentInfo:user          	; InboundCreditCardPaymentInfo:User          	; 	;
-; InboundCreditCardPaymentInfo:User                            	; uid           	; User:uid                                       	;                                            	; true	;
-; InboundCreditCardPaymentInfo:CreditCardType                  	; name          	; CreditCardType:name                            	;                                            	; 	;
-; InboundCreditCardPaymentInfo:CreditCardType                  	; code          	; CreditCardType:code                            	;                                            	; true	;
-
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; autoCapture                 ; CheckoutComCreditCardPaymentInfo:autoCapture       ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; validToMonth                ; CheckoutComCreditCardPaymentInfo:validToMonth      ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; validToYear                 ; CheckoutComCreditCardPaymentInfo:validToYear       ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; user                        ; CheckoutComCreditCardPaymentInfo:user              ; InboundCreditCardPaymentInfo:User                         ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; paymentId                   ; CheckoutComCreditCardPaymentInfo:paymentId         ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; cardBin                     ; CheckoutComCreditCardPaymentInfo:cardBin           ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; cardToken                   ; CheckoutComCreditCardPaymentInfo:cardToken         ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; code                        ; CheckoutComCreditCardPaymentInfo:code              ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; validFromMonth              ; CheckoutComCreditCardPaymentInfo:validFromMonth    ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; saved                       ; CheckoutComCreditCardPaymentInfo:saved             ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; validFromYear               ; CheckoutComCreditCardPaymentInfo:validFromYear     ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; subscriptionId              ; CheckoutComCreditCardPaymentInfo:subscriptionId    ;                                                           ;                        ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; creationtime                ; CheckoutComCreditCardPaymentInfo:creationtime      ;                                                           ; true                   ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; ccOwner                     ; CheckoutComCreditCardPaymentInfo:ccOwner           ;                                                           ; true                   ;
+                                            ; InboundCreditCardPaymentInfo:User                                  ; uid                         ; User:uid                                           ;                                                           ; true                   ;
+                                            ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; scheme                      ; CheckoutComCreditCardPaymentInfo:scheme            ;                                                           ;                        ;
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundCreditCardPaymentInfo                          ; BASIC
+                                         ; InboundCreditCardPaymentInfo          ; BASIC
 
+INSERT_UPDATE Script; code[unique = true]; scriptType(code); content
+                    ; cardTypeScript     ; GROOVY          ; "
+    import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
+
+    def paymentInfo = (CheckoutComCreditCardPaymentInfoModel) itemModel
+
+    if (paymentInfo.type != null) {
+        paymentInfo.type.code
+    } else {
+        """"
+    }
+"
+
+INSERT_UPDATE Script; code[unique = true]; scriptType(code); content
+                    ; cardOriginalScript ; GROOVY          ; "
+    import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
+
+    def paymentInfo = (CheckoutComCreditCardPaymentInfoModel) itemModel
+
+    if (paymentInfo.original != null) {
+        return false
+    } else {
+        return true
+    }
+"
+
+INSERT_UPDATE IntegrationObjectVirtualAttributeDescriptor; code[unique = true]; logicLocation              ; type(code)
+                                                         ; typeDescriptor     ; model://cardTypeScript     ; java.lang.String
+                                                         ; cardOriginal       ; model://cardOriginalScript ; java.lang.Boolean
+
+INSERT_UPDATE IntegrationObjectItemVirtualAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; retrievalDescriptor(code)
+                                                   ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; type                        ; typeDescriptor
+                                                   ; InboundCreditCardPaymentInfo:CheckoutComCreditCardPaymentInfo      ; cardOriginal                ; cardOriginal

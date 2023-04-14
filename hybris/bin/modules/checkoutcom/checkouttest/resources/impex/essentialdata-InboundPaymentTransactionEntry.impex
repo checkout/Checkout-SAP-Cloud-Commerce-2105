@@ -1,0 +1,17 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]            ; integrationType(code)
+                               ; InboundPaymentTransactionEntry ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]     ; type(code)              ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundPaymentTransactionEntry        ; PaymentTransactionEntry ; PaymentTransactionEntry ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundPaymentTransactionEntry        ; PaymentTransactionType  ; PaymentTransactionType  ;                      ; ALL_SUBTYPES            ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionEntry             ; requestId                   ; PaymentTransactionEntry:requestId                  ;                                                           ; true                   ;
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionEntry             ; transactionStatus           ; PaymentTransactionEntry:transactionStatus          ;                                                           ;                        ;
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionEntry             ; transactionStatusDetails    ; PaymentTransactionEntry:transactionStatusDetails   ;                                                           ;                        ;
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionEntry             ; type                        ; PaymentTransactionEntry:type                       ; InboundPaymentTransactionEntry:PaymentTransactionType     ; true                   ;
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionType              ; code                        ; PaymentTransactionType:code                        ;                                                           ; true                   ;
+                                            ; InboundPaymentTransactionEntry:PaymentTransactionEntry             ; creationtime                ; PaymentTransactionEntry:creationtime               ;                                                           ;                        ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundPaymentTransactionEntry        ; BASIC

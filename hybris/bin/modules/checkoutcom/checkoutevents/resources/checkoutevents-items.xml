@@ -10,12 +10,14 @@
             <value code="payment_void_declined"/>
             <value code="payment_captured"/>
             <value code="payment_capture_declined"/>
+            <value code="payment_capture_pending"/>
             <value code="payment_refunded"/>
             <value code="payment_refund_declined"/>
             <value code="payment_pending"/>
             <value code="payment_expired"/>
             <value code="payment_declined"/>
             <value code="payment_canceled"/>
+            <value code="payment_returned"/>
         </enumtype>
 
         <enumtype code="CheckoutComPaymentEventStatus">
@@ -23,6 +25,10 @@
             <value code="COMPLETED"/>
             <value code="FAILED"/>
             <value code="IGNORED"/>
+        </enumtype>
+
+        <enumtype code="PaymentTransactionType" autocreate="false" generate="false">
+            <value code="RETURN" />
         </enumtype>
     </enumtypes>
 
@@ -175,7 +181,6 @@
                     </attribute>
                 </attributes>
             </itemtype>
-
         </typegroup>
 
     </itemtypes>

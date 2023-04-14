@@ -20,12 +20,13 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckoutComCardPaymentDataFormValidatorTest {
 
-    private static final String PAYMENT_TOKEN_KEY = "paymentToken";
     private static final String NUMBER_KEY = "number";
     private static final String CARD_BIN_KEY = "cardBin";
-    private static final String VALID_TO_MONTH_KEY = "validToMonth";
+    private static final String CARD_TYPE_KEY = "cardType";
     private static final String VALID_TO_YEAR_KEY = "validToYear";
-    private static final String CARD_TYPE = "cardType";
+    private static final String PAYMENT_TOKEN_KEY = "paymentToken";
+    private static final String VALID_TO_MONTH_KEY = "validToMonth";
+    private static final String CARTES_BANCAIRES = "cartes_bancaires";
 
     @InjectMocks
     private CheckoutComCardPaymentDataFormValidator testObj;
@@ -44,7 +45,7 @@ public class CheckoutComCardPaymentDataFormValidatorTest {
         attributesMap.put(CARD_BIN_KEY, "123456");
         attributesMap.put(VALID_TO_MONTH_KEY, "12");
         attributesMap.put(VALID_TO_YEAR_KEY, "2020");
-        attributesMap.put(CARD_TYPE, "American Express");
+        attributesMap.put(CARD_TYPE_KEY, "American Express");
 
         paymentDataForm.setFormAttributes(attributesMap);
     }
@@ -124,13 +125,13 @@ public class CheckoutComCardPaymentDataFormValidatorTest {
 
     @Test
     public void validate_WhenCardTypeIsBlank_ShouldReturnError() {
-        paymentDataForm.getFormAttributes().replace(CARD_TYPE, null);
+        paymentDataForm.getFormAttributes().replace(CARD_TYPE_KEY, null);
 
         testObj.validate(paymentDataForm, errors);
 
         assertTrue(errors.hasErrors());
         assertEquals(1, errors.getErrorCount());
-        assertEquals("formAttributes[" + CARD_TYPE + "]", errors.getFieldError().getField());
+        assertEquals("formAttributes[" + CARD_TYPE_KEY + "]", errors.getFieldError().getField());
     }
 
     @Test
@@ -142,5 +143,16 @@ public class CheckoutComCardPaymentDataFormValidatorTest {
         assertTrue(errors.hasErrors());
         assertEquals(1, errors.getErrorCount());
         assertEquals("formAttributes[" + VALID_TO_YEAR_KEY + "]", errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenCartesBancairesIsUsedAsCardType_ShouldReturnError() {
+        paymentDataForm.getFormAttributes().replace(CARD_TYPE_KEY, CARTES_BANCAIRES);
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals("formAttributes[" + CARD_TYPE_KEY + "]", errors.getFieldError().getField());
     }
 }

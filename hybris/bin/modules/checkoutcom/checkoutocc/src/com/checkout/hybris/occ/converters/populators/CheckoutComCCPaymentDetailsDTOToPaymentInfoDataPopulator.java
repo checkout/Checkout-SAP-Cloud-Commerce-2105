@@ -27,6 +27,7 @@ public class CheckoutComCCPaymentDetailsDTOToPaymentInfoDataPopulator implements
         ccPaymentInfoData.setExpiryMonth(paymentDetailsWsDTO.getExpiryMonth());
         ccPaymentInfoData.setExpiryYear(paymentDetailsWsDTO.getExpiryYear());
         ccPaymentInfoData.setPaymentToken(paymentDetailsWsDTO.getPaymentToken());
+        ccPaymentInfoData.setScheme(paymentDetailsWsDTO.getScheme());
         ccPaymentInfoData.setCardBin(paymentDetailsWsDTO.getCardBin());
         ccPaymentInfoData.setSaved(Optional.ofNullable(paymentDetailsWsDTO.getSaved()).orElse(Boolean.FALSE));
         ccPaymentInfoData.setAccountHolderName(paymentDetailsWsDTO.getAccountHolderName());

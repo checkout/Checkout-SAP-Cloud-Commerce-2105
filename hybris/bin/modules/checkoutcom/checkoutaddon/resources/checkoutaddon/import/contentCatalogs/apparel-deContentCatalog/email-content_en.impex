@@ -2,10 +2,21 @@ $contentCatalog = apparel-deContentCatalog
 $contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 
 # Language
-$lang = en
+$language = en
 
-INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
-                                   ;;OrderConfirmationEmailBody;"
+# CMS components and Email velocity templates
+UPDATE RendererTemplate; code[unique = true]; templateScript
+"#% beforeEach:
+import de.hybris.platform.core.Registry;
+import de.hybris.platform.commons.model.renderer.RendererTemplateModel;
+System.out.println(line);
+rendererTemplateCode = line.get(1);
+RendererTemplateModel rendererTemplate = Registry.getApplicationContext().getBean(""rendererService"").getRendererTemplateForCode(rendererTemplateCode);
+line.put(2, ""## messageSource=classpath:/checkoutaddon/messages/email-orderConfirmation_$lang.properties\n"" + rendererTemplate.templateScript);"
+                       ; apparel-de_Email_Order_Confirmation_Body
+
+INSERT_UPDATE CMSParagraphComponent; $contentCV[unique = true]; uid[unique = true]         ; content[lang = $language]
+                                   ;                          ; OrderConfirmationEmailBody ; "
 #macro( genHtmlBoldFont $text )
 <font color='#414a4f' size='2' face='Arial, Helvetica, sans-serif'><b>$text</b></font>
 #end
@@ -132,8 +143,15 @@ INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];con
 					</td>
 					<td width='33%' valign='top'>
 						<font color='#333' size='2' face='Arial, Helvetica, sans-serif'><b>${ctx.messages.paymentDetails}</b></font>
-						#if(${ctx.order.paymentInfo})
-							<p style='margin:3px 0 5px 0;'><font color='#666666' size='2' face='Arial, Helvetica, sans-serif'>${ctx.messages.getMessage('paymentCardType', ${ctx.order.paymentInfo.cardType})}</font></p>
+                        #if(${ctx.order.paymentInfo})
+                            <p style='margin:3px 0 5px 0;'><font color='#666666' size='2' face='Arial, Helvetica, sans-serif'>
+                            #set ($checkoutPaymentInfo = ${ctx.order.checkoutComPaymentInfo})
+    						#if($checkoutPaymentInfo and $checkoutPaymentInfo.type == 'ACH')
+    						    ${ctx.messages.getMessage('paymentAchName', $checkoutPaymentInfo.accountNumber)}
+    						#else
+							    ${ctx.messages.getMessage('paymentCardType', ${ctx.order.paymentInfo.cardType})}
+							#{end}
+							</font></p>
 						#end
 					</td>
 				</tr>

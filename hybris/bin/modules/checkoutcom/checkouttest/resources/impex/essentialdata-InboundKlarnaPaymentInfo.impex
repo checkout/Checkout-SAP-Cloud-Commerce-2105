@@ -1,22 +1,22 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-                               ; InboundKlarnaPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]      ; integrationType(code)
+                               ; InboundKlarnaPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-                                   ; InboundKlarnaPaymentInfo	; Order                          	; Order                          	; 	; ALL_SUB_AND_SUPER_TYPES	;
-                                   ; InboundKlarnaPaymentInfo	; User                           	; User                           	; 	; ALL_SUB_AND_SUPER_TYPES	;
-                                   ; InboundKlarnaPaymentInfo	; CheckoutComKlarnaAPMPaymentInfo	; CheckoutComKlarnaAPMPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]             ; type(code)                      ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundKlarnaPaymentInfo              ; Order                           ; Order                           ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundKlarnaPaymentInfo              ; User                            ; User                            ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundKlarnaPaymentInfo              ; CheckoutComKlarnaAPMPaymentInfo ; CheckoutComKlarnaAPMPaymentInfo ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-                                            ; InboundKlarnaPaymentInfo:Order                          	; checkoutComPaymentReference	; Order:checkoutComPaymentReference                 	;                               	; true	;
-                                            ; InboundKlarnaPaymentInfo:Order                          	; code                       	; Order:code                                        	;                               	; true	;
-                                            ; InboundKlarnaPaymentInfo:User                           	; uid                        	; User:uid                                          	;                               	; true	;
-                                            ; InboundKlarnaPaymentInfo:User                           	; orders                     	; User:orders                                       	; InboundKlarnaPaymentInfo:Order	; 	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; user                       	; CheckoutComKlarnaAPMPaymentInfo:user              	; InboundKlarnaPaymentInfo:User 	; 	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; creationtime               	; CheckoutComKlarnaAPMPaymentInfo:creationtime      	;                               	; 	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; authorizationToken         	; CheckoutComKlarnaAPMPaymentInfo:authorizationToken	;                               	; 	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; type                       	; CheckoutComKlarnaAPMPaymentInfo:type              	;                               	; 	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; code                       	; CheckoutComKlarnaAPMPaymentInfo:code              	;                               	; true	;
-                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo	; paymentId                  	; CheckoutComKlarnaAPMPaymentInfo:paymentId         	;                               	; 	;
+                                            ; InboundKlarnaPaymentInfo:Order                                     ; checkoutComPaymentReference ; Order:checkoutComPaymentReference                  ;                                                           ; true                   ;
+                                            ; InboundKlarnaPaymentInfo:Order                                     ; code                        ; Order:code                                         ;                                                           ; true                   ;
+                                            ; InboundKlarnaPaymentInfo:User                                      ; uid                         ; User:uid                                           ;                                                           ; true                   ;
+                                            ; InboundKlarnaPaymentInfo:User                                      ; orders                      ; User:orders                                        ; InboundKlarnaPaymentInfo:Order                            ;                        ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; user                        ; CheckoutComKlarnaAPMPaymentInfo:user               ; InboundKlarnaPaymentInfo:User                             ;                        ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; creationtime                ; CheckoutComKlarnaAPMPaymentInfo:creationtime       ;                                                           ;                        ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; authorizationToken          ; CheckoutComKlarnaAPMPaymentInfo:authorizationToken ;                                                           ;                        ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; type                        ; CheckoutComKlarnaAPMPaymentInfo:type               ;                                                           ;                        ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; code                        ; CheckoutComKlarnaAPMPaymentInfo:code               ;                                                           ; true                   ;
+                                            ; InboundKlarnaPaymentInfo:CheckoutComKlarnaAPMPaymentInfo           ; paymentId                   ; CheckoutComKlarnaAPMPaymentInfo:paymentId          ;                                                           ;                        ;
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundKlarnaPaymentInfo                          ; BASIC
+                                         ; InboundKlarnaPaymentInfo              ; BASIC

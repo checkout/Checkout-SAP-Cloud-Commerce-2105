@@ -5,12 +5,14 @@
     <bean class="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData">
         <property name="paymentToken" type="java.lang.String"/>
         <property name="cardBin" type="java.lang.String"/>
+        <property name="scheme" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.CheckoutComPaymentInfoData">
         <property name="type" type="java.lang.String"/>
         <property name="billingAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
         <property name="qrCodeData" type="java.lang.String"/>
+        <property name="accountNumber" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.AuthorizeResponseData">
@@ -41,13 +43,15 @@
         <property name="document" type="java.lang.String"/>
     </bean>
 
-    <bean class="com.checkout.hybris.facades.beans.AchPaymentInfoData"
-          extends="com.checkout.hybris.facades.beans.APMPaymentInfoData">
+    <bean class="com.checkout.hybris.facades.beans.AchPaymentInfoData">
         <property name="accountHolderName" type="java.lang.String"/>
         <property name="accountType" type="java.lang.String"/>
         <property name="accountNumber" type="java.lang.String"/>
         <property name="routingNumber" type="java.lang.String"/>
         <property name="companyName" type="java.lang.String"/>
+        <property name="paymentMethod" type="java.lang.String"/>
+        <property name="bankCode" type="java.lang.String"/>
+        <property name="mask" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.hybris.facades.beans.SepaPaymentInfoData"
@@ -369,4 +373,50 @@
         <property name="intent" type="java.lang.String"/>
     </bean>
 
+    <bean class="com.checkout.hybris.facades.beans.AchBankInfoDetailsData">
+        <property name="accountType" type="java.lang.String"/>
+        <property name="accountNumber" type="java.lang.String"/>
+        <property name="bankRouting" type="java.lang.String"/>
+        <property name="accountHolderName" type="java.lang.String"/>
+        <property name="accountHolderEmail" type="java.lang.String"/>
+        <property name="mask" type="java.lang.String"/>
+        <property name="institutionName" type="java.lang.String"/>
+        <property name="companyName" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponseAccount">
+        <property name="class_type" type="java.lang.String"/>
+        <property name="id" type="java.lang.String"/>
+        <property name="mask" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="subtype" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="verification_status" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponseInstitution">
+        <property name="institution_id" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponse">
+        <property name="account"
+                  type="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponseAccount"/>
+        <property name="accounts"
+                  type="java.util.List&lt;com.checkout.hybris.facades.beans.PlaidLinkMetadataResponseAccount&gt;"/>
+        <property name="account_id" type="java.lang.String"/>
+        <property name="link_session_id" type="java.lang.String"/>
+        <property name="public_token" type="java.lang.String"/>
+        <property name="status" type="java.lang.String"/>
+        <property name="transfer_status" type="java.lang.String"/>
+        <property name="institution"
+                  type="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponseInstitution"/>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.beans.PlaidLinkCreationResponse">
+        <property name="publicToken" type="java.lang.String"/>
+        <property name="metadata"
+                  type="com.checkout.hybris.facades.beans.PlaidLinkMetadataResponse"/>
+        <property name="customerConsents" type="java.lang.Boolean"/>
+    </bean>
 </beans>

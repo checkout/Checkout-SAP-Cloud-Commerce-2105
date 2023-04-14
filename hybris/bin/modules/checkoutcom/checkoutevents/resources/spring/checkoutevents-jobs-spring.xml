@@ -20,4 +20,11 @@
         <constructor-arg ref="checkoutComPaymentEventCleanupService"/>
     </bean>
 
+    <alias name="defaultCheckoutComCleanupJob" alias="checkoutComCleanupJob"/>
+    <bean id="defaultCheckoutComCleanupJob"
+          class="com.checkout.hybris.events.cronjob.performables.CheckoutComCleanupJob"
+          parent="abstractJobPerformable">
+        <constructor-arg name="checkoutComCleanupService" ref="checkoutComCleanupService"/>
+    </bean>
+
 </beans>

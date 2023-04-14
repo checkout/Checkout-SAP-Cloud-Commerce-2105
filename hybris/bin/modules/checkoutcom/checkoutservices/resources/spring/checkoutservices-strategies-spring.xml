@@ -54,6 +54,7 @@
         <constructor-arg ref="checkoutComPaymentRequestStrategyMapper"/>
         <constructor-arg ref="cmsSiteService"/>
         <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="checkoutComCartModelToPaymentL2AndL3Converter"/>
     </bean>
 
     <alias name="defaultCheckoutComCardPaymentRequestStrategy" alias="checkoutComCardPaymentRequestStrategy"/>
@@ -158,15 +159,16 @@
 
     <alias name="defaultCheckoutComAchPayPaymentRequestStrategy" alias="checkoutComAchPayPaymentRequestStrategy"/>
     <bean id="defaultCheckoutComAchPayPaymentRequestStrategy"
-          class="com.checkout.hybris.core.payment.request.strategies.impl.CheckoutComAchPayPaymentRequestStrategy"
+          class="com.checkout.hybris.core.payment.request.strategies.impl.CheckoutComNasAchPayPaymentRequestStrategy"
           parent="checkoutComAbstractApmPaymentRequestStrategy">
-        <constructor-arg ref="checkoutComPaymentIntegrationService"/>
     </bean>
 
     <alias name="defaultCheckoutComSepaPaymentRequestStrategy" alias="checkoutComSepaPaymentRequestStrategy"/>
     <bean id="defaultCheckoutComSepaPaymentRequestStrategy"
           class="com.checkout.hybris.core.payment.request.strategies.impl.CheckoutComSepaPaymentRequestStrategy"
-          parent="checkoutComAchPayPaymentRequestStrategy"/>
+          parent="checkoutComAbstractApmPaymentRequestStrategy">
+        <constructor-arg name="checkoutComPaymentIntegrationService" ref="checkoutComPaymentIntegrationService"/>
+    </bean>
 
     <alias name="defaultCheckoutComApplePayPaymentRequestStrategy" alias="checkoutComApplePayPaymentRequestStrategy"/>
     <bean id="defaultCheckoutComApplePayPaymentRequestStrategy"

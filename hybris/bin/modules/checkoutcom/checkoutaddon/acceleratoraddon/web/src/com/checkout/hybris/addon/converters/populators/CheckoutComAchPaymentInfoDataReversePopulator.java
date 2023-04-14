@@ -1,7 +1,6 @@
 package com.checkout.hybris.addon.converters.populators;
 
 import com.checkout.hybris.addon.forms.PaymentDataForm;
-import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.facades.beans.AchPaymentInfoData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -21,6 +20,8 @@ public class CheckoutComAchPaymentInfoDataReversePopulator implements Populator<
     protected static final String COMPANY_NAME_KEY = "companyName";
     protected static final String CORPORATE_ACCOUNT_TYPE_VALUE = "Corporate";
     protected static final String CORP_SAVINGS_ACCOUNT_TYPE_VALUE = "CorpSavings";
+    protected static final String PAYMENT_METHOD_KEY = "paymentMethod";
+    protected static final String BANK_CODE_KEY = "bankCode";
 
     /**
      * {@inheritDoc}
@@ -32,7 +33,6 @@ public class CheckoutComAchPaymentInfoDataReversePopulator implements Populator<
 
         final Map<String, Object> formAttributes = source.getFormAttributes();
 
-        target.setType(CheckoutComPaymentType.ACH.name());
         target.setAccountHolderName((String) formAttributes.get(ACCOUNT_HOLDER_NAME));
         target.setAccountNumber((String) formAttributes.get(ACCOUNT_NUMBER));
         target.setAccountType((String) formAttributes.get(ACCOUNT_TYPE_KEY));
@@ -40,5 +40,8 @@ public class CheckoutComAchPaymentInfoDataReversePopulator implements Populator<
         if (target.getAccountType().equalsIgnoreCase(CORPORATE_ACCOUNT_TYPE_VALUE) || target.getAccountType().equalsIgnoreCase(CORP_SAVINGS_ACCOUNT_TYPE_VALUE)) {
             target.setCompanyName((String) formAttributes.get(COMPANY_NAME_KEY));
         }
+        target.setPaymentMethod((String) formAttributes.get(PAYMENT_METHOD_KEY));
+        target.setBankCode((String) formAttributes.get(BANK_CODE_KEY));
+
     }
 }

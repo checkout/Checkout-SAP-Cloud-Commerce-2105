@@ -3,6 +3,10 @@
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="items.xsd">
 
+    <collectiontypes>
+        <collectiontype code="CheckoutComAPMs" elementtype="CheckoutComAPMConfiguration"/>
+    </collectiontypes>
+
     <enumtypes>
         <enumtype code="CreditCardType" autocreate="false" generate="false">
             <value code="jcb"/>
@@ -25,6 +29,7 @@
         <enumtype code="OrderStatus" autocreate="false" dynamic="true">
             <value code="AUTHORIZATION_PENDING"/>
             <value code="CAPTURE_PENDING"/>
+            <value code="PAYMENT_RETURNED"/>
         </enumtype>
 
         <enumtype code="ReturnStatus" autocreate="false" dynamic="true">
@@ -91,6 +96,12 @@
             <value code="Installment"/>
         </enumtype>
 
+        <enumtype code="achEnv" dynamic="true">
+            <value code="Sandbox"/>
+            <value code="Development"/>
+            <value code="Production"/>
+        </enumtype>
+
     </enumtypes>
 
     <relations>
@@ -145,7 +156,6 @@
     </relations>
 
     <itemtypes>
-
         <typegroup name="PaymentInfo">
             <itemtype code="PaymentInfo" autocreate="false" generate="false">
                 <attributes>
@@ -185,6 +195,10 @@
                         <modifiers optional="true"/>
                         <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                         <description>Indicates if the customer wants to save the card.</description>
+                    </attribute>
+                    <attribute qualifier="scheme" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Preferred scheme for co-branded cards.</description>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -284,6 +298,21 @@
                         <persistence type="property"/>
                         <modifiers optional="true"/>
                         <description>Company Name</description>
+                    </attribute>
+                    <attribute qualifier="paymentMethod" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                        <description>Payment Method</description>
+                    </attribute>
+                    <attribute qualifier="bankCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                        <description>Bank Code</description>
+                    </attribute>
+                    <attribute qualifier="mask" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                        <description>Masked account number</description>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -388,6 +417,11 @@
                         <persistence type="property"/>
                         <modifiers unique="true" optional="false" initial="true"/>
                         <description>This is the Checkout.com payment reference</description>
+                    </attribute>
+                    <attribute qualifier="achConsent" type="CheckoutComACHConsent">
+                        <persistence type="property"/>
+                        <modifiers optional="true" initial="false"/>
+                        <description>This is the related ACH Consent</description>
                     </attribute>
                 </attributes>
                 <indexes>
@@ -527,6 +561,48 @@
                         <persistence type="property"/>
                         <description>Your private shared key. You can find it in the Hub.</description>
                     </attribute>
+                    <attribute qualifier="nasSecretKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Use the valid secret key of your NAS Checkout.com account. You can find this in the
+                            Hub.
+                        </description>
+                    </attribute>
+                    <attribute qualifier="nasPublicKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS public key. You can find it in the Hub.</description>
+                    </attribute>
+                    <attribute qualifier="nasSignatureKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS signature key. You can find it in the Hub.</description>
+                    </attribute>
+                    <attribute qualifier="nasAuthorisationHeaderKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>Your NAS Authorisation header key. You can find it in the Hub, Notifications settings.</description>
+                    </attribute>
+                    <attribute qualifier="useNas" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use NAS or ABC.</description>
+                    </attribute>
+                    <attribute qualifier="useNasAuthorisationKeyOnNotifications" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use signature key to verify NAS Notifications</description>
+                    </attribute>
+                    <attribute qualifier="useNasSignatureKeyOnNotifications" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines whether to use signature key to verify NAS Notifications</description>
+                    </attribute>
+                    <attribute qualifier="useAbcSignatureKeyOnNotifications" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>Determines whether to use signature key to verify NAS Notifications</description>
+                    </attribute>
                     <attribute qualifier="environment" type="EnvironmentType">
                         <persistence type="property"/>
                         <description>The Checkout.com environment to which we is integrated.</description>
@@ -590,6 +666,10 @@
                         <persistence type="property"/>
                         <description>The configuration for Klarna.</description>
                     </attribute>
+                    <attribute qualifier="achConfiguration" type="CheckoutComACHConfiguration">
+                        <description>The configuration for ACH</description>
+                        <persistence type="property"/>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -641,6 +721,129 @@
                 </attributes>
             </itemtype>
 
+            <itemtype code="CheckoutComACHConfiguration" extends="GenericItem">
+                <deployment table="ChkoACHConfig" typecode="23310"/>
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String">
+                        <modifiers initial="true" unique="true" write="true" search="true" read="true"
+                                   optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the code of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="name" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the name of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="clientName" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the clientName of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="language" type="Language">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the language of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="redirectUri" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the redirectUri of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="webhook" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the webhook of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="linkCustomizationName" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the name of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="clientId" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the clientId of the ACH</description>
+                    </attribute>
+                    <attribute qualifier="secret" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Contains the secret of the </description>
+                    </attribute>
+                    <attribute qualifier="achEnv" type="AchEnv">
+                        <persistence type="property"/>
+                        <description>The Ach Environment</description>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="checkoutComACHIdx" unique="true">
+                        <key attribute="code"/>
+                    </index>
+                </indexes>
+            </itemtype>
+
+            <itemtype code="CheckoutComACHConsent">
+                <deployment table="ChkoACHConsent" typecode="23311"/>
+                <attributes>
+                    <attribute qualifier="order" type="AbstractOrder">
+                        <modifiers unique="true" optional="false" initial="false" read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Order</description>
+                    </attribute>
+                    <attribute qualifier="payer" type="java.lang.String">
+                        <modifiers initial="true" write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Payer or company name</description>
+                    </attribute>
+                    <attribute qualifier="email" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Payer's email address</description>
+                    </attribute>
+                    <attribute qualifier="accountType" type="ACHAccountType">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Checking or savings account type</description>
+                    </attribute>
+                    <attribute qualifier="bankName" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Bank name</description>
+                    </attribute>
+                    <attribute qualifier="accountNumber" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Account number</description>
+                    </attribute>
+                    <attribute qualifier="routingNumber" type="java.lang.String">
+                        <modifiers write="true" search="true" read="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>Routing Number</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComCleanupCronJob" extends="CronJob">
+                <attributes>
+                    <attribute qualifier="itemTypeCode" type="java.lang.String">
+                        <description>Item Type Code to remove</description>
+                        <modifiers initial="true" optional="false"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="batchSize" type="java.lang.Integer">
+                        <description>Size of batches to be processed</description>
+                        <persistence type="property"/>
+                        <defaultvalue>5000</defaultvalue>
+                        <modifiers optional="true"/>
+                    </attribute>
+                    <attribute qualifier="itemRemovalAge" type="java.lang.Integer">
+                        <description>Time (in seconds) that states how old an item should be to be removed by the cronjob</description>
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
         </typegroup>
 
         <typegroup name="Site">
@@ -658,6 +861,35 @@
                     <attribute qualifier="checkoutComFailureRedirectUrl" type="java.lang.String">
                         <persistence type="property"/>
                         <description>Payment redirect URL for failure transaction</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CheckoutComGlobalAPMConfiguration" singleton="true">
+                <deployment table="ChkoGlobAPMConfig" typecode="23348"/>
+                <attributes>
+                    <attribute qualifier="abcAPMs" type="CheckoutComAPMs">
+                        <persistence type="property"/>
+                        <description>APMs that are enabled for ABC</description>
+                    </attribute>
+                    <attribute qualifier="nasAPMs" type="CheckoutComAPMs">
+                        <persistence type="property"/>
+                        <description>APMs that are enabled for NAS</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup name="Customer">
+            <itemtype code="Customer" autocreate="false" generate="false">
+                <attributes>
+                    <attribute qualifier="taxNumber" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>The tax Number used for L2 payments purposes</description>
+                    </attribute>
+                    <attribute qualifier="dutyAmount" type="java.lang.Double">
+                        <persistence type="property"/>
+                        <description>The total duty amount for L3 payments purposes</description>
                     </attribute>
                 </attributes>
             </itemtype>

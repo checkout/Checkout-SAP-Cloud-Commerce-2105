@@ -20,14 +20,12 @@ import de.hybris.platform.processengine.model.BusinessProcessModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.*;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -46,17 +44,18 @@ import static de.hybris.platform.payment.enums.PaymentTransactionType.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @UnitTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnitParamsRunner.class)
 public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
     private static final String WAIT_FOR_EVENT_NAME = "eventName";
     private static final String DECLINED = "20000";
     private static final String APPROVED = "10000";
+    private static final String DEFERRED_APPROVED = "10200";
     private static final String ACTION_ID = "actionId";
     private static final String PAYMENT_ID = "paymentId";
     private static final String CARD_TOKEN = "card_token";
@@ -110,6 +109,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         when(testObj.getTransactionTemplate()).thenReturn(transactionOperationsMock);
 
         when(eventMock.getAmount()).thenReturn(AMOUNT);
@@ -342,14 +342,15 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
     public void processEvent_WhenAuthAlreadyExistsAndEventTypeIsAuthorise_ShouldSetTheFailReasonAndReturnFalse() {
         when(checkoutComPaymentTransactionServiceMock.findAcceptedAuthorizationEntry(paymentTransactionMock)).thenReturn(Optional.empty());
         when(checkoutComPaymentTransactionServiceMock.findPendingAuthorizationEntry(paymentTransactionMock)).thenReturn(Optional.of(authorizationPendingPaymentTransactionEntryMock));
-        when(eventMock.getEventType()).thenReturn(CheckoutComPaymentEventType.PAYMENT_APPROVED.getCode());
+        when(eventMock.getEventType()).thenReturn(PAYMENT_APPROVED.getCode());
         doReturn(WAIT_FOR_EVENT_NAME).when(testObj).createWaitForEventName(eventMock, AUTHORIZATION, businessProcessMock);
         doNothing().when(testObj).processPayment(any(CheckoutComPaymentEventModel.class), any(PaymentTransactionModel.class), any(PaymentTransactionType.class));
         doNothing().when(testObj).updateDeferredAuthorization(any(CheckoutComPaymentEventModel.class), any(PaymentTransactionModel.class), any(PaymentTransactionType.class), any(BusinessProcessModel.class));
 
         final boolean result = testObj.processEvent(eventMock, AUTHORIZATION, orderMock, businessProcessMock);
 
-        assertFalse(result);
+        assertThat(result).isFalse();
+        ;
         verify(testObj, never()).filterEquivalentAuthorisationEvents(anyList(), anyList());
         verify(testObj, never()).processPayment(eventMock, paymentTransactionMock, AUTHORIZATION);
         verifyZeroInteractions(businessProcessServiceMock);
@@ -367,7 +368,8 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.processEvent(eventMock, CAPTURE, orderMock, businessProcessMock);
 
-        assertTrue(result);
+        assertThat(result).isTrue();
+        ;
         InOrder inOrder = inOrder(testObj, businessProcessServiceMock);
         inOrder.verify(testObj).processPayment(eventMock, paymentTransactionMock, CAPTURE);
         inOrder.verify(testObj).updateDeferredAuthorization(eventMock, paymentTransactionMock, CAPTURE, businessProcessMock);
@@ -386,7 +388,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.processEvent(eventMock, CANCEL, orderMock, businessProcessMock);
 
-        assertTrue(result);
+        assertThat(result).isTrue();
         InOrder inOrder = inOrder(testObj, businessProcessServiceMock);
         inOrder.verify(testObj).processPayment(eventMock, paymentTransactionMock, CANCEL);
         inOrder.verify(testObj, never()).updateDeferredAuthorization(eventMock, paymentTransactionMock, CANCEL, businessProcessMock);
@@ -394,34 +396,33 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
     }
 
     @Test
-    public void equivalentEventAlreadyFound_WhenEquivalentAuthorisationForTheSamePaymentId_ShouldAddPendingAuthorisationAsIgnored() {
+    @Parameters({"PAYMENT_APPROVED","PAYMENT_CAPTURE_PENDING"})
+    public void equivalentEventAlreadyFound_WhenEquivalentAuthorisationForTheSamePaymentId_ShouldAddPendingAuthorisationAsIgnored(final String eventCode) {
         final List<CheckoutComPaymentEventModel> ignoredEvents = new ArrayList<>();
         final List<CheckoutComPaymentEventModel> eventsToProcess = new ArrayList<>(asList(eventMock, event2Mock));
-        when(eventMock.getEventType()).thenReturn(PAYMENT_APPROVED.getCode());
+        when(eventMock.getEventType()).thenReturn(eventCode);
         when(event2Mock.getPaymentId()).thenReturn(PAYMENT_ID);
         when(event2Mock.getEventType()).thenReturn(PAYMENT_PENDING.getCode());
 
         testObj.filterEquivalentAuthorisationEvents(eventsToProcess, ignoredEvents);
 
-        assertEquals(1, ignoredEvents.size());
-        assertEquals(1, eventsToProcess.size());
-        assertTrue(eventsToProcess.contains(eventMock));
-        assertTrue(ignoredEvents.contains(event2Mock));
+        assertThat(eventsToProcess).containsExactly(eventMock);
+        assertThat(ignoredEvents).containsExactly(event2Mock);
     }
 
     @Test
-    public void equivalentEventAlreadyFound_WhenNoEquivalentAuthorisationForTheSamePaymentId_ShouldDoNothing() {
+    @Parameters({"PAYMENT_APPROVED","PAYMENT_CAPTURE_PENDING"})
+    public void equivalentEventAlreadyFound_WhenNoEquivalentAuthorisationForTheSamePaymentId_ShouldDoNothing(final String eventCode) {
         final List<CheckoutComPaymentEventModel> ignoredEvents = new ArrayList<>();
         final List<CheckoutComPaymentEventModel> eventsToProcess = new ArrayList<>(asList(eventMock, event2Mock));
-        when(eventMock.getEventType()).thenReturn(PAYMENT_APPROVED.getCode());
+        when(eventMock.getEventType()).thenReturn(eventCode);
         when(event2Mock.getPaymentId()).thenReturn(PAYMENT_ID);
         when(event2Mock.getEventType()).thenReturn(PAYMENT_CAPTURED.getCode());
 
         testObj.filterEquivalentAuthorisationEvents(eventsToProcess, ignoredEvents);
 
-        assertTrue(ignoredEvents.isEmpty());
-        assertEquals(2, eventsToProcess.size());
-        assertTrue(eventsToProcess.containsAll(asList(eventMock, event2Mock)));
+        assertThat(ignoredEvents).isEmpty();
+        assertThat(eventsToProcess).containsExactlyInAnyOrder(eventMock, event2Mock);
     }
 
     @Test
@@ -441,7 +442,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
     }
 
     @Test
-    public void processPayment_WhenEventApproved_ShouldUAcceptPayment() {
+    public void processPayment_WhenEventIsApproved_ShouldAcceptPayment() {
         when(eventMock.getResponseCode()).thenReturn(APPROVED);
 
         testObj.processPayment(eventMock, paymentTransactionMock, AUTHORIZATION);
@@ -450,12 +451,37 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
     }
 
     @Test
+    public void processPayment_WhenEventResponseIsNotRefund_andIsDeferredApproved_ShouldRejectPayment() {
+        when(eventMock.getResponseCode()).thenReturn(DEFERRED_APPROVED);
+
+        testObj.processPayment(eventMock, paymentTransactionMock, AUTHORIZATION);
+
+        verify(paymentServiceMock).rejectPayment(eventMock, paymentTransactionMock, AUTHORIZATION);
+    }
+
+    @Test
+    public void processPayment_WhenEventResponseIsRefund_andDeferredApproved_ShouldAcceptPayment() {
+        when(eventMock.getResponseCode()).thenReturn(DEFERRED_APPROVED);
+
+        testObj.processPayment(eventMock, paymentTransactionMock, REFUND_FOLLOW_ON);
+
+        verify(paymentServiceMock).acceptPayment(eventMock, paymentTransactionMock, REFUND_FOLLOW_ON);
+    }
+
+    @Test
+    public void processPayment_WhenEventResponseIsReturn_ShouldReturnPayment() {
+        testObj.processPayment(eventMock, paymentTransactionMock, RETURN);
+
+        verify(paymentServiceMock).returnPayment(eventMock, paymentTransactionMock, RETURN);
+    }
+
+    @Test
     public void createWaitForEventName_WhenRefundPayment_ShouldConcatenateProcessCodeActionIdAndPaymentTransactionType() {
         when(businessProcessMock.getCode()).thenReturn(BUSINESS_PROCESS_CODE);
 
         final String result = testObj.createWaitForEventName(eventMock, REFUND_FOLLOW_ON, businessProcessMock);
 
-        assertEquals(BUSINESS_PROCESS_CODE + "_" + ACTION_ID + "_" + REFUND_FOLLOW_ON.toString(), result);
+        assertThat(BUSINESS_PROCESS_CODE + "_" + ACTION_ID + "_" + REFUND_FOLLOW_ON).isEqualTo(result);
     }
 
     @Test
@@ -464,21 +490,21 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final String result = testObj.createWaitForEventName(eventMock, CAPTURE, businessProcessMock);
 
-        assertEquals(BUSINESS_PROCESS_CODE + "_" + CAPTURE.toString(), result);
+        assertThat(BUSINESS_PROCESS_CODE + "_" + CAPTURE).isEqualTo(result);
     }
 
     @Test
     public void shouldWaitForPaymentTransaction_WhenTransactionTypeAuthorizationAndEventTypeIsPaymentApproved_ShouldReturnFalse() {
-        final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, CheckoutComPaymentEventType.PAYMENT_APPROVED.getCode());
+        final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, PAYMENT_APPROVED.getCode());
 
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     @Test
     public void shouldWaitForPaymentTransaction_WhenTransactionTypeAuthorizationAndEventTypeIsPaymentPending_ShouldReturnFalse() {
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, CheckoutComPaymentEventType.PAYMENT_PENDING.getCode());
 
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -487,7 +513,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, PAYMENT_DECLINED.getCode());
 
-        assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -496,7 +522,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, PAYMENT_CANCELED.getCode());
 
-        assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -505,7 +531,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, AUTHORIZATION, CheckoutComPaymentEventType.PAYMENT_EXPIRED.getCode());
 
-        assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -514,7 +540,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, CAPTURE, CheckoutComPaymentEventType.PAYMENT_CAPTURED.getCode());
 
-        assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -523,7 +549,7 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
 
         final boolean result = testObj.shouldWaitForPaymentTransaction(orderMock, CAPTURE, CheckoutComPaymentEventType.PAYMENT_CAPTURED.getCode());
 
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     @Test

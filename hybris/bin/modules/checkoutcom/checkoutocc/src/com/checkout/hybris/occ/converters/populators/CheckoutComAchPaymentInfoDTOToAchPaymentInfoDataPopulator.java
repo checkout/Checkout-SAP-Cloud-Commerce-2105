@@ -23,10 +23,11 @@ public class CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulator implement
         Assert.notNull(source, "PaymentDetailsWsDTO cannot be null.");
         Assert.notNull(target, "AchPaymentInfoData cannot be null.");
 
-        target.setType(CheckoutComPaymentType.ACH.name());
         target.setAccountHolderName(source.getAccountHolderName());
         target.setAccountNumber(source.getAccountNumber());
         target.setAccountType(source.getAccountType());
+        target.setBankCode(source.getBankCode());
+        target.setPaymentMethod(source.getPaymentMethod());
         target.setRoutingNumber(source.getRoutingNumber());
         if (target.getAccountType().equalsIgnoreCase(CORPORATE_ACCOUNT_TYPE_VALUE) || target.getAccountType().equalsIgnoreCase(CORP_SAVINGS_ACCOUNT_TYPE_VALUE)) {
             target.setCompanyName(source.getCompanyName());

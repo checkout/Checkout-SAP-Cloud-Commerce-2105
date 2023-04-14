@@ -27,10 +27,11 @@ import org.springframework.transaction.support.TransactionOperations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.checkout.hybris.events.constants.CheckouteventsConstants.EVENT_APPROVED_RESPONSE_CODE;
-import static com.checkout.hybris.events.enums.CheckoutComPaymentEventType.PAYMENT_APPROVED;
-import static com.checkout.hybris.events.enums.CheckoutComPaymentEventType.PAYMENT_PENDING;
+import static com.checkout.hybris.events.constants.CheckouteventsConstants.DEFERRED_EVENT_APPROVED_RESPONSE_CODE;
+import static com.checkout.hybris.events.enums.CheckoutComPaymentEventType.*;
 import static de.hybris.platform.payment.dto.TransactionStatus.ACCEPTED;
 import static de.hybris.platform.payment.dto.TransactionStatus.REJECTED;
 import static de.hybris.platform.payment.dto.TransactionStatusDetails.PROCESSOR_DECLINE;
@@ -124,10 +125,11 @@ public class DefaultCheckoutComPaymentEventProcessingService implements Checkout
                 .filter(this::isAuthoriseEventType)
                 .collect(groupingBy(CheckoutComPaymentEventModel::getPaymentId))
                 .forEach((paymentId, eventList) -> {
-                    final Optional<CheckoutComPaymentEventModel> pendingEvent = eventList.stream().filter(event -> PAYMENT_PENDING.getCode().equalsIgnoreCase(event.getEventType())).findAny();
-                    final Optional<CheckoutComPaymentEventModel> approvedEvent = eventList.stream().filter(event -> PAYMENT_APPROVED.getCode().equalsIgnoreCase(event.getEventType())).findAny();
+                    final Optional<CheckoutComPaymentEventModel> pendingEvent = findEventInList(eventList, PAYMENT_PENDING);
+                    final Optional<CheckoutComPaymentEventModel> approvedEvent = findEventInList(eventList, PAYMENT_APPROVED);
+                    final Optional<CheckoutComPaymentEventModel> capturePendingEvent = findEventInList(eventList, PAYMENT_CAPTURE_PENDING);
 
-                    if (eventList.size() > 1 && pendingEvent.isPresent() && approvedEvent.isPresent()) {
+                    if (eventList.size() > 1 && (pendingEvent.isPresent() && approvedEvent.isPresent()) || (pendingEvent.isPresent() && capturePendingEvent.isPresent())) {
                         updateFailReasonAndAddEventToList(String.format("Equivalent event was already found for the paymentId: [%s] .", paymentId), pendingEvent.get(), ignoredEvents);
                         eventsToProcess.remove(pendingEvent.get());
                     }
@@ -256,10 +258,14 @@ public class DefaultCheckoutComPaymentEventProcessingService implements Checkout
      * @param transactionType the transaction type
      */
     protected void processPayment(final CheckoutComPaymentEventModel event, final PaymentTransactionModel transaction, final PaymentTransactionType transactionType) {
-        if (EVENT_APPROVED_RESPONSE_CODE.equalsIgnoreCase(event.getResponseCode())) {
+        if (RETURN.equals(transactionType)) {
+            paymentService.returnPayment(event, transaction, transactionType);
+        }
+        else if (EVENT_APPROVED_RESPONSE_CODE.equalsIgnoreCase(event.getResponseCode()) || isDeferredRefund(event, transactionType)) {
             LOG.debug("Accepting payment of type [{}] based on event with id [{}]", transactionType.toString(), event.getEventId());
             paymentService.acceptPayment(event, transaction, transactionType);
-        } else {
+        }
+         else {
             LOG.debug("Rejecting payment of transaction type [{}] based on event with id [{}]", transactionType.toString(), event.getEventId());
             paymentService.rejectPayment(event, transaction, transactionType);
         }
@@ -380,8 +386,9 @@ public class DefaultCheckoutComPaymentEventProcessingService implements Checkout
      * @return true if AUTHORIZATION event, false otherwise
      */
     protected boolean isAuthoriseEventType(final CheckoutComPaymentEventModel paymentEvent) {
-        return PAYMENT_PENDING.getCode().equalsIgnoreCase(paymentEvent.getEventType()) ||
-                PAYMENT_APPROVED.getCode().equalsIgnoreCase(paymentEvent.getEventType());
+        return Stream.of(PAYMENT_PENDING, PAYMENT_APPROVED, PAYMENT_CAPTURE_PENDING)
+                .map(CheckoutComPaymentEventType::getCode)
+                .anyMatch(status -> status.equalsIgnoreCase(paymentEvent.getEventType()));
     }
 
     /**
@@ -444,5 +451,15 @@ public class DefaultCheckoutComPaymentEventProcessingService implements Checkout
 
     protected TransactionOperations getTransactionTemplate() {
         return transactionTemplate;
+    }
+
+    protected Optional<CheckoutComPaymentEventModel> findEventInList(final List<CheckoutComPaymentEventModel> eventList, final CheckoutComPaymentEventType eventType) {
+        return eventList.stream()
+                .filter(event -> eventType.getCode().equalsIgnoreCase(event.getEventType()))
+                .findAny();
+    }
+
+    protected boolean isDeferredRefund(final CheckoutComPaymentEventModel event, final PaymentTransactionType transactionType) {
+        return REFUND_FOLLOW_ON.equals(transactionType) && DEFERRED_EVENT_APPROVED_RESPONSE_CODE.equalsIgnoreCase(event.getResponseCode());
     }
 }

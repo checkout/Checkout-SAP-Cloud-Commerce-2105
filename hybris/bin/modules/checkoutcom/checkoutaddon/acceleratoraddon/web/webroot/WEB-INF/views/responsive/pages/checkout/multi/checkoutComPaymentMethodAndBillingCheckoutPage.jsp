@@ -56,8 +56,16 @@
                                         <div class="form-additionals">
                                         </div>
 
+                                        <div class="checkbox consents-achPayment hidden" data-account="<spring:theme code='checkout.account.achpayment.popup.title'/> " data-error="<spring:theme code='checkoutcom.billing.address.page.global.field.error'/>">
+                                            <label for="customerConsent">
+                                                <input type="checkbox" id="customerConsent">
+                                                <spring:theme code="checkoutcom.achpayment.checkbox" htmlEscape="false"/>
+                                            </label>
+                                            <div style="display:none" id="pop-up-consents" data-title="<spring:theme code='checkoutcom.achpayment.popuptitle'/>">
+                                                <spring:theme code="checkout.achpayment.popup"/>
+                                            </div>
+                                        </div>
                                     </form:form>
-
                                 </ycommerce:testId>
                             </div>
                         </div>

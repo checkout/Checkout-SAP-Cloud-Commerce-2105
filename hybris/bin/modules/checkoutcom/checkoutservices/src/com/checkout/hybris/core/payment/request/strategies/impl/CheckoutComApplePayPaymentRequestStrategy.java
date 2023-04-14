@@ -7,6 +7,7 @@ import com.checkout.hybris.core.model.CheckoutComApplePayPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.PaymentRequest;
 import com.checkout.payments.RequestSource;
@@ -31,8 +32,11 @@ public class CheckoutComApplePayPaymentRequestStrategy extends CheckoutComAbstra
                                                      final CheckoutComCurrencyService checkoutComCurrencyService,
                                                      final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                      final CMSSiteService cmsSiteService,
-                                                     final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+                                                     final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                     final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter) {
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
     }
 
     /**
