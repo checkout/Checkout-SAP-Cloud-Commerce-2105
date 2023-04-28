@@ -28,28 +28,28 @@ INSERT_UPDATE AchAccountType; code[unique = true]
                             ; Corporate
                             ; CorpSavings
 
-INSERT_UPDATE CheckoutComAPMConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode)                                                                                         ; restrictedCurrencies(isocode)
-                                         ; SOFORT             ; Sofort         ; AT,BE,DE,ES,IT,NL                                                                                                    ; EUR
-                                         ; PAYPAL             ; PayPal         ;                                                                                                                      ;
-                                         ; POLI               ; POLi           ; AU,NZ                                                                                                                ; AUD,NZD
-                                         ; IDEAL              ; iDeal          ; NL                                                                                                                   ; EUR
-                                         ; KLARNA             ; Klarna         ; AT,DK,FI,DE,NL,NO,SE,GB,IM,JE,GG                                                                                     ; EUR,GBP
-                                         ; ALIPAY             ; Alipay         ; US,CN                                                                                                                ; USD
-                                         ; BENEFITPAY         ; Benefit Pay    ; BH                                                                                                                   ; BHD
-                                         ; BANCONTACT         ; Bancontact     ; BE                                                                                                                   ; EUR
-                                         ; GIROPAY            ; Giropay        ; DE                                                                                                                   ; EUR
-                                         ; EPS                ; Eps            ; AT                                                                                                                   ; EUR
-                                         ; KNET               ; Knet           ; KW                                                                                                                   ; KWD
-                                         ; QPAY               ; QPay           ; QA                                                                                                                   ; QAR
-                                         ; MULTIBANCO         ; Multibanco     ; PT                                                                                                                   ; EUR
-                                         ; SEPA               ; Sepa           ; AT,BE,CY,DE,EE,ES,FI,FR,GR,IE,IT,LT,LU,LV,MT,NL,PT,SI,SK,AD,BG,CH,CZ,DK,GB,IM,JE,GG,HR,HU,IS,LI,MC,NO,PL,RO,SM,SE,VA ; EUR
-                                         ; P24                ; Przelewy24     ; PL                                                                                                                   ; EUR,PLN
+INSERT_UPDATE CheckoutComAPMConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode)                                                                                         ; restrictedCurrencies(isocode); enabledInNAS[default = false]
+                                         ; SOFORT             ; Sofort         ; AT,BE,DE,ES,IT,NL                                                                                                    ; EUR                          ; true
+                                         ; PAYPAL             ; PayPal         ;                                                                                                                      ;                              ;
+                                         ; POLI               ; POLi           ; AU,NZ                                                                                                                ; AUD,NZD                      ;
+                                         ; IDEAL              ; iDeal          ; NL                                                                                                                   ; EUR                          ; true
+                                         ; KLARNA             ; Klarna         ; AT,DK,FI,DE,NL,NO,SE,GB,IM,JE,GG                                                                                     ; EUR,GBP                      ;
+                                         ; ALIPAY             ; Alipay         ; US,CN                                                                                                                ; USD                          ;
+                                         ; BENEFITPAY         ; Benefit Pay    ; BH                                                                                                                   ; BHD                          ;
+                                         ; BANCONTACT         ; Bancontact     ; BE                                                                                                                   ; EUR                          ; true
+                                         ; GIROPAY            ; Giropay        ; DE                                                                                                                   ; EUR                          ; true
+                                         ; EPS                ; Eps            ; AT                                                                                                                   ; EUR                          ; true
+                                         ; KNET               ; Knet           ; KW                                                                                                                   ; KWD                          ;
+                                         ; QPAY               ; QPay           ; QA                                                                                                                   ; QAR                          ;
+                                         ; MULTIBANCO         ; Multibanco     ; PT                                                                                                                   ; EUR                          ; true
+                                         ; SEPA               ; Sepa           ; AT,BE,CY,DE,EE,ES,FI,FR,GR,IE,IT,LT,LU,LV,MT,NL,PT,SI,SK,AD,BG,CH,CZ,DK,GB,IM,JE,GG,HR,HU,IS,LI,MC,NO,PL,RO,SM,SE,VA ; EUR                          ;
+                                         ; P24                ; Przelewy24     ; PL                                                                                                                   ; EUR,PLN                      ; true
 
-INSERT_UPDATE CheckoutComFawryConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); productId        ; productDescription[lang = en]
-                                           ; FAWRY              ; Fawry          ; EG                          ; EGP                          ; Fawry product id ; Fawry product description
+INSERT_UPDATE CheckoutComFawryConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); productId        ; productDescription[lang = en]; enabledInNAS
+                                           ; FAWRY              ; Fawry          ; EG                          ; EGP                          ; Fawry product id ; Fawry product description    ; true
 
-INSERT_UPDATE CheckoutComOxxoConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); description[lang = en]     ; integrationType(code)
-                                          ; OXXO               ; Oxxo           ; MX                          ; MXN                          ; redirect OXXO Demo Payment ; redirect
+INSERT_UPDATE CheckoutComOxxoConfiguration; code[unique = true]; name[lang = en]; restrictedCountries(isocode); restrictedCurrencies(isocode); description[lang = en]     ; integrationType(code); enabledInNAS
+                                          ; OXXO               ; Oxxo           ; MX                          ; MXN                          ; redirect OXXO Demo Payment ; redirect             ; false
 
 INSERT_UPDATE CheckoutComGlobalAPMConfiguration; abcAPMs(code)                                                                                                     ; nasAPMs(code);
                                                ; SOFORT,PAYPAL,POLI,IDEAL,KLARNA,ALIPAY,BENEFITPAY,BANCONTACT,GIROPAY,EPS,KNET,QPAY,MULTIBANCO,SEPA,P24,FAWRY,OXXO ; SOFORT,IDEAL,BANCONTACT,GIROPAY,EPS,MULTIBANCO,P24,FAWRY
