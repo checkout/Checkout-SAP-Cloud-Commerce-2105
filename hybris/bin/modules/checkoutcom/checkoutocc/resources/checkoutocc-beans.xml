@@ -10,6 +10,8 @@
         <property name="bic" type="java.lang.String"/>
         <property name="accountNumber" type="java.lang.String"/>
         <property name="accountType" type="java.lang.String"/>
+        <property name="paymentMethod" type="java.lang.String"/>
+        <property name="bankCode" type="java.lang.String"/>
         <property name="routingNumber" type="java.lang.String"/>
         <property name="companyName" type="java.lang.String"/>
         <property name="accountIban" type="java.lang.String"/>
@@ -22,6 +24,7 @@
         <property name="country" type="java.lang.String"/>
         <property name="authorizationToken" type="java.lang.String"/>
         <property name="document" type="java.lang.String"/>
+        <property name="scheme" type="java.lang.String"/>
     </bean>
 
     <bean class="com.checkout.dto.apm.CheckoutComAPMConfigurationWsDTO">
@@ -111,5 +114,41 @@
         <property name="ckoSessionId" type="java.lang.String">
             <annotations>@JsonProperty("cko-session-id")</annotations>
         </property>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkCreationResponseDTO">
+        <property name="publicToken" type="java.lang.String"/>
+        <property name="metadata"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseDTO"/>
+        <property name="customerConsents" type="java.lang.Boolean"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountDTO">
+        <property name="class_type" type="java.lang.String"/>
+        <property name="id" type="java.lang.String"/>
+        <property name="mask" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="subtype" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="verification_status" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseInstitutionDTO">
+        <property name="institution_id" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseDTO">
+        <property name="account"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountDTO"/>
+        <property name="accounts"
+                  type="java.util.List&lt;com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountDTO&gt;"/>
+        <property name="account_id" type="java.lang.String"/>
+        <property name="link_session_id" type="java.lang.String"/>
+        <property name="public_token" type="java.lang.String"/>
+        <property name="status" type="java.lang.String"/>
+        <property name="transfer_status" type="java.lang.String"/>
+        <property name="institution"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseInstitutionDTO"/>
     </bean>
 </beans>

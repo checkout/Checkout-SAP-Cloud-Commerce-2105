@@ -109,6 +109,15 @@ public interface CheckoutComPaymentService extends PaymentService {
     void rejectPayment(CheckoutComPaymentEventModel paymentEvent, PaymentTransactionModel transaction, PaymentTransactionType transactionType);
 
     /**
+     * Return a payment based on the event. A payment transaction entry will represent the outcome of the payment return
+     *
+     * @param paymentEvent    the payment event representing an accepted payment
+     * @param transaction     the payment transaction related to the payment
+     * @param transactionType the payment transaction type
+     */
+    void returnPayment(CheckoutComPaymentEventModel paymentEvent, PaymentTransactionModel transaction, PaymentTransactionType transactionType);
+
+    /**
      * Handles the pending payment response based on the APM payment type and returns the authorise response
      *
      * @param paymentPendingResponse the pending payment response from checkout.com

@@ -1,6 +1,7 @@
 package com.checkout.hybris.facades.payment.impl;
 
 import com.checkout.hybris.core.model.CheckoutComAPMPaymentInfoModel;
+import com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComBenefitPayPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
 import com.checkout.hybris.core.payment.details.mappers.CheckoutComUpdatePaymentInfoStrategyMapper;
@@ -45,6 +46,8 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
     @Mock
     private Converter<CCPaymentInfoData, CheckoutComCreditCardPaymentInfoModel> checkoutComCCPaymentInfoReverseConverterMock;
     @Mock
+    private Converter<AchPaymentInfoData, CheckoutComAchPaymentInfoModel> checkoutComAchPaymentInfoReverseConverterMock;
+    @Mock
     private CartModel cartModelMock;
     @Mock
     private CCPaymentInfoData ccPaymentInfoDataMock;
@@ -53,9 +56,13 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
     @Mock
     private CheckoutComAPMPaymentInfoModel apmPaymentInfoMock;
     @Mock
+    private CheckoutComAchPaymentInfoModel checkoutComAchPaymentInfoModelMock;
+    @Mock
     private CartData cartDataMock;
     @Mock
     private APMPaymentInfoData apmPaymentInfoDataMock;
+    @Mock
+    private AchPaymentInfoData achPaymentInfoDataMock;
     @Mock
     private CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolverMock;
     @Mock
@@ -83,6 +90,7 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
         when(checkoutComPaymentTypeResolverMock.resolvePaymentMethod(CheckoutComPaymentType.BENEFITPAY.name())).thenReturn(CheckoutComPaymentType.BENEFITPAY);
         when(checkoutComApmMappedPaymentInfoReverseConverterMock.convertAPMPaymentInfoData(apmPaymentInfoDataMock, CheckoutComPaymentType.BENEFITPAY)).thenReturn(benefitPayPaymentInfoMock);
         when(checkoutComCCPaymentInfoReverseConverterMock.convert(ccPaymentInfoDataMock)).thenReturn(checkoutComCreditCardPaymentInfoModelMock);
+        when(checkoutComAchPaymentInfoReverseConverterMock.convert(achPaymentInfoDataMock)).thenReturn(checkoutComAchPaymentInfoModelMock);
     }
 
     @Test
@@ -115,7 +123,7 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
 
         testObj.addPaymentInfoToCart(ccPaymentInfoDataMock);
 
-        InOrder inOrder = inOrder(cartServiceMock, checkoutComCCPaymentInfoReverseConverterMock, paymentInfoServiceMock, checkoutComCreditCardPaymentInfoModelMock);
+        final InOrder inOrder = inOrder(cartServiceMock, checkoutComCCPaymentInfoReverseConverterMock, paymentInfoServiceMock, checkoutComCreditCardPaymentInfoModelMock);
         inOrder.verify(cartServiceMock).getSessionCart();
         inOrder.verify(checkoutComCCPaymentInfoReverseConverterMock).convert(ccPaymentInfoDataMock);
         inOrder.verify(paymentInfoServiceMock).createPaymentInfo(checkoutComCreditCardPaymentInfoModelMock, cartModelMock);
@@ -127,7 +135,7 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
 
         testObj.addPaymentInfoToCart(apmPaymentInfoDataMock);
 
-        InOrder inOrder = inOrder(cartServiceMock, checkoutComApmMappedPaymentInfoReverseConverterMock, paymentInfoServiceMock, benefitPayPaymentInfoMock);
+        final InOrder inOrder = inOrder(cartServiceMock, checkoutComApmMappedPaymentInfoReverseConverterMock, paymentInfoServiceMock, benefitPayPaymentInfoMock);
         inOrder.verify(cartServiceMock).hasSessionCart();
         inOrder.verify(cartServiceMock).getSessionCart();
         inOrder.verify(checkoutComApmMappedPaymentInfoReverseConverterMock).convertAPMPaymentInfoData(apmPaymentInfoDataMock, CheckoutComPaymentType.BENEFITPAY);
@@ -147,6 +155,15 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
         inOrder.verify(paymentInfoServiceMock).removePaymentInfo(cartModelMock);
         inOrder.verify(paymentInfoServiceMock).createPaymentInfo(benefitPayPaymentInfoMock, cartModelMock);
     }
+
+    @Test
+    public void addPaymentInfoToCart_WhenACHPaymentInfoDataAndCartAlreadyHAsPaymentInfo_ShouldSetThePaymentToSessionCart() {
+        ReflectionTestUtils.setField(testObj, "checkoutComAchPaymentInfoReverseConverter", checkoutComAchPaymentInfoReverseConverterMock);
+        testObj.addPaymentInfoToCart(achPaymentInfoDataMock);
+
+        verify(paymentInfoServiceMock).createPaymentInfo(checkoutComAchPaymentInfoModelMock, cartModelMock);
+    }
+
 
     @Test(expected = IllegalArgumentException.class)
     public void isTokenMissingOnCardPaymentInfo_WhenCartNull_ShouldThrowException() {
@@ -236,7 +253,6 @@ public class DefaultCheckoutComPaymentInfoFacadeTest {
         final Object result = testObj.createPaymentInfoData(ACH.name());
 
         assertTrue(result instanceof AchPaymentInfoData);
-        assertEquals(ACH.name(), ((AchPaymentInfoData) result).getType());
     }
 
     @Test

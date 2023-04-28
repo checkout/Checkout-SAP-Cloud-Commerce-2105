@@ -54,7 +54,7 @@ public class DefaultCheckoutComRequestEventValidator implements CheckoutComReque
         LOG.debug("Received event body: [{}]", eventBody);
 
         if (!isNasActive()) {
-            return isCkoSignatureValid(ckoSignature, eventBody);
+            return !isAbcSignatureKeyActive() || isCkoSignatureValid(ckoSignature, eventBody);
         } else if (isNasAuthorizationHeaderActive() && isNasAuthorizationHeaderInvalid(eventAuthorizationHeaderKey)) {
             return false;
         } else {
@@ -96,6 +96,11 @@ public class DefaultCheckoutComRequestEventValidator implements CheckoutComReque
     private boolean isNasSignatureKeyActive() {
         return checkoutComMerchantConfigurationService.isNasUsed() &&
                 checkoutComMerchantConfigurationService.isNasSignatureKeyUsedOnNotificationValidation();
+    }
+
+    private boolean isAbcSignatureKeyActive() {
+        return !checkoutComMerchantConfigurationService.isNasUsed() &&
+                checkoutComMerchantConfigurationService.isAbcSignatureKeyUsedOnNotificationValidation();
     }
 
     private String getSiteIdForTheEvent(final String eventBody) {

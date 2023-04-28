@@ -19,6 +19,13 @@
         <constructor-arg ref="checkoutComPaymentEventDao"/>
     </bean>
 
+    <alias name="defaultCheckoutComCleanupService" alias="checkoutComCleanupService"/>
+    <bean id="defaultCheckoutComCleanupService"
+          class="com.checkout.hybris.events.services.impl.DefaultCheckoutComCleanupService">
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="checkoutComCleanupDao"/>
+    </bean>
+
     <alias name="defaultCheckoutComPaymentEventProcessingService" alias="checkoutComPaymentEventProcessingService"/>
     <bean id="defaultCheckoutComPaymentEventProcessingService"
           class="com.checkout.hybris.events.services.impl.DefaultCheckoutComPaymentEventProcessingService">

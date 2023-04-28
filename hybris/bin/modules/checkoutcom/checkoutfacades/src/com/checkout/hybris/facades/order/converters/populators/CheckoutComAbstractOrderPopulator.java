@@ -1,6 +1,7 @@
 package com.checkout.hybris.facades.order.converters.populators;
 
 import com.checkout.hybris.core.model.CheckoutComAPMPaymentInfoModel;
+import com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComBenefitPayPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.resolvers.CheckoutComPaymentTypeResolver;
@@ -44,14 +45,20 @@ public class CheckoutComAbstractOrderPopulator implements Populator<AbstractOrde
             setPaymentTypeAndQrCodeOnOrderData(target, paymentInfo, checkoutComPaymentType);
 
             if (paymentInfo instanceof CheckoutComAPMPaymentInfoModel) {
+                final CheckoutComAPMPaymentInfoModel checkoutPaymentInfo = (CheckoutComAPMPaymentInfoModel) paymentInfo;
                 final Populator<CheckoutComAPMPaymentInfoModel, CheckoutComPaymentInfoData> checkoutComPaymentInfoPopulator = checkoutComApmPaymentInfoPopulatorMapper.findPopulator(checkoutComPaymentType);
 
                 final CheckoutComPaymentInfoData checkoutComPaymentInfoData = new CheckoutComPaymentInfoData();
-                checkoutComPaymentInfoPopulator.populate((CheckoutComAPMPaymentInfoModel) paymentInfo, checkoutComPaymentInfoData);
+                checkoutComPaymentInfoPopulator.populate(checkoutPaymentInfo, checkoutComPaymentInfoData);
 
                 if (source.getUser() instanceof CustomerModel && checkoutComPaymentInfoData.getBillingAddress() != null) {
                     checkoutComPaymentInfoData.getBillingAddress().setEmail(((CustomerModel) source.getUser()).getContactEmail());
                 }
+
+                if (checkoutPaymentInfo instanceof CheckoutComAchPaymentInfoModel) {
+                    checkoutComPaymentInfoData.setAccountNumber(((CheckoutComAchPaymentInfoModel) checkoutPaymentInfo).getMask());
+                }
+
                 target.setCheckoutComPaymentInfo(checkoutComPaymentInfoData);
             }
         }

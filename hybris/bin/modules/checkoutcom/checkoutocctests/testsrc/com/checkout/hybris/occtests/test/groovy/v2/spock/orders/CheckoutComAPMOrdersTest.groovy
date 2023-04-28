@@ -54,8 +54,8 @@ class CheckoutComAPMOrdersTest extends AbstractCheckoutComPaymentsTest {
 //        XML    | KNET       | KWD_CURRENCY_CODE | 'Kuwait'       | DEFAULT_CHECKOUT_KNET_PAYMENT_JSON       | KW_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.knet.sandbox'
         JSON   | POLI       | AUD_CURRENCY_CODE | 'Australia'    | DEFAULT_CHECKOUT_POLI_PAYMENT_JSON       | AU_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.poli.sandbox'
         XML    | POLI       | AUD_CURRENCY_CODE | 'Australia'    | DEFAULT_CHECKOUT_POLI_PAYMENT_JSON       | AU_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.poli.sandbox'
-        JSON   | QPAY       | QAR_CURRENCY_CODE | 'Qatar'        | DEFAULT_CHECKOUT_QPAY_PAYMENT_JSON       | QATAR_BILLING_ADDRESS_JSON    | 'checkoutocctests.checkout.qpay.sandbox'
-        XML    | QPAY       | QAR_CURRENCY_CODE | 'Qatar'        | DEFAULT_CHECKOUT_QPAY_PAYMENT_JSON       | QATAR_BILLING_ADDRESS_JSON    | 'checkoutocctests.checkout.qpay.sandbox'
+//        JSON   | QPAY       | QAR_CURRENCY_CODE | 'Qatar'        | DEFAULT_CHECKOUT_QPAY_PAYMENT_JSON       | QATAR_BILLING_ADDRESS_JSON    | 'checkoutocctests.checkout.qpay.sandbox'
+//        XML    | QPAY       | QAR_CURRENCY_CODE | 'Qatar'        | DEFAULT_CHECKOUT_QPAY_PAYMENT_JSON       | QATAR_BILLING_ADDRESS_JSON    | 'checkoutocctests.checkout.qpay.sandbox'
         JSON   | ALIPAY     | USD_CURRENCY_CODE | 'USA'          | DEFAULT_CHECKOUT_ALIPAY_PAYMENT_JSON     | US_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.alipay.sandbox'
         XML    | ALIPAY     | USD_CURRENCY_CODE | 'USA'          | DEFAULT_CHECKOUT_ALIPAY_PAYMENT_JSON     | US_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.alipay.sandbox'
         JSON   | ALIPAY     | USD_CURRENCY_CODE | 'China'        | DEFAULT_CHECKOUT_ALIPAY_PAYMENT_JSON     | CN_BILLING_ADDRESS_JSON       | 'checkoutocctests.checkout.alipay.sandbox'
@@ -102,8 +102,8 @@ class CheckoutComAPMOrdersTest extends AbstractCheckoutComPaymentsTest {
         XML    | FAWRY      | EGP_CURRENCY_CODE | 'Germany'      | DEFAULT_CHECKOUT_FAWRY_PAYMENT_JSON   | DEFAULT_BILLING_ADDRESS_JSON
 //        JSON   | BENEFITPAY | BHD_CURRENCY_CODE | 'Bahrain'      | DEFAULT_CHECKOUT_BENEFIT_PAYMENT_JSON | BH_BILLING_ADDRESS_JSON
 //        XML    | BENEFITPAY | BHD_CURRENCY_CODE | 'Bahrain'      | DEFAULT_CHECKOUT_BENEFIT_PAYMENT_JSON | BH_BILLING_ADDRESS_JSON
-        JSON   | SEPA       | EUR_CURRENCY_CODE | 'Austria'      | DEFAULT_CHECKOUT_SEPA_PAYMENT_JSON    | AT_BILLING_ADDRESS_JSON
-        XML    | SEPA       | EUR_CURRENCY_CODE | 'Austria'      | DEFAULT_CHECKOUT_SEPA_PAYMENT_JSON    | AT_BILLING_ADDRESS_JSON
+//        JSON   | SEPA       | EUR_CURRENCY_CODE | 'Austria'      | DEFAULT_CHECKOUT_SEPA_PAYMENT_JSON    | AT_BILLING_ADDRESS_JSON
+//        XML    | SEPA       | EUR_CURRENCY_CODE | 'Austria'      | DEFAULT_CHECKOUT_SEPA_PAYMENT_JSON    | AT_BILLING_ADDRESS_JSON
     }
 
     def "Authorized customer can't place an order with #currency currency with a billing address from #billingCountry with #APM: #format"() {

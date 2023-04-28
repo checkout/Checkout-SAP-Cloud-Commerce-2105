@@ -50,5 +50,6 @@ public class CheckoutComEventController {
             LOG.error("Exception while validating the event body.", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception while converting the event body to hmac.", e);
         }
+
     }
 }

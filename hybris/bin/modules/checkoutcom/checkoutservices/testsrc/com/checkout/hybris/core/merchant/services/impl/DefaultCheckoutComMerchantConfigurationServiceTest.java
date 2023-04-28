@@ -3,10 +3,7 @@ package com.checkout.hybris.core.merchant.services.impl;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.enums.PaymentActionType;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
-import com.checkout.hybris.core.model.CheckoutComApplePayConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComKlarnaConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
+import com.checkout.hybris.core.model.*;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.site.BaseSiteService;
@@ -17,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +51,8 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
     private CheckoutComGooglePayConfigurationModel googlePayConfigMock;
     @Mock
     private CheckoutComMerchantConfigurationModel merchantConfigurationMock;
+    @Mock
+    private CheckoutComACHConfigurationModel achConfigurationMock;
 
     @Before
     public void setUp() {
@@ -337,5 +337,21 @@ public class DefaultCheckoutComMerchantConfigurationServiceTest {
         when(merchantConfigurationMock.getUseNasSignatureKeyOnNotifications()).thenReturn(true);
 
         assertTrue(testObj.isNasSignatureKeyUsedOnNotificationValidation());
+    }
+
+    @Test
+    public void isAbcSignatureKeyUsedOnNotificationValidation_shouldReturnConfigurationFlag() {
+        when(merchantConfigurationMock.getUseAbcSignatureKeyOnNotifications()).thenReturn(true);
+
+        assertTrue(testObj.isAbcSignatureKeyUsedOnNotificationValidation());
+    }
+
+    @Test
+    public void getAchConfiguration_shouldReturnAchConfiguration() {
+        when(merchantConfigurationMock.getAchConfiguration()).thenReturn(achConfigurationMock);
+
+        final CheckoutComACHConfigurationModel result = testObj.getACHConfiguration();
+
+        assertThat(result).isSameAs(achConfigurationMock);
     }
 }

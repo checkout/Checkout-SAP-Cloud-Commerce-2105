@@ -10,14 +10,15 @@ ACC.applePay = {
       this.applePayNotSupported();
       return;
     }
-    $('#paymentMethod_applePayComponent').next().show();
-
+    $('#paymentMethod_applePayComponent').next();
   },
 
   enablePaymentFlow: function () {
     /* hide the delivery address */
     $('[for="coUseDeliveryAddress"]').closest('.checkbox').hide();
+    $('.consents-achPayment').addClass('hidden');
     $('#coBillingCountrySelector').hide();
+    $('.achPayment').hide();
     $('#coBillingAddress').hide();
     $('.gpay-card-info-container').remove()
 

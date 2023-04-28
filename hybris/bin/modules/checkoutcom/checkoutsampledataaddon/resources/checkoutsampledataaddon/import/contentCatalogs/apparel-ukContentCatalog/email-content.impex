@@ -3,3 +3,16 @@
 # -----------------------------------------------------------------------
 $contentCatalog=apparel-ukContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$lang=en
+UPDATE EmailPage; $contentCV[unique = true]; uid[unique = true]           ; fromEmail[lang = $lang]          ; fromName[lang = $lang]
+                ;                          ; CustomerRegistrationEmail    ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; DeliverySentEmail            ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; ForgottenPasswordEmail       ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderCancelledEmail          ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderCollectionReminderEmail ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderConfirmationEmail       ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderMoveToCsEmail           ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderPartiallyCanceledEmail  ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderPartiallyRefundedEmail  ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; OrderRefundEmail             ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"
+                ;                          ; ReadyForPickupEmail          ; "checkout-infra@e2ycommerce.com" ; "Customer Services Team"

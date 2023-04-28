@@ -1,7 +1,15 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+
+
 <c:set var="hasAvailablePaymentMethods" value="${hasAvailablePaymentMethods or isAvailable}" scope="session"/>
+
+
+<c:if test="${apmConfiguration.code eq 'ACH'}">
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+</c:if>
+
 
 <form:radiobutton id="paymentMethod_${apmConfiguration.code}" path="paymentMethod" disabled="${!isAvailable}"
                   value="${apmConfiguration.code}" cssClass="available-${isAvailable}" data-required="${isUserDataRequired}"

@@ -108,6 +108,8 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
             return handleApprovedPaymentResponse(authorizeResponseData, cart, payment);
         } else if (isPendingPayment(paymentResponse)) {
             return authorizeResponseConverter.convert(paymentService.handlePendingPaymentResponse(paymentResponse.getPending(), cart.getPaymentInfo()));
+        } else if (isFailedPayment(payment)) {
+            handleFailedPaymentResponse(cart, payment);
         }
 
         LOG.error("Payment authorization response returned: approved [{}], pending [{}]", payment == null ? "null" : payment.isApproved(), paymentResponse.isPending());
@@ -211,8 +213,17 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
         return authorizeResponseData;
     }
 
+    protected void handleFailedPaymentResponse(final CartModel cartModel, final PaymentProcessed payment) {
+        LOG.debug("Storing failed payment ID in for cart with code [{}].", cartModel.getCode());
+        paymentInfoService.addPaymentId(payment.getId(), cartModel.getPaymentInfo());
+    }
+
     protected boolean isPendingPayment(final PaymentResponse paymentResponse) {
         return paymentResponse.isPending() && paymentResponse.getPending() != null;
+    }
+
+    protected boolean isFailedPayment(final PaymentProcessed payment) {
+        return payment != null && !payment.isApproved();
     }
 
     protected ExpressCheckoutResult callSuperExpressCheckoutResult() {

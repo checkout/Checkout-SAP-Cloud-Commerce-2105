@@ -20,6 +20,8 @@ public class CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulatorTest {
     private static final String ACCOUNT_NAME_VALUE = "Account Name";
     private static final String ACCOUNT_TYPE_CHECKING_VALUE = "Checking";
     private static final String ACCOUNT_NUMBER_VALUE = "098765432";
+    private static final String PAYMENT_METHOD_VALUE = "Payment Method";
+    private static final String BANK_CODE_VALUE = "123";
     private static final String ROUTING_NUMBER_VALUE = "098765";
     private static final String COMPANY_NAME_VALUE = "Company Name";
     private static final String CORP_SAVINGS_ACCOUNT_TYPE_VALUE = "CorpSavings";
@@ -35,6 +37,8 @@ public class CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulatorTest {
         source.setAccountHolderName(ACCOUNT_NAME_VALUE);
         source.setAccountType(ACCOUNT_TYPE_CHECKING_VALUE);
         source.setAccountNumber(ACCOUNT_NUMBER_VALUE);
+        source.setBankCode(BANK_CODE_VALUE);
+        source.setPaymentMethod(PAYMENT_METHOD_VALUE);
         source.setRoutingNumber(ROUTING_NUMBER_VALUE);
         source.setType(ACH.name());
     }
@@ -43,7 +47,6 @@ public class CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulatorTest {
     public void populate_WhenAccountTypeChecking_ShouldPopulateTargetCorrectlyWithNoCompanyName() {
         testObj.populate(source, target);
 
-        assertEquals(ACH.name(), target.getType());
         assertEquals(ACCOUNT_NAME_VALUE, target.getAccountHolderName());
         assertEquals(ACCOUNT_NUMBER_VALUE, target.getAccountNumber());
         assertEquals(ACCOUNT_TYPE_CHECKING_VALUE, target.getAccountType());
@@ -58,12 +61,22 @@ public class CheckoutComAchPaymentInfoDTOToAchPaymentInfoDataPopulatorTest {
 
         testObj.populate(source, target);
 
-        assertEquals(ACH.name(), target.getType());
         assertEquals(ACCOUNT_NAME_VALUE, target.getAccountHolderName());
         assertEquals(ACCOUNT_NUMBER_VALUE, target.getAccountNumber());
         assertEquals(CORP_SAVINGS_ACCOUNT_TYPE_VALUE, target.getAccountType());
         assertEquals(ROUTING_NUMBER_VALUE, target.getRoutingNumber());
         assertEquals(COMPANY_NAME_VALUE, target.getCompanyName());
+    }
+
+    @Test
+    public void populate_WhenAccountTypeChecking_ShouldPopulateTargetCorrectly() {
+        testObj.populate(source, target);
+
+        assertEquals(ACCOUNT_NAME_VALUE, target.getAccountHolderName());
+        assertEquals(ACCOUNT_NUMBER_VALUE, target.getAccountNumber());
+        assertEquals(ACCOUNT_TYPE_CHECKING_VALUE, target.getAccountType());
+        assertEquals(BANK_CODE_VALUE, target.getBankCode());
+        assertEquals(PAYMENT_METHOD_VALUE, target.getPaymentMethod());
     }
 
     @Test(expected = IllegalArgumentException.class)

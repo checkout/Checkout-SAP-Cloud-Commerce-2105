@@ -46,6 +46,16 @@
           parent="listMergeDirective">
         <property name="add" ref="getCheckoutaddonBeforeViewHandler"/>
     </bean>
+    
+    <bean id="checkoutComIsMerchantABCBeforeViewHandler" 
+          class="com.checkout.hybris.addon.interceptors.beforeview.CheckoutComIsMerchantABCBeforeViewHandler">
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+    </bean>
+    
+    <bean id="CheckoutIsABCBeforeViewHandlerListMergeDirective" depends-on="beforeViewHandlersList"
+          parent="listMergeDirective">
+        <property name="add" ref="checkoutComIsMerchantABCBeforeViewHandler"/>
+    </bean>
 
     <alias name="defaultCheckoutComPreviewUrlResolverPageMappings" alias="previewUrlResolverPageMappings"/>
     <util:map id="defaultCheckoutComPreviewUrlResolverPageMappings">
@@ -84,7 +94,6 @@
                 <entry key="CARD" value-ref="checkoutComCCPaymentInfoDataReverseConverter"/>
                 <entry key="FAWRY" value-ref="checkoutComFawryPaymentInfoDataReverseConverter"/>
                 <entry key="IDEAL" value-ref="checkoutComIdealPaymentInfoDataReverseConverter"/>
-                <entry key="ACH" value-ref="checkoutComAchPaymentInfoDataReverseConverter"/>
                 <entry key="SEPA" value-ref="checkoutComSepaPaymentInfoDataReverseConverter"/>
                 <entry key="KLARNA" value-ref="checkoutComKlarnaPaymentInfoDataReverseConverter"/>
                 <entry key="OXXO" value-ref="checkoutComOxxoPaymentInfoDataReverseConverter"/>
@@ -279,8 +288,10 @@
 
     <alias name="defaultCheckoutComCCPaymentInfoDataReverseConverter"
            alias="checkoutComCCPaymentInfoDataReverseConverter"/>
-    <bean id="defaultCheckoutComCCPaymentInfoDataReverseConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData"/>
+    <bean id="defaultCheckoutComCCPaymentInfoDataReverseConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass"
+                  value="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData"/>
         <property name="populators">
             <list>
                 <ref bean="checkoutComCCPaymentInfoDataReversePopulator"/>
@@ -289,8 +300,10 @@
     </bean>
 
     <alias name="defaultCheckoutComAddressDataReverseConverter" alias="checkoutComAddressDataReverseConverter"/>
-    <bean id="defaultCheckoutComAddressDataReverseConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="de.hybris.platform.commercefacades.user.data.AddressData"/>
+    <bean id="defaultCheckoutComAddressDataReverseConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass"
+                  value="de.hybris.platform.commercefacades.user.data.AddressData"/>
         <property name="populators">
             <list>
                 <ref bean="checkoutComAddressDataReversePopulator"/>
@@ -303,5 +316,43 @@
           class="com.checkout.hybris.addon.converters.populators.CheckoutComAddressDataReversePopulator">
         <constructor-arg ref="i18NFacade"/>
     </bean>
+
+    <alias name="defaultCheckoutComCCPaymentInfoDataToCreditCardDataFormConverter"
+           alias="checkoutComCCPaymentInfoDataToCreditCardDataFormConverter"/>
+    <bean id="defaultCheckoutComCCPaymentInfoDataToCreditCardDataFormConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass"
+                  value="com.checkout.hybris.addon.forms.CreditCardDataForm"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComCCPaymentInfoDataToCreditCardDataFormPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComCCPaymentInfoDataToCreditCardDataFormPopulator"
+           alias="checkoutComCCPaymentInfoDataToCreditCardDataFormPopulator"/>
+    <bean class="com.checkout.hybris.addon.converters.populators.CheckoutComCCPaymentInfoDataToCreditCardDataFormPopulator"
+          id="defaultCheckoutComCCPaymentInfoDataToCreditCardDataFormPopulator"/>
+
+
+    <alias name="defaultCheckoutComCreditCardDataFormToCCPaymentInfoDataConverter"
+           alias="checkoutComCreditCardDataFormToCCPaymentInfoDataConverter"/>
+    <bean id="defaultCheckoutComCreditCardDataFormToCCPaymentInfoDataConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass"
+                  value="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComCreditCardDataFormToCCPaymentInfoDataPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComCreditCardDataFormToCCPaymentInfoDataPopulator"
+           alias="checkoutComCreditCardDataFormToCCPaymentInfoDataPopulator"/>
+    <bean class="com.checkout.hybris.addon.converters.populators.CheckoutComCreditCardDataFormToCCPaymentInfoDataPopulator"
+          id="defaultCheckoutComCreditCardDataFormToCCPaymentInfoDataPopulator"/>
+
 
 </beans>

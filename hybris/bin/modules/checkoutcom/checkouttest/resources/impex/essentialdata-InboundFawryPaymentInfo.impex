@@ -1,17 +1,17 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-; InboundFawryPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]     ; integrationType(code)
+                               ; InboundFawryPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-; InboundFawryPaymentInfo	; User                       	; User                       	; 	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundFawryPaymentInfo	; CheckoutComFawryPaymentInfo	; CheckoutComFawryPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]         ; type(code)                  ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundFawryPaymentInfo               ; CheckoutComFawryPaymentInfo ; CheckoutComFawryPaymentInfo ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundFawryPaymentInfo               ; User                        ; User                        ;                      ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-; InboundFawryPaymentInfo:User                       	; uid         	; User:uid                                	;                             	; true	;
-; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo	; code        	; CheckoutComFawryPaymentInfo:code        	;                             	; 	;
-; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo	; type        	; CheckoutComFawryPaymentInfo:type        	;                             	; 	;
-; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo	; user        	; CheckoutComFawryPaymentInfo:user        	; InboundFawryPaymentInfo:User	; 	;
-; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo	; paymentId   	; CheckoutComFawryPaymentInfo:paymentId   	;                             	; 	;
-; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo	; creationtime	; CheckoutComFawryPaymentInfo:creationtime	;                             	; true	;
+                                            ; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo                ; paymentId                   ; CheckoutComFawryPaymentInfo:paymentId              ;                                                           ; true                   ;
+                                            ; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo                ; mobileNumber                ; CheckoutComFawryPaymentInfo:mobileNumber           ;                                                           ;                        ;
+                                            ; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo                ; code                        ; CheckoutComFawryPaymentInfo:code                   ;                                                           ;                        ;
+                                            ; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo                ; type                        ; CheckoutComFawryPaymentInfo:type                   ;                                                           ;                        ;
+                                            ; InboundFawryPaymentInfo:CheckoutComFawryPaymentInfo                ; user                        ; CheckoutComFawryPaymentInfo:user                   ; InboundFawryPaymentInfo:User                              ;                        ;
+                                            ; InboundFawryPaymentInfo:User                                       ; uid                         ; User:uid                                           ;                                                           ; true                   ;
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundFawryPaymentInfo                          ; BASIC
+                                         ; InboundFawryPaymentInfo               ; BASIC

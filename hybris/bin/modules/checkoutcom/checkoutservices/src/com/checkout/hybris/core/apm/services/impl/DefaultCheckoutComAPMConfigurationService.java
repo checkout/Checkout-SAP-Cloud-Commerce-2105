@@ -4,15 +4,15 @@ import com.checkout.hybris.addon.model.CheckoutComAPMComponentModel;
 import com.checkout.hybris.addon.model.CheckoutComPaymentMethodComponentModel;
 import com.checkout.hybris.core.apm.configuration.CheckoutComAPMConfigurationSettings;
 import com.checkout.hybris.core.apm.services.CheckoutComAPMConfigurationService;
+import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
 import com.checkout.hybris.core.model.CheckoutComAPMConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
+import com.checkout.hybris.core.model.CheckoutComGlobalAPMConfigurationModel;
 import com.google.common.collect.ImmutableMap;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.internal.dao.GenericDao;
-import de.hybris.platform.site.BaseSiteService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,24 +30,28 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class DefaultCheckoutComAPMConfigurationService implements CheckoutComAPMConfigurationService {
 
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComAPMConfigurationService.class);
+
     protected static final String APM_CONFIGURATION_CODE_CANNOT_BE_NULL = "APM configuration code cannot be null.";
 
     protected final CartService cartService;
-    protected final BaseSiteService baseSiteService;
     protected final GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDao;
     protected final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao;
+    protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
+    protected final GenericDao<CheckoutComGlobalAPMConfigurationModel> globalAPMConfigurationDao;
     protected final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings;
 
     public DefaultCheckoutComAPMConfigurationService(final CartService cartService,
-                                                     final BaseSiteService baseSiteService,
                                                      final GenericDao<CheckoutComAPMComponentModel> checkoutComApmComponentDao,
                                                      final GenericDao<CheckoutComAPMConfigurationModel> checkoutComApmConfigurationDao,
+                                                     final GenericDao<CheckoutComGlobalAPMConfigurationModel> globalAPMConfigurationDao,
+                                                     final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
                                                      final Map<String, CheckoutComAPMConfigurationSettings> checkoutComAPMConfigurationSettings) {
         this.cartService = cartService;
-        this.baseSiteService = baseSiteService;
         this.checkoutComApmComponentDao = checkoutComApmComponentDao;
+        this.globalAPMConfigurationDao = globalAPMConfigurationDao;
         this.checkoutComApmConfigurationDao = checkoutComApmConfigurationDao;
         this.checkoutComAPMConfigurationSettings = checkoutComAPMConfigurationSettings;
+        this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
     }
 
     /**
@@ -63,9 +67,18 @@ public class DefaultCheckoutComAPMConfigurationService implements CheckoutComAPM
             return true;
         }
 
-        final CheckoutComMerchantConfigurationModel checkoutMerchantConfig = baseSiteService.getCurrentBaseSite().getCheckoutComMerchantConfiguration();
+        final CheckoutComGlobalAPMConfigurationModel globalAPMConfig = globalAPMConfigurationDao.find().stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("No CheckoutComAPMConfiguration has been found in the system"));
 
-        if (checkoutMerchantConfig.getUseNas() && !apmConfiguration.getEnabledInNAS()) {
+        final Collection<CheckoutComAPMConfigurationModel> allowedAPMs;
+        if (Boolean.TRUE.equals(checkoutComMerchantConfigurationService.isNasUsed())) {
+            allowedAPMs = globalAPMConfig.getNasAPMs();
+        } else {
+            allowedAPMs = globalAPMConfig.getAbcAPMs();
+        }
+
+        if (!allowedAPMs.contains(apmConfiguration)) {
             return false;
         }
 

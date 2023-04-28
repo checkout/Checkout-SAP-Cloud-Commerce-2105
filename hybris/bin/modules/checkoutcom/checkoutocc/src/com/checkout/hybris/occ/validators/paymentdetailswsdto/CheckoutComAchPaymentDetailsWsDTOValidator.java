@@ -18,12 +18,18 @@ public class CheckoutComAchPaymentDetailsWsDTOValidator implements Validator {
     private static final String ACCOUNT_HOLDER_NAME_FORM_KEY = "accountHolderName";
     private static final String ACCOUNT_TYPE_FORM_KEY = "accountType";
     private static final String ACCOUNT_NUMBER_FORM_KEY = "accountNumber";
+    private static final String BANK_CODE_FORM_KEY = "bankCode";
+    private static final String PAYMENT_METHOD_FORM_KEY = "paymentMethod";
     private static final String ROUTING_NUMBER_FORM_KEY = "routingNumber";
     private static final String COMPANY_NAME_FORM_KEY = "companyName";
     private static final String CORPORATE_ACCOUNT_TYPE_VALUE = "Corporate";
     private static final String CORP_SAVINGS_ACCOUNT_TYPE_VALUE = "CorpSavings";
     private static final String HOLDER_NAME_MANDATORY = "checkoutcom.occ.ach.accountHolderName.mandatory";
     private static final String HOLDER_NAME_INVALID = "checkoutcom.occ.ach.accountHolderName.invalid";
+    private static final String PAYMENTMETHOD_MANDATORY = "checkoutcom.occ.ach.paymentmethod.mandatory";
+    private static final String PAYMENTMETHOD_INVALID = "checkoutcom.occ.ach.paymentmethod.invalid";
+    private static final String BANKCODE_MANDATORY = "checkoutcom.occ.ach.bankcode.mandatory";
+    private static final String BANKCODE_INVALID = "checkoutcom.occ.ach.bankcode.invalid";
     private static final String ROUTINGNUMBER_MANDATORY = "checkoutcom.occ.ach.routingnumber.mandatory";
     private static final String ROUTINGNUMBER_INVALID = "checkoutcom.occ.ach.routingnumber.invalid";
     private static final String ACCOUNTNUMBER_MANDATORY = "checkoutcom.occ.ach.accountnumber.mandatory";
@@ -56,6 +62,8 @@ public class CheckoutComAchPaymentDetailsWsDTOValidator implements Validator {
         validateAccountHolderName(errors, paymentDetailsWsDTO);
         validateAccountType(errors, paymentDetailsWsDTO);
         validateAccountNumber(errors, paymentDetailsWsDTO);
+        validatePaymentMethod(errors, paymentDetailsWsDTO);
+        validateBankCode(errors, paymentDetailsWsDTO);
         validateRoutingNumber(errors, paymentDetailsWsDTO);
     }
 
@@ -72,6 +80,22 @@ public class CheckoutComAchPaymentDetailsWsDTOValidator implements Validator {
             errors.rejectValue(ROUTING_NUMBER_FORM_KEY, ROUTINGNUMBER_MANDATORY);
         } else if (!isValidRoutingNumber(paymentDetailsWsDTO.getRoutingNumber())) {
             errors.rejectValue(ROUTING_NUMBER_FORM_KEY, ROUTINGNUMBER_INVALID);
+        }
+    }
+
+    private void validatePaymentMethod(final Errors errors, final PaymentDetailsWsDTO paymentDetailsWsDTO) {
+        if (Objects.isNull(paymentDetailsWsDTO.getPaymentMethod())) {
+            errors.rejectValue(PAYMENT_METHOD_FORM_KEY, PAYMENTMETHOD_MANDATORY);
+        } else if (StringUtils.isBlank(paymentDetailsWsDTO.getPaymentMethod())) {
+            errors.rejectValue(PAYMENT_METHOD_FORM_KEY, PAYMENTMETHOD_INVALID);
+        }
+    }
+
+    private void validateBankCode(final Errors errors, final PaymentDetailsWsDTO paymentDetailsWsDTO) {
+        if (Objects.isNull(paymentDetailsWsDTO.getBankCode())) {
+            errors.rejectValue(BANK_CODE_FORM_KEY, BANKCODE_MANDATORY);
+        } else if (!isValidBankCode(paymentDetailsWsDTO.getBankCode())) {
+            errors.rejectValue(BANK_CODE_FORM_KEY, BANKCODE_INVALID);
         }
     }
 
@@ -136,5 +160,15 @@ public class CheckoutComAchPaymentDetailsWsDTOValidator implements Validator {
      */
     protected boolean isCompanyNameRequired(final String accountType) {
         return accountType.equalsIgnoreCase(CORPORATE_ACCOUNT_TYPE_VALUE) || accountType.equalsIgnoreCase(CORP_SAVINGS_ACCOUNT_TYPE_VALUE);
+    }
+
+    /**
+     * Checks if the account bank code contains at least one number
+     *
+     * @param bankCode the bank code string
+     * @return true if valid, false otherwise
+     */
+    protected boolean isValidBankCode(final String bankCode) {
+        return bankCode.matches("\\d+");
     }
 }

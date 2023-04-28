@@ -34,6 +34,7 @@ public class CheckoutComCCPaymentInfoReversePopulator implements Populator<CCPay
         checkoutComCreditCardPaymentInfoModel.setMarkToSave(ccPaymentInfoData.isSaved());
         checkoutComCreditCardPaymentInfoModel.setSaved(false);
         checkoutComCreditCardPaymentInfoModel.setCardBin(ccPaymentInfoData.getCardBin());
+        checkoutComCreditCardPaymentInfoModel.setScheme(ccPaymentInfoData.getScheme());
         checkoutComCreditCardPaymentInfoModel.setAutoCapture(checkoutComPaymentTypeResolver.isMadaCard(ccPaymentInfoData.getCardBin()) || checkoutComMerchantConfigurationService.isAutoCapture());
     }
 }

@@ -1,17 +1,21 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-; InboundSepaPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]    ; integrationType(code)
+                               ; InboundSepaPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-; InboundSepaPaymentInfo	; User                      	; User                      	; 	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundSepaPaymentInfo	; CheckoutComSepaPaymentInfo	; CheckoutComSepaPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]        ; type(code)                 ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundSepaPaymentInfo                ; SepaPaymentType            ; SepaPaymentType            ;                      ; ALL_SUBTYPES            ;
+                                   ; InboundSepaPaymentInfo                ; CheckoutComSepaPaymentInfo ; CheckoutComSepaPaymentInfo ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundSepaPaymentInfo                ; User                       ; User                       ;                      ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-; InboundSepaPaymentInfo:User                      	; uid         	; User:uid                               	;                            	; true	;
-; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo	; code        	; CheckoutComSepaPaymentInfo:code        	;                            	; 	;
-; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo	; creationtime	; CheckoutComSepaPaymentInfo:creationtime	;                            	; true	;
-; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo	; paymentId   	; CheckoutComSepaPaymentInfo:paymentId   	;                            	; 	;
-; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo	; type        	; CheckoutComSepaPaymentInfo:type        	;                            	; 	;
-; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo	; user        	; CheckoutComSepaPaymentInfo:user        	; InboundSepaPaymentInfo:User	; 	;
+                                            ; InboundSepaPaymentInfo:SepaPaymentType                             ; code                        ; SepaPaymentType:code                               ;                                                           ; true                   ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; type                        ; CheckoutComSepaPaymentInfo:type                    ;                                                           ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; user                        ; CheckoutComSepaPaymentInfo:user                    ; InboundSepaPaymentInfo:User                               ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; paymentId                   ; CheckoutComSepaPaymentInfo:paymentId               ;                                                           ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; accountIban                 ; CheckoutComSepaPaymentInfo:accountIban             ;                                                           ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; code                        ; CheckoutComSepaPaymentInfo:code                    ;                                                           ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; paymentType                 ; CheckoutComSepaPaymentInfo:paymentType             ; InboundSepaPaymentInfo:SepaPaymentType                    ;                        ;
+                                            ; InboundSepaPaymentInfo:CheckoutComSepaPaymentInfo                  ; creationtime                ; CheckoutComSepaPaymentInfo:creationtime            ;                                                           ; true                   ;
+                                            ; InboundSepaPaymentInfo:User                                        ; uid                         ; User:uid                                           ;                                                           ; true                   ;
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundSepaPaymentInfo                          ; BASIC
+                                         ; InboundSepaPaymentInfo                ; BASIC

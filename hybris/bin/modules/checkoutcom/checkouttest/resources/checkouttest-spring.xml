@@ -12,4 +12,21 @@
         <constructor-arg name="cronJobService" ref="cronJobService"/>
     </bean>
 
+    <bean name="checkoutTestAbstractOrderGenericDao"
+          class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+        <constructor-arg value="AbstractOrder"/>
+    </bean>
+
+    <bean id="checkoutPaymentIdValidateInterceptor"
+          class="com.checkout.hybris.test.interceptor.CheckoutComPaymentIdValidateInterceptor">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="abstractOrderGenericDao" ref="checkoutTestAbstractOrderGenericDao"/>
+    </bean>
+
+    <bean id="checkoutPaymentIdValidateInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="checkoutPaymentIdValidateInterceptor"/>
+        <property name="typeCode" value="PaymentInfo"/>
+    </bean>
+
 </beans>

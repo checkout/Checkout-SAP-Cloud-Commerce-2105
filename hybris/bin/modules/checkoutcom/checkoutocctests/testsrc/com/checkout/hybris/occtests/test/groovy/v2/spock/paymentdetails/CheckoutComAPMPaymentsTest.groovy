@@ -3,11 +3,11 @@ package com.checkout.hybris.occtests.test.groovy.v2.spock.paymentdetails
 import de.hybris.bootstrap.annotations.ManualTest
 import spock.lang.Unroll
 
+import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.*
 import static groovyx.net.http.ContentType.JSON
 import static groovyx.net.http.ContentType.XML
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 import static org.apache.http.HttpStatus.SC_CREATED
-import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.*
 
 @ManualTest
 @Unroll
@@ -41,8 +41,6 @@ class CheckoutComAPMPaymentsTest extends AbstractCheckoutComPaymentsTest {
         XML           | SOFORT     | DEFAULT_CHECKOUT_SOFORT_PAYMENT_XML
         JSON          | PAYPAL     | DEFAULT_CHECKOUT_PAYPAL_PAYMENT_JSON
         XML           | PAYPAL     | DEFAULT_CHECKOUT_PAYPAL_PAYMENT_XML
-        JSON          | ACH        | DEFAULT_CHECKOUT_ACH_PAYMENT_JSON
-        XML           | ACH        | DEFAULT_CHECKOUT_ACH_PAYMENT_XML
         JSON          | SEPA       | DEFAULT_CHECKOUT_SEPA_PAYMENT_JSON
         XML           | SEPA       | DEFAULT_CHECKOUT_SEPA_PAYMENT_XML
         JSON          | FAWRY      | DEFAULT_CHECKOUT_FAWRY_PAYMENT_JSON
@@ -108,14 +106,6 @@ class CheckoutComAPMPaymentsTest extends AbstractCheckoutComPaymentsTest {
         XML           | FAWRY | BAD_CHECKOUT_FAWRY_PAYMENT_XML              | 'mobileNumber'      | 'Mobile number is required for this payment'
         JSON          | FAWRY | WRONG_NUMBER_CHECKOUT_FAWRY_PAYMENT_JSON    | 'mobileNumber'      | 'The mobile number must have length 11 digits and must not include the country code'
         XML           | FAWRY | WRONG_NUMBER_CHECKOUT_FAWRY_PAYMENT_XML     | 'mobileNumber'      | 'The mobile number must have length 11 digits and must not include the country code'
-        JSON          | ACH   | WRONG_COMPANY_CHECKOUT_ACH_PAYMENT_JSON     | 'companyName'       | 'Company name maximum length is 40 characters'
-        XML           | ACH   | WRONG_COMPANY_CHECKOUT_ACH_PAYMENT_XML      | 'companyName'       | 'Company name maximum length is 40 characters'
-        JSON          | ACH   | WRONG_ROUTING_CHECKOUT_ACH_PAYMENT_JSON     | 'routingNumber'     | 'The routing number must contain only digits'
-        XML           | ACH   | WRONG_ROUTING_CHECKOUT_ACH_PAYMENT_XML      | 'routingNumber'     | 'The routing number must contain only digits'
-        JSON          | ACH   | WRONG_ACCOUNT_CHECKOUT_ACH_PAYMENT_JSON     | 'accountType'       | 'The selected account type is invalid'
-        XML           | ACH   | WRONG_ACCOUNT_CHECKOUT_ACH_PAYMENT_XML      | 'accountType'       | 'The selected account type is invalid'
-        JSON          | ACH   | BAD_CHECKOUT_ACH_PAYMENT_JSON               | 'accountHolderName' | 'The account holder name is mandatory'
-        XML           | ACH   | BAD_CHECKOUT_ACH_PAYMENT_XML                | 'accountHolderName' | 'The account holder name is mandatory'
         JSON          | IDEAL | WRONG_BIC_CHECKOUT_IDEAL_PAYMENT_JSON       | 'bic'               | 'BIC field is mandatory and must 8 or 11 characters long'
         XML           | IDEAL | WRONG_BIC_CHECKOUT_IDEAL_PAYMENT_XML        | 'bic'               | 'BIC field is mandatory and must 8 or 11 characters long'
         JSON          | IDEAL | BAD_CHECKOUT_IDEAL_PAYMENT_JSON             | 'bic'               | 'BIC field is mandatory and must 8 or 11 characters long'

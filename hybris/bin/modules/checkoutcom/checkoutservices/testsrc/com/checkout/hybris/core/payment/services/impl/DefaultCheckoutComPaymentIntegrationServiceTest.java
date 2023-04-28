@@ -14,6 +14,7 @@ import com.checkout.hybris.core.model.CheckoutComKlarnaAPMPaymentInfoModel;
 import com.checkout.hybris.core.order.daos.CheckoutComOrderDao;
 import com.checkout.hybris.core.payment.daos.CheckoutComPaymentInfoDao;
 import com.checkout.hybris.core.payment.exception.CheckoutComPaymentIntegrationException;
+import com.checkout.hybris.core.payment.services.CheckoutComApiService;
 import com.checkout.payments.*;
 import com.checkout.sources.SourceProcessed;
 import com.checkout.sources.SourceRequest;
@@ -161,6 +162,8 @@ public class DefaultCheckoutComPaymentIntegrationServiceTest {
     @Mock
     private CheckoutComKlarnaAPMPaymentInfoModel klarmePaymentInfoMock;
     @Mock
+    private CheckoutComApiService checkoutComApiServiceMock;
+    @Mock
     private PaymentInfoModel originalPaymentInfoMock;
     @Mock
     private Map<String, Object> metaDataMapMock;
@@ -213,7 +216,7 @@ public class DefaultCheckoutComPaymentIntegrationServiceTest {
         });
 
         doReturn("").when(testObj).prettyPrint(anyObject());
-        doReturn(checkoutApiMock).when(testObj).createCheckoutComApi(anyString(), anyString(), anyBoolean());
+        when(checkoutComApiServiceMock.createCheckoutApi()).thenReturn(checkoutApiMock);
     }
 
     @Test(expected = CheckoutComPaymentIntegrationException.class)

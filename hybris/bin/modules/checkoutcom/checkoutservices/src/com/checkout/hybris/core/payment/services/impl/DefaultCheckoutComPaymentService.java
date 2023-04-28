@@ -8,6 +8,7 @@ import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.resolvers.CheckoutComPaymentTypeResolver;
 import com.checkout.hybris.core.payment.response.mappers.CheckoutComPaymentResponseStrategyMapper;
 import com.checkout.hybris.core.payment.response.strategies.CheckoutComPaymentResponseStrategy;
+import com.checkout.hybris.core.payment.services.CheckoutComPaymentReturnedService;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentService;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentTransactionService;
 import com.checkout.hybris.events.enums.CheckoutComPaymentEventType;
@@ -41,20 +42,26 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComPaymentService.class);
 
     protected static final String ORDER_MODEL_CANNOT_BE_NULL = "OrderModel cannot be null";
+    protected static final String PAYMENT_ID_CANNOT_BE_NULL = "PaymentId cannot be null.";
+    protected static final String TRANSACTION_CANNOT_BE_NULL = "Transaction cannot be null.";
+    protected static final String TRANSACTION_TYPE_CANNOT_BE_NULL = "TransactionType cannot be null.";
 
     protected final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver;
     protected final CheckoutComPaymentTransactionService checkoutComPaymentTransactionService;
     protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
     protected final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper;
+    protected final CheckoutComPaymentReturnedService checkoutComPaymentReturnedService;
 
     public DefaultCheckoutComPaymentService(final CheckoutComPaymentTypeResolver checkoutComPaymentTypeResolver,
                                             final CheckoutComPaymentTransactionService checkoutComPaymentTransactionService,
                                             final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
-                                            final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper) {
+                                            final CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapper,
+                                            CheckoutComPaymentReturnedService checkoutComPaymentReturnedService) {
         this.checkoutComPaymentTypeResolver = checkoutComPaymentTypeResolver;
         this.checkoutComPaymentTransactionService = checkoutComPaymentTransactionService;
         this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
         this.checkoutComPaymentResponseStrategyMapper = checkoutComPaymentResponseStrategyMapper;
+        this.checkoutComPaymentReturnedService = checkoutComPaymentReturnedService;
     }
 
     /**
@@ -130,14 +137,14 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
      */
     @Override
     public void acceptPayment(final CheckoutComPaymentEventModel paymentEvent, final PaymentTransactionModel transaction, final PaymentTransactionType transactionType) {
-        validateParameterNotNull(paymentEvent, "paymentId cannot be null.");
-        validateParameterNotNull(transaction, "transaction cannot be null.");
-        validateParameterNotNull(transactionType, "transactionType cannot be null.");
+        validateParameterNotNull(paymentEvent, PAYMENT_ID_CANNOT_BE_NULL);
+        validateParameterNotNull(transaction, TRANSACTION_CANNOT_BE_NULL);
+        validateParameterNotNull(transactionType, TRANSACTION_TYPE_CANNOT_BE_NULL);
 
         final Optional<PaymentTransactionEntryModel> paymentTransactionEntryOptional = findPendingTransactionEntry(paymentEvent.getPaymentId(), transaction, transactionType);
 
         if (paymentTransactionEntryOptional.isPresent()) {
-            LOG.debug("Accepting pending transaction entry of type [{}] for event with id [{}]", transactionType.toString(), paymentEvent.getEventId());
+            LOG.debug("Accepting pending transaction entry of type [{}] for event with id [{}]", transactionType, paymentEvent.getEventId());
             final PaymentTransactionEntryModel paymentTransactionEntry = paymentTransactionEntryOptional.get();
             paymentTransactionEntry.setTransactionStatus(ACCEPTED.name());
             getModelService().save(paymentTransactionEntry);
@@ -159,9 +166,26 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
                 getModelService().save(order);
             }
 
-            LOG.debug("Creating a new transaction entry of type [{}] based on event with id [{}]", transactionType.toString(), paymentEvent.getEventId());
+            LOG.debug("Creating a new transaction entry of type [{}] based on event with id [{}]", transactionType, paymentEvent.getEventId());
             checkoutComPaymentTransactionService.createPaymentTransactionEntry(transaction, paymentEvent, transactionStatus, transactionStatusDetails, transactionType);
         }
+    }
+
+    @Override
+    public void returnPayment(final CheckoutComPaymentEventModel paymentEvent, final PaymentTransactionModel transaction, final PaymentTransactionType transactionType) {
+        validateParameterNotNull(paymentEvent, PAYMENT_ID_CANNOT_BE_NULL);
+        validateParameterNotNull(transaction, TRANSACTION_CANNOT_BE_NULL);
+        validateParameterNotNull(transactionType, TRANSACTION_TYPE_CANNOT_BE_NULL);
+
+        final AbstractOrderModel order = transaction.getOrder();
+
+        order.setStatus(OrderStatus.PAYMENT_RETURNED);
+        getModelService().save(order);
+
+        checkoutComPaymentReturnedService.handlePaymentReturned(order);
+
+        LOG.debug("Creating a new transaction entry of type [{}] based on event with id [{}]", transactionType, paymentEvent.getEventId());
+        checkoutComPaymentTransactionService.createPaymentTransactionEntry(transaction, paymentEvent, ACCEPTED.name(), SUCCESFULL.name(), transactionType);
     }
 
     /**
@@ -169,11 +193,11 @@ public class DefaultCheckoutComPaymentService extends DefaultPaymentServiceImpl 
      */
     @Override
     public void rejectPayment(final CheckoutComPaymentEventModel paymentEvent, final PaymentTransactionModel transaction, final PaymentTransactionType transactionType) {
-        validateParameterNotNull(paymentEvent, "paymentId cannot be null.");
-        validateParameterNotNull(transaction, "transaction cannot be null.");
-        validateParameterNotNull(transactionType, "transactionType cannot be null.");
+        validateParameterNotNull(paymentEvent, PAYMENT_ID_CANNOT_BE_NULL);
+        validateParameterNotNull(transaction, TRANSACTION_CANNOT_BE_NULL);
+        validateParameterNotNull(transactionType, TRANSACTION_TYPE_CANNOT_BE_NULL);
 
-        LOG.debug("Creating a new REJECTED transaction entry of type [{}] based on event with id [{}]", transactionType.toString(), paymentEvent.getEventId());
+        LOG.debug("Creating a new REJECTED transaction entry of type [{}] based on event with id [{}]", transactionType, paymentEvent.getEventId());
         checkoutComPaymentTransactionService.createPaymentTransactionEntry(transaction, paymentEvent, REJECTED.name(), PROCESSOR_DECLINE.name(), transactionType);
     }
 

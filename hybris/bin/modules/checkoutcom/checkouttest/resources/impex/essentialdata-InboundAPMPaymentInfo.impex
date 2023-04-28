@@ -1,18 +1,17 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
-; InboundAPMPaymentInfo; INBOUND
+INSERT_UPDATE IntegrationObject; code[unique = true]   ; integrationType(code)
+                               ; InboundAPMPaymentInfo ; INBOUND
 
-INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code)
-; InboundAPMPaymentInfo	; User                     	; User                     	; 	; ALL_SUB_AND_SUPER_TYPES	;
-; InboundAPMPaymentInfo	; CheckoutComAPMPaymentInfo	; CheckoutComAPMPaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]       ; type(code)                ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundAPMPaymentInfo                 ; User                      ; User                      ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundAPMPaymentInfo                 ; CheckoutComAPMPaymentInfo ; CheckoutComAPMPaymentInfo ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
 
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
-; InboundAPMPaymentInfo:User                     	; uid         	; User:uid                              	;                           	; true	;
-; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo	; type        	; CheckoutComAPMPaymentInfo:type        	;                           	; 	;
-; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo	; code        	; CheckoutComAPMPaymentInfo:code        	;                           	; 	;
-; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo	; creationtime	; CheckoutComAPMPaymentInfo:creationtime	;                           	; true	;
-; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo	; user        	; CheckoutComAPMPaymentInfo:user        	; InboundAPMPaymentInfo:User	; 	;
-; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo	; paymentId   	; CheckoutComAPMPaymentInfo:paymentId   	;                           	; 	;
-
+                                            ; InboundAPMPaymentInfo:User                                         ; uid                         ; User:uid                                           ;                                                           ; true                   ;
+                                            ; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo                    ; type                        ; CheckoutComAPMPaymentInfo:type                     ;                                                           ;                        ;
+                                            ; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo                    ; paymentId                   ; CheckoutComAPMPaymentInfo:paymentId                ;                                                           ;                        ;
+                                            ; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo                    ; code                        ; CheckoutComAPMPaymentInfo:code                     ;                                                           ; true                   ;
+                                            ; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo                    ; user                        ; CheckoutComAPMPaymentInfo:user                     ; InboundAPMPaymentInfo:User                                ;                        ;
+                                            ; InboundAPMPaymentInfo:CheckoutComAPMPaymentInfo                    ; deferred                    ; CheckoutComAPMPaymentInfo:deferred                 ;                                                           ;                        ;
 
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
-                                         ; InboundAPMPaymentInfo                          ; BASIC
+                                         ; InboundAPMPaymentInfo                 ; BASIC

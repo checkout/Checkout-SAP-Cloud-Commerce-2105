@@ -4,6 +4,7 @@ import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.enums.PaymentActionType;
 import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
+import com.checkout.hybris.core.model.CheckoutComACHConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComApplePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComGooglePayConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComKlarnaConfigurationModel;
@@ -72,6 +73,14 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
     @Override
     public boolean isNasSignatureKeyUsedOnNotificationValidation() {
         return getCurrentConfiguration().getUseNasSignatureKeyOnNotifications();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isAbcSignatureKeyUsedOnNotificationValidation() {
+        return getCurrentConfiguration().getUseAbcSignatureKeyOnNotifications();
     }
 
     /**
@@ -186,6 +195,15 @@ public class DefaultCheckoutComMerchantConfigurationService implements CheckoutC
     public CheckoutComGooglePayConfigurationModel getGooglePayConfiguration() {
         final CheckoutComMerchantConfigurationModel configuration = getCurrentConfiguration();
         return configuration.getGooglePayConfiguration();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CheckoutComACHConfigurationModel getACHConfiguration() {
+        final CheckoutComMerchantConfigurationModel configuration = getCurrentConfiguration();
+        return configuration.getAchConfiguration();
     }
 
     /**

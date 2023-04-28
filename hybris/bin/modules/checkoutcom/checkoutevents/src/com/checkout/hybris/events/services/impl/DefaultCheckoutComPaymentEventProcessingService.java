@@ -258,10 +258,14 @@ public class DefaultCheckoutComPaymentEventProcessingService implements Checkout
      * @param transactionType the transaction type
      */
     protected void processPayment(final CheckoutComPaymentEventModel event, final PaymentTransactionModel transaction, final PaymentTransactionType transactionType) {
-        if (EVENT_APPROVED_RESPONSE_CODE.equalsIgnoreCase(event.getResponseCode()) || isDeferredRefund(event, transactionType)) {
+        if (RETURN.equals(transactionType)) {
+            paymentService.returnPayment(event, transaction, transactionType);
+        }
+        else if (EVENT_APPROVED_RESPONSE_CODE.equalsIgnoreCase(event.getResponseCode()) || isDeferredRefund(event, transactionType)) {
             LOG.debug("Accepting payment of type [{}] based on event with id [{}]", transactionType.toString(), event.getEventId());
             paymentService.acceptPayment(event, transaction, transactionType);
-        } else {
+        }
+         else {
             LOG.debug("Rejecting payment of transaction type [{}] based on event with id [{}]", transactionType.toString(), event.getEventId());
             paymentService.rejectPayment(event, transaction, transactionType);
         }

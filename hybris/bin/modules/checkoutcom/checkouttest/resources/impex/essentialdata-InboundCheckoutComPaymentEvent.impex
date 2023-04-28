@@ -1,0 +1,24 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]            ; integrationType(code)
+                               ; InboundCheckoutComPaymentEvent ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]           ; type(code)                    ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCheckoutComPaymentEvent        ; CheckoutComPaymentEventStatus ; CheckoutComPaymentEventStatus ;                      ; ALL_SUBTYPES            ;
+                                   ; InboundCheckoutComPaymentEvent        ; Currency                      ; Currency                      ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundCheckoutComPaymentEvent        ; CheckoutComPaymentEvent       ; CheckoutComPaymentEvent       ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code)   ; unique[default = false]; autoCreate[default = false]
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEventStatus       ; code                        ; CheckoutComPaymentEventStatus:code                 ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:Currency                            ; isocode                     ; Currency:isocode                                   ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; eventType                   ; CheckoutComPaymentEvent:eventType                  ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; actionId                    ; CheckoutComPaymentEvent:actionId                   ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; eventId                     ; CheckoutComPaymentEvent:eventId                    ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; amount                      ; CheckoutComPaymentEvent:amount                     ;                                                              ;                        ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; payload                     ; CheckoutComPaymentEvent:payload                    ;                                                              ;                        ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; paymentReference            ; CheckoutComPaymentEvent:paymentReference           ;                                                              ; true                   ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; paymentId                   ; CheckoutComPaymentEvent:paymentId                  ;                                                              ;                        ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; siteId                      ; CheckoutComPaymentEvent:siteId                     ;                                                              ;                        ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; currency                    ; CheckoutComPaymentEvent:currency                   ; InboundCheckoutComPaymentEvent:Currency                      ;                        ;
+                                            ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEvent             ; status                      ; CheckoutComPaymentEvent:status                     ; InboundCheckoutComPaymentEvent:CheckoutComPaymentEventStatus ; true                   ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundCheckoutComPaymentEvent        ; BASIC

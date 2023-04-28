@@ -1,0 +1,19 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]  ; integrationType(code)
+                               ; InboundReturnProcess ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code)    ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundReturnProcess                  ; ReturnRequest      ; ReturnRequest ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundReturnProcess                  ; ReturnProcess      ; ReturnProcess ; true                 ; RESTRICT_TO_ITEM_TYPE   ;
+                                   ; InboundReturnProcess                  ; Order              ; Order         ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundReturnProcess:ReturnProcess                                 ; returnRequest               ; ReturnProcess:returnRequest                        ; InboundReturnProcess:ReturnRequest                        ;                        ;
+                                            ; InboundReturnProcess:ReturnProcess                                 ; code                        ; ReturnProcess:code                                 ;                                                           ; true                   ;
+                                            ; InboundReturnProcess:ReturnProcess                                 ; refundActionId              ; ReturnProcess:refundActionId                       ;                                                           ; true                   ;
+                                            ; InboundReturnProcess:Order                                         ; checkoutComPaymentReference ; Order:checkoutComPaymentReference                  ;                                                           ; true                   ;
+                                            ; InboundReturnProcess:Order                                         ; code                        ; Order:code                                         ;                                                           ; true                   ;
+                                            ; InboundReturnProcess:ReturnRequest                                 ; order                       ; ReturnRequest:order                                ; InboundReturnProcess:Order                                ;                        ;
+                                            ; InboundReturnProcess:ReturnRequest                                 ; code                        ; ReturnRequest:code                                 ;                                                           ; true                   ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundReturnProcess                  ; BASIC

@@ -71,7 +71,7 @@ public interface CheckoutComPaymentInfoService extends PaymentInfoService {
     void addQRCodeDataToBenefitPaymentInfo(CheckoutComBenefitPayPaymentInfoModel paymentInfo, String qrCode);
 
     /**
-     * Adds a valid payment id to the given payment info model
+     * Adds a payment id to the given payment info model
      *
      * @param paymentId   the checkout.com payment id
      * @param paymentInfo the payment info model

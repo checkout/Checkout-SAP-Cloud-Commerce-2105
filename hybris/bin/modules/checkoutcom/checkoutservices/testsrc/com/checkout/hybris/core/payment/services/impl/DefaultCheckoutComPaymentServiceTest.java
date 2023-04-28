@@ -8,6 +8,7 @@ import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
 import com.checkout.hybris.core.payment.resolvers.CheckoutComPaymentTypeResolver;
 import com.checkout.hybris.core.payment.response.mappers.CheckoutComPaymentResponseStrategyMapper;
 import com.checkout.hybris.core.payment.response.strategies.impl.CheckoutComMultibancoPaymentResponseStrategy;
+import com.checkout.hybris.core.payment.services.CheckoutComPaymentReturnedService;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentTransactionService;
 import com.checkout.hybris.events.model.CheckoutComPaymentEventModel;
 import com.checkout.payments.CardSourceResponse;
@@ -89,6 +90,8 @@ public class DefaultCheckoutComPaymentServiceTest {
     private CheckoutComPaymentResponseStrategyMapper checkoutComPaymentResponseStrategyMapperMock;
     @Mock
     private CheckoutComMultibancoPaymentResponseStrategy checkoutComMultibancoPaymentResponseStrategyMock;
+    @Mock
+    private CheckoutComPaymentReturnedService checkoutComPaymentReturnedServiceMock;
 
     @Mock
     private CartModel cartMock;
@@ -550,6 +553,21 @@ public class DefaultCheckoutComPaymentServiceTest {
         testObj.rejectPayment(paymentEventMock, paymentTransactionMock, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void returnPayment_WhenNullEvent_ShouldThrowException() {
+        testObj.returnPayment(null, paymentTransactionMock, RETURN);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void returnPayment_WhenNullTransaction_ShouldThrowException() {
+        testObj.returnPayment(paymentEventMock, null, RETURN);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void returnPayment_WhenNullTransactionType_ShouldThrowException() {
+        testObj.returnPayment(paymentEventMock, paymentTransactionMock, null);
+    }
+
     @Test
     public void handlePendingPaymentResponse_WhenMultibancoPaymentMethod_ShouldUseMultibancoStrategyAndReturnAuthoriseResponse() {
         when(checkoutComPaymentTypeResolverMock.resolvePaymentType(apmPaymentInfoMock)).thenReturn(MULTIBANCO);
@@ -671,12 +689,25 @@ public class DefaultCheckoutComPaymentServiceTest {
         verify(checkoutComPaymentTransactionServiceMock).createPaymentTransactionEntry(paymentTransactionMock, paymentEventMock, REJECTED.name(), PROCESSOR_DECLINE.name(), AUTHORIZATION);
     }
 
+    @Test
+    public void returnPayment_ShouldUpdateOrderStatusToPaymentReturned() {
+        doNothing().when(checkoutComPaymentTransactionServiceMock).createPaymentTransactionEntry(any(PaymentTransactionModel.class), any(CheckoutComPaymentEventModel.class), anyString(), anyString(), any(PaymentTransactionType.class));
+
+        testObj.returnPayment(paymentEventMock, paymentTransactionMock, RETURN);
+
+        final InOrder inOrder = inOrder(orderMock, modelServiceMock, checkoutComPaymentTransactionServiceMock);
+        inOrder.verify(orderMock).setStatus(OrderStatus.PAYMENT_RETURNED);
+        inOrder.verify(modelServiceMock).save(orderMock);
+        inOrder.verify(checkoutComPaymentTransactionServiceMock).createPaymentTransactionEntry(paymentTransactionMock, paymentEventMock, ACCEPTED.name(), SUCCESFULL.name(), RETURN);
+    }
+
     private void setUpTestObjMocks() {
         ReflectionTestUtils.setField(testObj, "modelService", modelServiceMock);
         ReflectionTestUtils.setField(testObj, "checkoutComMerchantConfigurationService", checkoutComMerchantConfigurationServiceMock);
         ReflectionTestUtils.setField(testObj, "checkoutComPaymentResponseStrategyMapper", checkoutComPaymentResponseStrategyMapperMock);
         ReflectionTestUtils.setField(testObj, "checkoutComPaymentTypeResolver", checkoutComPaymentTypeResolverMock);
         ReflectionTestUtils.setField(testObj, "checkoutComPaymentTransactionService", checkoutComPaymentTransactionServiceMock);
+        ReflectionTestUtils.setField(testObj, "checkoutComPaymentReturnedService", checkoutComPaymentReturnedServiceMock);
     }
 
     private void setUpPaymentEvent() {
