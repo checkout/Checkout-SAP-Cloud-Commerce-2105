@@ -21,6 +21,7 @@ class CheckoutComKlarnaTest extends AbstractCheckoutComPaymentsTest {
         addProductToCartOnline(restClient, customer, cart.code, PRODUCT_POWER_SHOT_A480)
         setDeliveryModeForCart(restClient, customer, cart.code, DELIVERY_STANDARD, JSON)
         createBillingAddress(customer.id, cart.code)
+        useABC()
 
         when: "API call to get klarna token data is made"
         def response = restClient.get(

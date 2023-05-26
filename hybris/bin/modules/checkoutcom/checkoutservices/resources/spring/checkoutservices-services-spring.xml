@@ -18,6 +18,8 @@
           parent="defaultPaymentInfoService">
         <constructor-arg ref="addressService"/>
         <constructor-arg ref="paymentInfoDao"/>
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="orderDao" name="checkoutComOrderDao"/>
     </bean>
 
     <alias name="defaultCheckoutComMerchantConfigurationService" alias="checkoutComMerchantConfigurationService"/>
@@ -35,6 +37,7 @@
         <constructor-arg ref="checkoutComApiRestTemplate"/>
         <constructor-arg ref="configurationService"/>
         <constructor-arg ref="checkoutComApiService"/>
+        <constructor-arg ref="paymentInfoService"/>
     </bean>
 
     <bean id="checkoutComApiRestTemplate" class="org.springframework.web.client.RestTemplate"/>

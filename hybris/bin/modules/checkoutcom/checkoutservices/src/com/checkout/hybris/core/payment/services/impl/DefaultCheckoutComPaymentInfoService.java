@@ -1,9 +1,13 @@
 package com.checkout.hybris.core.payment.services.impl;
 
 import com.checkout.hybris.core.address.services.CheckoutComAddressService;
+import com.checkout.hybris.core.enums.EnvironmentType;
+import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
 import com.checkout.hybris.core.model.CheckoutComAPMPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComBenefitPayPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
+import com.checkout.hybris.core.model.PayloadModel;
+import com.checkout.hybris.core.order.daos.CheckoutComOrderDao;
 import com.checkout.hybris.core.payment.daos.CheckoutComPaymentInfoDao;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentInfoService;
 import com.checkout.payments.CardSourceResponse;
@@ -17,7 +21,11 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.impl.DefaultPaymentInfoService;
 import de.hybris.platform.servicelayer.model.ModelService;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,15 +41,23 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  */
 public class DefaultCheckoutComPaymentInfoService extends DefaultPaymentInfoService implements CheckoutComPaymentInfoService {
 
+    private static final Logger LOG = LogManager.getLogger(DefaultCheckoutComPaymentInfoService.class);
     protected static final String CART_CANNOT_BE_NULL_ERROR_MSG = "Cart cannot be null.";
 
     protected final CheckoutComAddressService addressService;
     protected final CheckoutComPaymentInfoDao paymentInfoDao;
+    protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
+    protected final CheckoutComOrderDao checkoutComOrderDao;
+
 
     public DefaultCheckoutComPaymentInfoService(final CheckoutComAddressService addressService,
-                                                final CheckoutComPaymentInfoDao paymentInfoDao) {
+                                                final CheckoutComPaymentInfoDao paymentInfoDao,
+                                                final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                final CheckoutComOrderDao checkoutComOrderDao) {
         this.addressService = addressService;
         this.paymentInfoDao = paymentInfoDao;
+        this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
+        this.checkoutComOrderDao = checkoutComOrderDao;
     }
 
     /**
@@ -251,4 +267,55 @@ public class DefaultCheckoutComPaymentInfoService extends DefaultPaymentInfoServ
     protected ModelService callSuperModelService() {
         return getModelService();
     }
+
+
+    public void saveRequestAndResponseInOrder(final AbstractOrderModel abstractOrder, final String request, final String response) {
+        setPaymentRequestPayload(request, abstractOrder);
+        setPaymentResponsePayload(response, abstractOrder);
+        callSuperModelService().save(abstractOrder);
+    }
+
+    public void saveResponseInOrderByPaymentReference(final String paymentReference, final String response) {
+        if (StringUtils.isNotBlank(paymentReference)) {
+            final Optional<AbstractOrderModel> result = checkoutComOrderDao.findAbstractOrderForPaymentReferenceNumber(paymentReference);
+            if (result.isPresent()) {
+                final AbstractOrderModel abstractOrder = result.get();
+                setPaymentResponsePayload(response, abstractOrder);
+                callSuperModelService().save(abstractOrder);
+            }
+        }
+    }
+
+    private void setPaymentRequestPayload(final String request, final AbstractOrderModel abstractOrder) {
+        Optional.ofNullable(request).ifPresent(paymentRequest -> {
+            final List<PayloadModel> requestList = new ArrayList<>(abstractOrder.getRequestsPayload());
+            requestList.add(createPayloadModel(request));
+            abstractOrder.setRequestsPayload(requestList);
+        });
+    }
+
+    private void setPaymentResponsePayload(final String response, final AbstractOrderModel abstractOrder) {
+        Optional.ofNullable(response).ifPresent(paymentResponse -> {
+            final List<PayloadModel> requestList = new ArrayList<>(abstractOrder.getResponsesPayload());
+            requestList.add(createPayloadModel(response));
+            abstractOrder.setResponsesPayload(requestList);
+
+        });
+    }
+
+    protected PayloadModel createPayloadModel(final String payload) {
+        final PayloadModel payloadModel = callSuperModelService().create(PayloadModel.class);
+        payloadModel.setPayload(payload);
+        callSuperModelService().save(payloadModel);
+        return payloadModel;
+    }
+
+    public void logInfoOut(final String payload) {
+        if (checkoutComMerchantConfigurationService.getEnvironment().equals(EnvironmentType.TEST)) {
+            LOG.info("*** PAYLOAD OUT ***");
+            LOG.info(payload);
+            LOG.info("*** PAYLOAD OUT END ***");
+        }
+    }
+
 }
