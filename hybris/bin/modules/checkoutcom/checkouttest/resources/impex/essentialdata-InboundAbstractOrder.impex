@@ -1,0 +1,30 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]  ; integrationType(code)
+                               ; InboundAbstractOrder ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code)    ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundAbstractOrder                  ; User               ; User          ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundAbstractOrder                  ; Address            ; Address       ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundAbstractOrder                  ; AbstractOrder      ; AbstractOrder ; true                 ; ALL_SUBTYPES            ;
+                                   ; InboundAbstractOrder                  ; Currency           ; Currency      ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundAbstractOrder                  ; PaymentInfo        ; PaymentInfo   ;                      ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundAbstractOrder:User                                          ; uid                         ; User:uid                                           ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:Address                                       ; postalcode                  ; Address:postalcode                                 ;                                                           ;                        ;
+                                            ; InboundAbstractOrder:Address                                       ; town                        ; Address:town                                       ;                                                           ;                        ;
+                                            ; InboundAbstractOrder:Address                                       ; creationtime                ; Address:creationtime                               ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:Address                                       ; streetname                  ; Address:streetname                                 ;                                                           ;                        ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; paymentAddress              ; AbstractOrder:paymentAddress                       ; InboundAbstractOrder:Address                              ;                        ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; totalPrice                  ; AbstractOrder:totalPrice                           ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; currency                    ; AbstractOrder:currency                             ; InboundAbstractOrder:Currency                             ;                        ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; code                        ; AbstractOrder:code                                 ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; deliveryAddress             ; AbstractOrder:deliveryAddress                      ; InboundAbstractOrder:Address                              ;                        ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; checkoutPaymentId           ; AbstractOrder:checkoutPaymentId                    ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; checkoutComPaymentReference ; AbstractOrder:checkoutComPaymentReference          ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; paymentInfo                 ; AbstractOrder:paymentInfo                          ; InboundAbstractOrder:PaymentInfo                          ; true                   ;
+                                            ; InboundAbstractOrder:AbstractOrder                                 ; user                        ; AbstractOrder:user                                 ; InboundAbstractOrder:User                                 ;                        ;
+                                            ; InboundAbstractOrder:Currency                                      ; isocode                     ; Currency:isocode                                   ;                                                           ; true                   ;
+                                            ; InboundAbstractOrder:PaymentInfo                                   ; code                        ; PaymentInfo:code                                   ;                                                           ; true                   ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundAbstractOrder                  ; BASIC

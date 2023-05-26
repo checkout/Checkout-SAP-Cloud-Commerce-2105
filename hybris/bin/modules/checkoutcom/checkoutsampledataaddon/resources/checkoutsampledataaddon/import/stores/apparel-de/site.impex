@@ -26,8 +26,8 @@ INSERT_UPDATE CheckoutComKlarnaConfiguration; &klarnaConfigurationId; instanceId
 INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; secretKey  ; publicKey  ; privateSharedKey  ; nasSecretKey  ; nasPublicKey  ; nasSignatureKey  ; nasAuthorisationHeaderKey  ; environment(code); paymentAction(code); klarnaConfiguration(&klarnaConfigurationId); authorisationAmountValidationThreshold; threeDSEnabled; noThreeDSAttempt; checkoutComPaymentEventTypes(code)
                                               ; merchantConfiguration-$siteUid ; $secretKey ; $publicKey ; $privateSharedKey ; $nasSecretKey ; $nasPublicKey ; $nasSignatureKey ; $nasAuthorizationHeaderKey ; test             ; authorize          ; klarnaConfig                               ; 0.01                                  ; true          ; false           ; payment_approved, payment_voided, payment_void_declined, payment_captured, payment_capture_declined, payment_refunded, payment_refund_declined, payment_pending, payment_declined, payment_expired, payment_canceled, payment_capture_pending
 
-INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; useNas; useNasAuthorisationKeyOnNotifications; useNasSignatureKeyOnNotifications
-                                              ; merchantConfiguration-$siteUid ; false ; false                                ; false
+INSERT_UPDATE CheckoutComMerchantConfiguration; code[unique = true]            ; useNas; useNasAuthorisationKeyOnNotifications; useNasSignatureKeyOnNotifications; useAbcSignatureKeyOnNotifications
+                                              ; merchantConfiguration-$siteUid ; false ; false                                ; false                            ; false
 
 UPDATE BaseSite; uid[unique = true]; checkoutComMerchantConfiguration(code)
                ; $siteUid          ; merchantConfiguration-$siteUid

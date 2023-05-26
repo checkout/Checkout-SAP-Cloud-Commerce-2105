@@ -11,7 +11,11 @@ import com.checkout.hybris.core.payment.exception.CheckoutComPaymentIntegrationE
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentIntegrationService;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
+import com.checkout.payments.AlternativePaymentSource;
+import com.checkout.payments.PaymentRequest;
+import com.checkout.payments.RequestSource;
 import com.checkout.sources.SourceData;
 import com.checkout.sources.SourceRequest;
 import com.checkout.sources.SourceResponse;
@@ -26,15 +30,18 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 /**
  * specific {@link CheckoutComPaymentRequestStrategy} implementation for Sepa apm payments
  */
-public class CheckoutComSepaPaymentRequestStrategy extends CheckoutComAchPayPaymentRequestStrategy {
+public class CheckoutComSepaPaymentRequestStrategy extends CheckoutComAbstractApmPaymentRequestStrategy {
 
-    protected static final Logger LOG = LogManager.getLogger(CheckoutComAchPayPaymentRequestStrategy.class);
+    protected static final Logger LOG = LogManager.getLogger(CheckoutComSepaPaymentRequestStrategy.class);
 
     protected static final String ACCOUNT_IBAN_KEY = "account_iban";
     protected static final String MANDATE_TYPE_KEY = "mandate_type";
     protected static final String FIRST_NAME_KEY = "first_name";
     protected static final String LAST_NAME_KEY = "last_name";
     protected static final String BILLING_DESCRIPTOR_KEY = "billing_descriptor";
+    protected static final String PAYMENT_SOURCE_ID_KEY = "id";
+
+    protected final CheckoutComPaymentIntegrationService checkoutComPaymentIntegrationService;
 
     public CheckoutComSepaPaymentRequestStrategy(final CheckoutComUrlService checkoutComUrlService,
                                                  final CheckoutComPhoneNumberStrategy checkoutComPhoneNumberStrategy,
@@ -42,8 +49,12 @@ public class CheckoutComSepaPaymentRequestStrategy extends CheckoutComAchPayPaym
                                                  final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                  final CMSSiteService cmsSiteService,
                                                  final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                 final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter,
                                                  final CheckoutComPaymentIntegrationService checkoutComPaymentIntegrationService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService, checkoutComPaymentIntegrationService);
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
+        this.checkoutComPaymentIntegrationService = checkoutComPaymentIntegrationService;
     }
 
     /**
@@ -55,11 +66,35 @@ public class CheckoutComSepaPaymentRequestStrategy extends CheckoutComAchPayPaym
     }
 
     /**
-     * Gets the SourceResponse got from checkout.com set up payment source integration call
-     *
-     * @param cart the cart model
-     * @return the checkout.com SourceResponse
+     * {@inheritDoc}
      */
+    @Override
+    public PaymentRequest<RequestSource> createPaymentRequest(final CartModel cart) {
+        validateParameterNotNull(cart, "Cart model cannot be null");
+
+        final String currencyIsoCode = cart.getCurrency().getIsocode();
+        final Long amount = checkoutComCurrencyService.convertAmountIntoPennies(currencyIsoCode, cart.getTotalPrice());
+
+        final PaymentRequest<RequestSource> paymentRequest = super.getRequestSourcePaymentRequest(cart, currencyIsoCode,
+                                                                                                  amount);
+
+        final SourceResponse sourceResponse = getCheckoutComSourceResponse(cart);
+        validateParameterNotNull(sourceResponse,
+                                 "Checkout.com SourceResponse from set up payment source cannot be null");
+        validateParameterNotNull(sourceResponse.getSource(),
+                                 "Checkout.com SourceResponse Id from set up payment source response cannot be null");
+
+        final AlternativePaymentSource source = (AlternativePaymentSource) paymentRequest.getSource();
+        source.put(PAYMENT_SOURCE_ID_KEY, sourceResponse.getSource().getId());
+        ((AlternativePaymentSource) paymentRequest.getSource()).setType(PAYMENT_SOURCE_ID_KEY);
+
+        populatePaymentRequest(cart, paymentRequest);
+        createCustomerRequestFromSource(sourceResponse.getSource()).ifPresent(paymentRequest::setCustomer);
+
+        return paymentRequest;
+    }
+
+
     protected SourceResponse getCheckoutComSourceResponse(final CartModel cart) {
         SourceResponse sourceResponse = null;
         if (cart.getPaymentInfo() instanceof CheckoutComSepaPaymentInfoModel) {

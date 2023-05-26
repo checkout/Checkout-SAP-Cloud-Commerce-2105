@@ -102,4 +102,22 @@ public class DefaultCheckoutComMerchantConfigurationFacadeTest {
 
         assertFalse(result.isPresent());
     }
+    
+    @Test
+    public void isCheckoutComMerchantABC_WhenMerchantIsNAS_shouldReturnFalse() {
+        when(checkoutComMerchantConfigurationServiceMock.isNasUsed()).thenReturn(true);
+        
+        final Boolean result = testObj.isCheckoutComMerchantABC();
+        
+        assertFalse(result);
+    }
+
+    @Test
+    public void isCheckoutComMerchantABC_WhenMerchantIsABC_shouldReturnTrue() {
+        when(checkoutComMerchantConfigurationServiceMock.isNasUsed()).thenReturn(false);
+
+        final Boolean result = testObj.isCheckoutComMerchantABC();
+
+        assertTrue(result);
+    }
 }

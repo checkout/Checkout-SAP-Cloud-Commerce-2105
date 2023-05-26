@@ -9,6 +9,7 @@ import com.checkout.hybris.core.model.CheckoutComKlarnaAPMPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.AlternativePaymentSource;
 import com.checkout.payments.PaymentRequest;
@@ -29,6 +30,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 /**
  * specific {@link CheckoutComPaymentRequestStrategy} implementation for Klarna apm payments
  */
+@SuppressWarnings("java:S107")
 public class CheckoutComKlarnaPaymentRequestStrategy extends CheckoutComAbstractApmPaymentRequestStrategy {
 
     protected static final String AUTHORIZATION_TOKEN_KEY = "authorization_token";
@@ -48,8 +50,11 @@ public class CheckoutComKlarnaPaymentRequestStrategy extends CheckoutComAbstract
                                                    final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                    final CMSSiteService cmsSiteService,
                                                    final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                   final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter,
                                                    final Converter<CartModel, List<KlarnaProductRequestDto>> checkoutComKlarnaProductsRequestDtoConverter) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
         this.checkoutComKlarnaProductsRequestDtoConverter = checkoutComKlarnaProductsRequestDtoConverter;
     }
 

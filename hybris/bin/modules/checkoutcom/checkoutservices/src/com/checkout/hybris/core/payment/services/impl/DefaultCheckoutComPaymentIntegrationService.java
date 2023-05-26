@@ -1,9 +1,5 @@
 package com.checkout.hybris.core.payment.services.impl;
 
-import com.checkout.CheckoutApi;
-import com.checkout.CheckoutApiException;
-import com.checkout.CheckoutApiImpl;
-import com.checkout.common.ApiResponseInfo;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.klarna.capture.request.KlarnaCaptureRequestDto;
 import com.checkout.hybris.core.klarna.capture.response.KlarnaCaptureResponseDto;
@@ -16,7 +12,13 @@ import com.checkout.hybris.core.model.CheckoutComKlarnaAPMPaymentInfoModel;
 import com.checkout.hybris.core.order.daos.CheckoutComOrderDao;
 import com.checkout.hybris.core.payment.daos.CheckoutComPaymentInfoDao;
 import com.checkout.hybris.core.payment.exception.CheckoutComPaymentIntegrationException;
+import com.checkout.hybris.core.payment.services.CheckoutComApiService;
+import com.checkout.hybris.core.payment.services.CheckoutComPaymentInfoService;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentIntegrationService;
+import com.checkout.CheckoutApi;
+import com.checkout.CheckoutApiException;
+import com.checkout.GsonSerializer;
+import com.checkout.common.ApiResponseInfo;
 import com.checkout.payments.*;
 import com.checkout.sources.SourceRequest;
 import com.checkout.sources.SourceResponse;
@@ -50,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Default implementation of the {@link CheckoutComPaymentIntegrationService}
  */
+@SuppressWarnings("java:S107")
 public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComPaymentIntegrationService {
 
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComPaymentIntegrationService.class);
@@ -66,20 +69,27 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
     protected final SessionService sessionService;
     protected final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
     protected final ConfigurationService configurationService;
+    protected final CheckoutComApiService checkoutComApiService;
     protected final RestTemplate restTemplate;
+    protected final CheckoutComPaymentInfoService paymentInfoService;
 
     public DefaultCheckoutComPaymentIntegrationService(final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
                                                        final SessionService sessionService,
                                                        final CheckoutComOrderDao orderDao,
                                                        final CheckoutComPaymentInfoDao checkoutComPaymentInfoDao,
                                                        final RestTemplate restTemplate,
-                                                       final ConfigurationService configurationService) {
+                                                       final ConfigurationService configurationService,
+                                                       final CheckoutComApiService checkoutComApiService,
+                                                       final CheckoutComPaymentInfoService paymentInfoService) {
+
         this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
         this.sessionService = sessionService;
         this.orderDao = orderDao;
         this.checkoutComPaymentInfoDao = checkoutComPaymentInfoDao;
         this.restTemplate = restTemplate;
         this.configurationService = configurationService;
+        this.checkoutComApiService = checkoutComApiService;
+        this.paymentInfoService = paymentInfoService;
     }
 
     /**
@@ -87,7 +97,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
      */
     @Override
     public PaymentResponse authorizePayment(final PaymentRequest<RequestSource> paymentRequest) {
-        final CheckoutApi checkoutApi = createCheckoutComApi();
+        final CheckoutApi checkoutApi = checkoutComApiService.createCheckoutApi();
 
         try {
             return checkoutApi.paymentsClient().requestAsync(paymentRequest).get();
@@ -106,10 +116,16 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
      */
     @Override
     public GetPaymentResponse getPaymentDetails(final String paymentIdentifier) {
-        final CheckoutApi checkoutApi = createCheckoutComApi();
+        final CheckoutApi checkoutApi = checkoutComApiService.createCheckoutApi();
 
         try {
-            return checkoutApi.paymentsClient().getAsync(paymentIdentifier).get();
+            final GetPaymentResponse getPaymentResponse = checkoutApi.paymentsClient().getAsync(paymentIdentifier).get();
+            final GsonSerializer gsonSerializer = new GsonSerializer();
+            final String paymentResponseJson = gsonSerializer.toJson(getPaymentResponse);
+            paymentInfoService.saveResponseInOrderByPaymentReference(getPaymentResponse.getReference(), paymentResponseJson);
+            paymentInfoService.logInfoOut(paymentResponseJson);
+
+            return getPaymentResponse;
         } catch (final ExecutionException | CancellationException e) {
             LOG.error("Error while getting the payment details from Checkout.com for payment identifier [{}]", paymentIdentifier);
             throw new CheckoutComPaymentIntegrationException(GET_PAYMENT_DETAILS_REQUEST_FAILED, e);
@@ -202,7 +218,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
      */
     @Override
     public SourceResponse setUpPaymentSource(final SourceRequest sourceRequest) {
-        final CheckoutApi checkoutApi = createCheckoutComApi();
+        final CheckoutApi checkoutApi = checkoutComApiService.createCheckoutApi();
 
         try {
             return checkoutApi.sourcesClient().requestAsync(sourceRequest).get();
@@ -221,7 +237,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
      */
     @Override
     public TokenResponse generateWalletPaymentToken(final WalletTokenRequest walletTokenRequest) {
-        final CheckoutApi checkoutApi = createCheckoutComApi();
+        final CheckoutApi checkoutApi = checkoutComApiService.createCheckoutApi();
 
         try {
             return checkoutApi.tokensClient().requestAsync(walletTokenRequest).get();
@@ -407,23 +423,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
         final Optional<AbstractOrderModel> order = orderDao.findAbstractOrderForPaymentReferenceNumber(paymentReference);
         final BaseSiteModel site = order.map(AbstractOrderModel::getSite).orElse(null);
         sessionService.setAttribute(CURRENT_SITE, site);
-        return createCheckoutComApi();
-    }
-
-    /**
-     * Creates the instance of the checkout.com api
-     *
-     * @return the checkout.com sdk api
-     */
-    protected CheckoutApi createCheckoutComApi() {
-        final String secretKey = checkoutComMerchantConfigurationService.getSecretKey();
-        final String publicKey = checkoutComMerchantConfigurationService.getPublicKey();
-        final boolean useSandbox = checkoutComMerchantConfigurationService.getEnvironment().equals(EnvironmentType.TEST);
-        return createCheckoutComApi(secretKey, publicKey, useSandbox);
-    }
-
-    protected CheckoutApi createCheckoutComApi(final String secretKey, final String publicKey, final boolean useSandbox) {
-        return CheckoutApiImpl.create(secretKey, useSandbox, publicKey);
+        return checkoutComApiService.createCheckoutApi();
     }
 
     /**

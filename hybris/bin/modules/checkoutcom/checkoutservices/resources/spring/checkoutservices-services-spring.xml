@@ -18,6 +18,8 @@
           parent="defaultPaymentInfoService">
         <constructor-arg ref="addressService"/>
         <constructor-arg ref="paymentInfoDao"/>
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="orderDao" name="checkoutComOrderDao"/>
     </bean>
 
     <alias name="defaultCheckoutComMerchantConfigurationService" alias="checkoutComMerchantConfigurationService"/>
@@ -34,6 +36,8 @@
         <constructor-arg ref="orderDao"/>
         <constructor-arg ref="checkoutComApiRestTemplate"/>
         <constructor-arg ref="configurationService"/>
+        <constructor-arg ref="checkoutComApiService"/>
+        <constructor-arg ref="paymentInfoService"/>
     </bean>
 
     <bean id="checkoutComApiRestTemplate" class="org.springframework.web.client.RestTemplate"/>
@@ -52,6 +56,7 @@
         <constructor-arg ref="checkoutComPaymentTransactionService"/>
         <constructor-arg ref="checkoutComMerchantConfigurationService"/>
         <constructor-arg ref="checkoutComPaymentResponseStrategyMapper"/>
+        <constructor-arg ref="checkoutComPaymentReturnedService" />
     </bean>
 
     <alias name="defaultCheckoutComPaymentTransactionService" alias="checkoutComPaymentTransactionService"/>
@@ -62,6 +67,10 @@
         <constructor-arg ref="modelService"/>
         <constructor-arg ref="timeService"/>
     </bean>
+
+    <alias name="defaultCheckoutComPaymentReturnedService" alias="checkoutComPaymentReturnedService"/>
+    <bean id="defaultCheckoutComPaymentReturnedService"
+          class="com.checkout.hybris.core.payment.services.impl.DefaultCheckoutComPaymentReturnedService" />
 
     <alias name="defaultCheckoutComOrderService" alias="checkoutComOrderService"/>
     <bean id="defaultCheckoutComOrderService"
@@ -111,16 +120,23 @@
     <bean id="defaultCheckoutComAPMConfigurationService"
           class="com.checkout.hybris.core.apm.services.impl.DefaultCheckoutComAPMConfigurationService">
         <constructor-arg ref="cartService"/>
-        <constructor-arg ref="baseSiteService"/>
         <constructor-arg ref="checkoutComApmComponentDao"/>
         <constructor-arg ref="checkoutComApmConfigurationDao"/>
         <constructor-arg ref="checkoutComAPMConfigurationSettings"/>
+        <constructor-arg ref="checkoutComMerchantConfigurationService"/>
+        <constructor-arg ref="checkoutComGlobalAPMConfigurationDao"/>
     </bean>
 
     <alias name="defaultApmConfigurationDao" alias="checkoutComApmConfigurationDao"/>
     <bean name="defaultApmConfigurationDao"
           class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
         <constructor-arg value="CheckoutComAPMConfiguration"/>
+    </bean>
+
+    <alias name="defaultCheckoutComGlobalAPMConfigurationDao" alias="checkoutComGlobalAPMConfigurationDao"/>
+    <bean name="defaultCheckoutComGlobalAPMConfigurationDao"
+          class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+        <constructor-arg value="CheckoutComGlobalAPMConfiguration"/>
     </bean>
 
     <alias name="defaultApmComponentDao" alias="checkoutComApmComponentDao"/>
@@ -259,26 +275,74 @@
         <property name="isApmUserDataRequired" value="true"/>
     </bean>
 
-    <alias name="defaultCheckoutComPaymentResponseStrategyMapper" alias="checkoutComPaymentResponseStrategyMapper"/>
+    <alias name="defaultCheckoutComPaymentResponseStrategyMapper"
+           alias="checkoutComPaymentResponseStrategyMapper"/>
     <bean id="defaultCheckoutComPaymentResponseStrategyMapper"
           class="com.checkout.hybris.core.payment.response.mappers.CheckoutComPaymentResponseStrategyMapper">
-        <constructor-arg name="defaultCheckoutComPaymentResponseStrategy" ref="checkoutComPaymentResponseStrategy"/>
+        <constructor-arg name="defaultCheckoutComPaymentResponseStrategy"
+                         ref="checkoutComPaymentResponseStrategy"/>
     </bean>
 
-    <alias name="defaultCheckoutComUpdatePaymentInfoStrategyMapper" alias="checkoutComUpdatePaymentInfoStrategyMapper"/>
+    <alias name="defaultCheckoutComUpdatePaymentInfoStrategyMapper"
+           alias="checkoutComUpdatePaymentInfoStrategyMapper"/>
     <bean id="defaultCheckoutComUpdatePaymentInfoStrategyMapper"
           class="com.checkout.hybris.core.payment.details.mappers.CheckoutComUpdatePaymentInfoStrategyMapper">
-        <constructor-arg name="defaultCheckoutComPaymentInfoStrategy" ref="checkoutComPaymentInfoStrategy"/>
+        <constructor-arg name="defaultCheckoutComPaymentInfoStrategy"
+                         ref="checkoutComPaymentInfoStrategy"/>
     </bean>
 
-    <alias name="defaultCheckoutComCertificateService" alias="checkoutComCertificateService"/>
+    <alias name="defaultCheckoutComCertificateService"
+           alias="checkoutComCertificateService"/>
     <bean id="defaultCheckoutComCertificateService"
           class="com.checkout.hybris.core.certificate.services.impl.DefaultCheckoutComCertificateService"/>
 
-    <alias name="defaultCheckoutComOxxoPaymentRequestService" alias="checkoutComOxxoPaymentRequestService"/>
+    <alias name="defaultCheckoutComOxxoPaymentRequestService"
+           alias="checkoutComOxxoPaymentRequestService"/>
     <bean id="defaultCheckoutComOxxoPaymentRequestService"
           class="com.checkout.hybris.core.payment.oxxo.service.impl.DefaultCheckoutComOxxoPaymentRequestService">
-        <constructor-arg ref="checkoutComAPMConfigurationService"/>
-        <constructor-arg ref="checkoutComOxxoRequestPayerDtoConverter"/>
+        <constructor-arg name="checkoutComAPMConfigurationService" ref="checkoutComAPMConfigurationService"/>
+        <constructor-arg name="checkoutComOxxoRequestPayerDtoConverter" ref="checkoutComOxxoRequestPayerDtoConverter"/>
+    </bean>
+
+    <alias name="defaultCheckoutComACHService" alias="checkoutComPlaidLinkService"/>
+    <bean id="defaultCheckoutComACHService"
+          class="com.checkout.hybris.core.payment.ach.service.impl.DefaultCheckoutComPlaidLinkService">
+        <constructor-arg name="checkoutComMerchantConfigurationService" ref="checkoutComMerchantConfigurationService"/>
+    </bean>
+
+    <alias name="defaultAchConsentGenericDao" alias="achConsentGenericDao"/>
+    <bean name="defaultAchConsentGenericDao"
+          class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+        <constructor-arg value="CheckoutComACHConsent"/>
+    </bean>
+
+    <alias name="defaultCheckoutComACHConsentService" alias="checkoutComACHConsentService"/>
+    <bean id="defaultCheckoutComACHConsentService"
+          class="com.checkout.hybris.core.payment.ach.service.impl.DefaultCheckoutComACHConsentService">
+        <constructor-arg name="modelService" ref="modelService"/>
+        <constructor-arg name="cartService" ref="cartService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComApiService" alias="checkoutComApiService"/>
+    <bean class="com.checkout.hybris.core.payment.services.impl.DefaultCheckoutComApiService"
+          id="defaultCheckoutComApiService">
+        <constructor-arg name="checkoutComMerchantConfigurationService"
+                         ref="checkoutComMerchantConfigurationService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPaymentInstrumentService"
+           alias="checkoutComPaymentInstrumentService"/>
+    <bean class="com.checkout.hybris.core.payment.services.impl.DefaultCheckoutComPaymentInstrumentService"
+          id="defaultCheckoutComPaymentInstrumentService">
+        <constructor-arg name="checkoutComApiService" ref="checkoutComApiService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComCustomerAccountServiceAdapter"
+           alias="checkoutComCustomerAccountServiceAdapter"/>
+    <bean class="com.checkout.hybris.commerceservices.customer.impl.DefaultCheckoutComCustomerAccountServiceAdapter"
+          id="defaultCheckoutComCustomerAccountServiceAdapter">
+        <constructor-arg name="customerAccountService" ref="customerAccountService"/>
+        <constructor-arg name="checkoutComPaymentInstrumentsService"
+                         ref="checkoutComPaymentInstrumentService"/>
     </bean>
 </beans>

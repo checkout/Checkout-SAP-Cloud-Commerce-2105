@@ -6,6 +6,7 @@ import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurati
 import com.checkout.hybris.core.model.CheckoutComAPMPaymentInfoModel;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.AlternativePaymentSource;
 import com.checkout.payments.PaymentRequest;
@@ -24,14 +25,16 @@ import static java.util.Optional.empty;
  * Abstract {@link CheckoutComPaymentRequestStrategy} implementation for apm payments
  */
 public abstract class CheckoutComAbstractApmPaymentRequestStrategy extends CheckoutComAbstractPaymentRequestStrategy implements CheckoutComPaymentRequestStrategy {
-
-    public CheckoutComAbstractApmPaymentRequestStrategy(final CheckoutComUrlService checkoutComUrlService,
-                                                        final CheckoutComPhoneNumberStrategy checkoutComPhoneNumberStrategy,
-                                                        final CheckoutComCurrencyService checkoutComCurrencyService,
-                                                        final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
-                                                        final CMSSiteService cmsSiteService,
-                                                        final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+    protected CheckoutComAbstractApmPaymentRequestStrategy(final CheckoutComUrlService checkoutComUrlService,
+                                                           final CheckoutComPhoneNumberStrategy checkoutComPhoneNumberStrategy,
+                                                           final CheckoutComCurrencyService checkoutComCurrencyService,
+                                                           final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
+                                                           final CMSSiteService cmsSiteService,
+                                                           final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                           final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter) {
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
     }
 
     /**
@@ -39,14 +42,19 @@ public abstract class CheckoutComAbstractApmPaymentRequestStrategy extends Check
      */
     @Override
     protected PaymentRequest<RequestSource> getRequestSourcePaymentRequest(final CartModel cart,
-                                                                           final String currencyIsoCode, final Long amount) {
+                                                                           final String currencyIsoCode,
+                                                                           final Long amount) {
         validateParameterNotNull(cart.getPaymentInfo(), "paymentInfo cannot be null");
 
         final PaymentInfoModel paymentInfo = cart.getPaymentInfo();
         if (paymentInfo instanceof CheckoutComAPMPaymentInfoModel) {
-            return PaymentRequest.fromSource(new AlternativePaymentSource(((CheckoutComAPMPaymentInfoModel) paymentInfo).getType().toLowerCase()), currencyIsoCode, amount);
+            return PaymentRequest.fromSource(new AlternativePaymentSource(
+                    ((CheckoutComAPMPaymentInfoModel) paymentInfo).getType().toLowerCase()), currencyIsoCode, amount);
         } else {
-            throw new IllegalArgumentException(format("Strategy called with unsupported paymentInfo type : [%s] while trying to authorize cart: [%s]", paymentInfo.getClass().toString(), cart.getCode()));
+            throw new IllegalArgumentException(
+                    format("Strategy called with unsupported paymentInfo type : [%s] while trying to authorize cart: " +
+                                   "[%s]",
+                           paymentInfo.getClass().toString(), cart.getCode()));
         }
     }
 
@@ -56,13 +64,5 @@ public abstract class CheckoutComAbstractApmPaymentRequestStrategy extends Check
     @Override
     protected Optional<Boolean> isCapture() {
         return empty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void populateRequestMetadata(final PaymentRequest<RequestSource> request) {
-        request.setMetadata(createGenericMetadata());
     }
 }

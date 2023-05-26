@@ -7,6 +7,7 @@ import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurati
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.AlternativePaymentSource;
 import com.checkout.payments.PaymentRequest;
@@ -25,6 +26,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 /**
  * specific {@link CheckoutComPaymentRequestStrategy} implementation for P24 apm payments
  */
+@SuppressWarnings("java:S107")
 public class CheckoutComPTwentyFourPaymentRequestStrategy extends CheckoutComAbstractApmPaymentRequestStrategy {
 
     protected static final String PAYMENT_COUNTRY_KEY = "payment_country";
@@ -39,8 +41,11 @@ public class CheckoutComPTwentyFourPaymentRequestStrategy extends CheckoutComAbs
                                                         final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                         final CMSSiteService cmsSiteService,
                                                         final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                        final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter,
                                                         final CheckoutComAddressService addressService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
         this.addressService = addressService;
     }
 

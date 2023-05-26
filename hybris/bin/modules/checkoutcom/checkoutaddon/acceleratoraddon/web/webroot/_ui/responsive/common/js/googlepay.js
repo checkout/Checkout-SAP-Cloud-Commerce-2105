@@ -72,7 +72,9 @@ ACC.googlePay = {
   enablePaymentFlow: function () {
     /* hide the delivery address */
     $('[for="coUseDeliveryAddress"]').closest('.checkbox').hide();
+    $('.consents-achPayment').addClass('hidden');
     $('#coBillingCountrySelector').hide();
+    $('.achPayment').hide();
     $('#coBillingAddress').hide();
 
     /* disable the checkout next button */

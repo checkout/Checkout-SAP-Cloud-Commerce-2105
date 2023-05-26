@@ -26,6 +26,8 @@ public class CheckoutComAchPaymentDetailsWsDTOValidatorTest {
     private static final String ACCOUNT_HOLDER_NAME_MAP_FIELD = "accountHolderName";
     private static final String ACCOUNT_TYPE_MAP_FIELD = "accountType";
     private static final String ACCOUNT_NUMBER_MAP_FIELD = "accountNumber";
+    private static final String BANK_CODE_MAP_FIELD = "bankCode";
+    private static final String PAYMENT_METHOD_MAP_FIELD = "paymentMethod";
     private static final String ROUTING_NUMBER_MAP_FIELD = "routingNumber";
     private static final String COMPANY_NAME_MAP_FIELD = "companyName";
     private static final String CORPORATE_ACCOUNT_TYPE = "Corporate";
@@ -48,6 +50,8 @@ public class CheckoutComAchPaymentDetailsWsDTOValidatorTest {
         paymentDetailsWsDTO.setAccountHolderName("Mr Tom Trump");
         paymentDetailsWsDTO.setAccountType(CORPORATE_ACCOUNT_TYPE);
         paymentDetailsWsDTO.setAccountNumber("4099999992");
+        paymentDetailsWsDTO.setBankCode("123");
+        paymentDetailsWsDTO.setPaymentMethod("Payment Method");
         paymentDetailsWsDTO.setRoutingNumber("011075150");
         paymentDetailsWsDTO.setCompanyName("Electronics");
         paymentDetailsWsDTO.setType(ACH.name());
@@ -242,6 +246,61 @@ public class CheckoutComAchPaymentDetailsWsDTOValidatorTest {
         assertTrue(errors.hasErrors());
         assertEquals(1, errors.getErrorCount());
         assertEquals(COMPANY_NAME_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeNotFound_ShouldReturnError() {
+        paymentDetailsWsDTO.setBankCode(null);
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeEmpty_ShouldReturnError() {
+        paymentDetailsWsDTO.setBankCode(BLANK_STRING);
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeNotValid_ShouldReturnError() {
+        paymentDetailsWsDTO.setBankCode("233dda");
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenPaymentMethodNotFound_ShouldReturnError() {
+        paymentDetailsWsDTO.setPaymentMethod(null);
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(PAYMENT_METHOD_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenPaymentMethodEmpty_ShouldReturnError() {
+        paymentDetailsWsDTO.setPaymentMethod(BLANK_STRING);
+
+        testObj.validate(paymentDetailsWsDTO, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(PAYMENT_METHOD_MAP_FIELD, errors.getFieldError().getField());
     }
 
     @Test

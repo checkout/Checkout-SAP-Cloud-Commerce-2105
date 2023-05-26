@@ -9,7 +9,9 @@ import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
+
 import com.checkout.payments.*;
 import com.checkout.sources.SourceProcessed;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
@@ -30,7 +32,6 @@ import static java.util.Optional.empty;
  * Abstract strategy to implement the common request population logic
  */
 public abstract class CheckoutComAbstractPaymentRequestStrategy implements CheckoutComPaymentRequestStrategy {
-
     protected static final String SITE_ID_KEY = "site_id";
     protected static final String UDF1_KEY = "udf1";
 
@@ -40,19 +41,22 @@ public abstract class CheckoutComAbstractPaymentRequestStrategy implements Check
     protected CheckoutComCurrencyService checkoutComCurrencyService;
     protected CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService;
     protected CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper;
+    protected CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter;
 
-    public CheckoutComAbstractPaymentRequestStrategy(final CheckoutComUrlService checkoutComUrlService,
-                                                     final CheckoutComPhoneNumberStrategy checkoutComPhoneNumberStrategy,
-                                                     final CheckoutComCurrencyService checkoutComCurrencyService,
-                                                     final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
-                                                     final CMSSiteService cmsSiteService,
-                                                     final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService) {
+    protected CheckoutComAbstractPaymentRequestStrategy(final CheckoutComUrlService checkoutComUrlService,
+                                                        final CheckoutComPhoneNumberStrategy checkoutComPhoneNumberStrategy,
+                                                        final CheckoutComCurrencyService checkoutComCurrencyService,
+                                                        final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
+                                                        final CMSSiteService cmsSiteService,
+                                                        final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                        final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter) {
         this.checkoutComUrlService = checkoutComUrlService;
         this.checkoutComPhoneNumberStrategy = checkoutComPhoneNumberStrategy;
         this.checkoutComCurrencyService = checkoutComCurrencyService;
         this.checkoutComPaymentRequestStrategyMapper = checkoutComPaymentRequestStrategyMapper;
         this.cmsSiteService = cmsSiteService;
         this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
+        this.checkoutComCartModelToPaymentL2AndL3Converter = checkoutComCartModelToPaymentL2AndL3Converter;
     }
 
     protected CheckoutComAbstractPaymentRequestStrategy() {
@@ -109,7 +113,9 @@ public abstract class CheckoutComAbstractPaymentRequestStrategy implements Check
         populateRedirectUrls(request);
         populateRequestMetadata(request);
         populateDynamicBillingDescriptor(request);
+        checkoutComCartModelToPaymentL2AndL3Converter.convert(cart, request);
     }
+
 
     /**
      * Populates the request's billing descriptor values based on the merchant configuration
@@ -117,10 +123,12 @@ public abstract class CheckoutComAbstractPaymentRequestStrategy implements Check
      * @param request the payment request
      */
     protected void populateDynamicBillingDescriptor(final PaymentRequest<RequestSource> request) {
-        final BillingDescriptor billingDescriptorMerchantConfiguration = checkoutComMerchantConfigurationService.getBillingDescriptor();
+        final BillingDescriptor billingDescriptorMerchantConfiguration =
+                checkoutComMerchantConfigurationService.getBillingDescriptor();
         final Boolean includeBillingDescriptor = billingDescriptorMerchantConfiguration.getIncludeBillingDescriptor();
         if (Boolean.TRUE.equals(includeBillingDescriptor)) {
-            com.checkout.payments.BillingDescriptor billingDescriptor = new com.checkout.payments.BillingDescriptor();
+            final com.checkout.payments.BillingDescriptor billingDescriptor =
+                    new com.checkout.payments.BillingDescriptor();
             billingDescriptor.setName(billingDescriptorMerchantConfiguration.getBillingDescriptorName());
             billingDescriptor.setCity(billingDescriptorMerchantConfiguration.getBillingDescriptorCity());
             request.setBillingDescriptor(billingDescriptor);
@@ -229,7 +237,9 @@ public abstract class CheckoutComAbstractPaymentRequestStrategy implements Check
      *
      * @param request the request payload
      */
-    protected abstract void populateRequestMetadata(final PaymentRequest<RequestSource> request);
+    protected void populateRequestMetadata(final PaymentRequest<RequestSource> request) {
+        request.setMetadata(createGenericMetadata());
+    }
 
     /**
      * Creates the customer request using the source response id from checkout.com

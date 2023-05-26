@@ -7,7 +7,9 @@ import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
+
 import com.checkout.payments.*;
 import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import de.hybris.platform.core.model.order.CartModel;
@@ -30,8 +32,11 @@ public class CheckoutComCardPaymentRequestStrategy extends CheckoutComAbstractPa
                                                  final CheckoutComCurrencyService checkoutComCurrencyService,
                                                  final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                  final CMSSiteService cmsSiteService,
-                                                 final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+                                                 final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                 final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter) {
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
     }
 
     /**
@@ -95,16 +100,6 @@ public class CheckoutComCardPaymentRequestStrategy extends CheckoutComAbstractPa
         final PaymentRequest<RequestSource> paymentRequest = PaymentRequest.fromSource(new TokenSource(paymentInfo.getCardToken()), currencyIsoCode, amount);
         ((TokenSource) paymentRequest.getSource()).setBillingAddress(billingAddress != null ? createAddress(billingAddress) : null);
         return paymentRequest;
-    }
-
-    /**
-     * Populates the metadata in the request object.
-     *
-     * @param request the request payload
-     */
-    @Override
-    protected void populateRequestMetadata(final PaymentRequest<RequestSource> request) {
-        request.setMetadata(createGenericMetadata());
     }
 
     /**

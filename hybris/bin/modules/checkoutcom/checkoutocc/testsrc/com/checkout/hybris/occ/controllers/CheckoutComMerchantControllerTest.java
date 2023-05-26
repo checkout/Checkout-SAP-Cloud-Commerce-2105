@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 public class CheckoutComMerchantControllerTest {
 
     private static final String PUBLIC_KEY = "publicKey";
+    private static final String IS_ABC_FALSE = "false";
 
     @InjectMocks
     private CheckoutComMerchantController testObj;
@@ -44,4 +45,36 @@ public class CheckoutComMerchantControllerTest {
         assertThat(result).hasFieldOrPropertyWithValue("body", "Merchant key is empty or null");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @Test
+    public void isMerchantABC_WhenMerchantIsABC_ShouldReturnTrue() {
+        when(checkoutComMerchantConfigurationFacadeMock.isCheckoutComMerchantABC()).thenReturn(Boolean.TRUE);
+
+        final ResponseEntity<String> result = testObj.isMerchantABC();
+
+        assertThat(result).hasFieldOrPropertyWithValue("body", Boolean.TRUE.toString());
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void isMerchantABC_WhenMerchantIsNAS_ShouldReturnFalse() {
+        when(checkoutComMerchantConfigurationFacadeMock.isCheckoutComMerchantABC()).thenReturn(Boolean.FALSE);
+
+        final ResponseEntity<String> result = testObj.isMerchantABC();
+
+        assertThat(result).hasFieldOrPropertyWithValue("body", IS_ABC_FALSE);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void isMerchantABC_WhenMerchantIsUndefined_ShouldReturnError() {
+        when(checkoutComMerchantConfigurationFacadeMock.isCheckoutComMerchantABC()).thenReturn(null);
+
+        final ResponseEntity<String> result = testObj.isMerchantABC();
+
+        assertThat(result).hasFieldOrPropertyWithValue("body", IS_ABC_FALSE);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    
 }

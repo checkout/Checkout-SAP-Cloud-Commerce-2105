@@ -1,0 +1,12 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]              ; integrationType(code)
+                               ; InboundCheckoutComCleanupCronJob ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]       ; type(code)                ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCheckoutComCleanupCronJob      ; CheckoutComCleanupCronJob ; CheckoutComCleanupCronJob ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundCheckoutComCleanupCronJob:CheckoutComCleanupCronJob         ; code                        ; CheckoutComCleanupCronJob:code                     ;                                                           ; true                   ;
+                                            ; InboundCheckoutComCleanupCronJob:CheckoutComCleanupCronJob         ; itemRemovalAge              ; CheckoutComCleanupCronJob:itemRemovalAge           ;                                                           ;                        ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundCheckoutComCleanupCronJob             ; BASIC

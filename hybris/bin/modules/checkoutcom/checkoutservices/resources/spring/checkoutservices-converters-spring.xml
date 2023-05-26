@@ -46,4 +46,11 @@
         </property>
     </bean>
 
+    <alias name="defaultCheckoutComCartModelToPaymentL2AndL3Converter"
+           alias="checkoutComCartModelToPaymentL2AndL3Converter"/>
+    <bean class="com.checkout.hybris.core.populators.payments.DefaultCheckoutComCartModelToPaymentL2AndL3Converter"
+          name="defaultCheckoutComCartModelToPaymentL2AndL3Converter">
+        <constructor-arg name="checkoutComCurrencyService" ref="checkoutComCurrencyService"/>
+    </bean>
+
 </beans>

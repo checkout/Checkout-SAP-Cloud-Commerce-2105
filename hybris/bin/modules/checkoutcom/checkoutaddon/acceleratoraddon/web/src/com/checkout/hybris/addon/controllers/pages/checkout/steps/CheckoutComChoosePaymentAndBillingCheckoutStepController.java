@@ -14,13 +14,12 @@ import de.hybris.platform.servicelayer.config.ConfigurationService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -119,11 +118,39 @@ public class CheckoutComChoosePaymentAndBillingCheckoutStepController extends Ch
     }
 
     /**
+     * Save the tokenized card and go to summary page
+     *
+     * @return the summary page
+     */
+
+    @PostMapping(value = "/set-payment-details")
+    @RequireHardLogIn
+    @ResponseBody
+    public ResponseEntity<Void> setPaymentToken(final Model model,
+                                                @Valid
+                                                final PaymentDetailsForm paymentDetailsForm,
+                                                final BindingResult bindingResult) {
+
+
+        if (addGlobalErrors(model, bindingResult)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        handleAndSaveAddresses(paymentDetailsForm);
+
+        final Object paymentInfoData = checkoutComPaymentInfoFacade.createPaymentInfoData(
+                paymentDetailsForm.getPaymentMethod());
+        checkoutComPaymentInfoFacade.addPaymentInfoToCart(paymentInfoData);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
      * Sets the saved paymentMethod selected and proceeds to summary step
      *
      * @param selectedPaymentMethodId The id of the {@link CheckoutComCreditCardPaymentInfoModel} to use
      * @return the checkout summary step
      */
+
     @GetMapping(value = "/choose-payment-method/choose")
     @RequireHardLogIn
     public String selectExistingPaymentMethod(@RequestParam(value = "selectedPaymentMethodId") final String selectedPaymentMethodId,

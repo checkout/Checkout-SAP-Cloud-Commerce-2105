@@ -13,6 +13,7 @@ import com.checkout.hybris.facades.accelerator.CheckoutComCheckoutFlowFacade;
 import com.checkout.hybris.facades.beans.AuthorizeResponseData;
 import com.checkout.hybris.facades.beans.CheckoutComPaymentInfoData;
 import com.checkout.hybris.facades.constants.CheckoutFacadesConstants;
+import com.checkout.GsonSerializer;
 import com.checkout.payments.PaymentProcessed;
 import com.checkout.payments.PaymentRequest;
 import com.checkout.payments.PaymentResponse;
@@ -43,6 +44,7 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
     protected final CheckoutComPaymentInfoService paymentInfoService;
     protected final CheckoutComPaymentService paymentService;
     protected final Converter<AuthorizeResponse, AuthorizeResponseData> authorizeResponseConverter;
+
 
     public DefaultCheckoutComCheckoutFlowFacadeDecorator(final CheckoutFlowFacade checkoutFlowFacade,
                                                          final CheckoutComAddressService addressService,
@@ -97,6 +99,13 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
         try {
             final PaymentRequest<RequestSource> request = checkoutComRequestFactory.createPaymentRequest(cart);
             paymentResponse = checkoutComPaymentIntegrationService.authorizePayment(request);
+            final GsonSerializer gsonSerializer = new GsonSerializer();
+            final String requestJson = gsonSerializer.toJson(request);
+            final String responseJson = gsonSerializer.toJson(paymentResponse);
+            //Parse response and request
+            paymentInfoService.saveRequestAndResponseInOrder(cart, requestJson, responseJson);
+            paymentInfoService.logInfoOut(requestJson);
+            paymentInfoService.logInfoOut(responseJson);
         } catch (final CheckoutComPaymentIntegrationException | IllegalArgumentException e) {
             LOG.error("Exception during authorization", e);
             authorizeResponseData.setIsSuccess(false);
@@ -108,6 +117,8 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
             return handleApprovedPaymentResponse(authorizeResponseData, cart, payment);
         } else if (isPendingPayment(paymentResponse)) {
             return authorizeResponseConverter.convert(paymentService.handlePendingPaymentResponse(paymentResponse.getPending(), cart.getPaymentInfo()));
+        } else if (isFailedPayment(payment)) {
+            handleFailedPaymentResponse(cart, payment);
         }
 
         LOG.error("Payment authorization response returned: approved [{}], pending [{}]", payment == null ? "null" : payment.isApproved(), paymentResponse.isPending());
@@ -211,8 +222,17 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecorator extends CheckoutComAb
         return authorizeResponseData;
     }
 
+    protected void handleFailedPaymentResponse(final CartModel cartModel, final PaymentProcessed payment) {
+        LOG.debug("Storing failed payment ID in for cart with code [{}].", cartModel.getCode());
+        paymentInfoService.addPaymentId(payment.getId(), cartModel.getPaymentInfo());
+    }
+
     protected boolean isPendingPayment(final PaymentResponse paymentResponse) {
         return paymentResponse.isPending() && paymentResponse.getPending() != null;
+    }
+
+    protected boolean isFailedPayment(final PaymentProcessed payment) {
+        return payment != null && !payment.isApproved();
     }
 
     protected ExpressCheckoutResult callSuperExpressCheckoutResult() {

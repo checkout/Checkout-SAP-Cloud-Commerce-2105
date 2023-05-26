@@ -190,7 +190,6 @@
         <property name="targetClass" value="com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel"/>
         <property name="populators">
             <list>
-                <ref bean="checkoutComApmPaymentInfoReversePopulator"/>
                 <ref bean="checkoutComAchPaymentInfoReversePopulator"/>
             </list>
         </property>
@@ -276,7 +275,6 @@
                 <entry key="BENEFITPAY" value-ref="checkoutComBenefitPayPaymentInfoReverseConverter"/>
                 <entry key="FAWRY" value-ref="checkoutComFawryPaymentInfoReverseConverter"/>
                 <entry key="IDEAL" value-ref="checkoutComIdealPaymentInfoReverseConverter"/>
-                <entry key="ACH" value-ref="checkoutComAchPaymentInfoReverseConverter"/>
                 <entry key="SEPA" value-ref="checkoutComSepaPaymentInfoReverseConverter"/>
                 <entry key="APPLEPAY" value-ref="checkoutComApplePayPaymentInfoReverseConverter"/>
                 <entry key="GOOGLEPAY" value-ref="checkoutComGooglePayPaymentInfoReverseConverter"/>
@@ -536,5 +534,57 @@
           class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComGooglePayPaymentRequestPopulator">
         <constructor-arg name="checkoutComGooglePayTransactionInfoConverter" ref="checkoutComGooglePayTransactionInfoConverter"/>
         <constructor-arg name="cartFacade" ref="cartFacade"/>
+    </bean>
+
+    <alias name="defaultCheckoutComAchConsentReversePopulator"
+           alias="checkoutComAchConsentReversePopulator"/>
+    <bean id="defaultCheckoutComAchConsentReversePopulator"
+          class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComAchConsentReversePopulator"/>
+
+    <alias name="defaultCheckoutComAchConsentReverseConverter"
+           alias="checkoutComAchConsentReverseConverter"/>
+    <bean id="defaultCheckoutComAchConsentReverseConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.core.model.CheckoutComACHConsentModel"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComAchConsentReversePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultCheckoutComPublicTokenExchangeResponseToAchBankInfoDetailPopulator"
+           alias="checkoutComPublicTokenExchangeResponseToAchBankInfoDetailPopulator"/>
+    <bean id="defaultCheckoutComPublicTokenExchangeResponseToAchBankInfoDetailPopulator"
+          class="com.checkout.hybris.facades.payment.converters.populators.CheckoutComPublicTokenExchangeResponseToAchBankInfoDetailPopulator">
+        <constructor-arg name="checkoutComPlaidLinkService"
+                         ref="checkoutComPlaidLinkService"/>
+    </bean>
+
+    <alias name="defaultCheckoutComPublicTokenExchangeResponseToAchBankInfoDetailConverter"
+           alias="checkoutComPublicTokenExchangeResponseToAchBankInfoDetailConverter"/>
+    <bean id="defaultCheckoutComPublicTokenExchangeResponseToAchBankInfoDetailConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.checkout.hybris.facades.beans.AchBankInfoDetailsData"/>
+        <property name="populators">
+            <list>
+                <ref bean="checkoutComPublicTokenExchangeResponseToAchBankInfoDetailPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="com.checkout.hybris.facades.converters.SamePropertiesGenericPopulator"
+          name="samePropertiesGenericPopulator"/>
+
+    <alias name="defaultPlaidLinkCreationResponseStorefrontDTOPlaidLinkCreationResponseConverter"
+           alias="plaidLinkCreationResponseStorefrontDTOPlaidLinkCreationResponseConverter"/>
+    <bean name="defaultPlaidLinkCreationResponseStorefrontDTOPlaidLinkCreationResponseConverter"
+          parent="abstractPopulatingConverter">
+        <property name="targetClass"
+                  value="com.checkout.hybris.facades.beans.PlaidLinkCreationResponse"/>
+        <property name="populators">
+            <list>
+                <ref bean="samePropertiesGenericPopulator"/>
+            </list>
+        </property>
     </bean>
 </beans>

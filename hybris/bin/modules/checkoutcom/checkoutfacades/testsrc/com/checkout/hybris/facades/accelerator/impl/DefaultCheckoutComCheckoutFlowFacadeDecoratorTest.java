@@ -148,12 +148,13 @@ public class DefaultCheckoutComCheckoutFlowFacadeDecoratorTest {
     }
 
     @Test
-    public void authorizePayment_WhenPaymentNotApproved_ShouldReturnFalse() {
+    public void authorizePayment_WhenPaymentNotApproved_ShouldSavePaymentID_andReturnFalse() {
         when(paymentMock.isApproved()).thenReturn(false);
 
         final AuthorizeResponseData result = testObj.authorizePayment();
 
         assertFalse(result.getIsSuccess());
+        verify(paymentInfoServiceMock).addPaymentId(PAYMENT_ID, checkoutComCreditCardPaymentInfoMock);
     }
 
     @Test

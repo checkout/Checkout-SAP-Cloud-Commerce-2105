@@ -12,6 +12,7 @@ import com.checkout.hybris.core.model.CheckoutComCreditCardPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.*;
 import de.hybris.bootstrap.annotations.UnitTest;
@@ -79,6 +80,8 @@ public class CheckoutComAbstractPaymentRequestStrategyTest {
     @Mock
     private CheckoutComCurrencyService checkoutComCurrencyServiceMock;
     @Mock
+    private CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3ConverterMock;
+    @Mock
     private CustomerModel customerModelMock;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private AddressModel cartAddressModelMock;
@@ -107,7 +110,7 @@ public class CheckoutComAbstractPaymentRequestStrategyTest {
     @Captor
     private ArgumentCaptor<com.checkout.payments.BillingDescriptor> billingDescriptorCaptor;
 
-    private Map<String, Object> metadataMap = new HashMap<>();
+    private final Map<String, Object> metadataMap = new HashMap<>();
 
     @Before
     public void setUp() {
@@ -120,7 +123,10 @@ public class CheckoutComAbstractPaymentRequestStrategyTest {
         Whitebox.setInternalState(testObj, "checkoutComCurrencyService", checkoutComCurrencyServiceMock);
         Whitebox.setInternalState(testObj, "checkoutComPaymentRequestStrategyMapper", checkoutComPaymentRequestStrategyMapperMock);
         Whitebox.setInternalState(testObj, "cmsSiteService", cmsSiteServiceMock);
-        Whitebox.setInternalState(testObj, "checkoutComMerchantConfigurationService", checkoutComMerchantConfigurationServiceMock);
+        Whitebox.setInternalState(testObj, "checkoutComMerchantConfigurationService",
+                                  checkoutComMerchantConfigurationServiceMock);
+        Whitebox.setInternalState(testObj, "checkoutComCartModelToPaymentL2AndL3Converter",
+                                  checkoutComCartModelToPaymentL2AndL3ConverterMock);
 
         setUpCart();
         setUpAddress();

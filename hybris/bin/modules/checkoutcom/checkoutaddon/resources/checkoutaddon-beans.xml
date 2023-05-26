@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="beans.xsd">
 
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkCreationResponseStorefrontDTO">
+        <property name="publicToken" type="java.lang.String"/>
+        <property name="metadata"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseStorefrontDTO"/>
+        <property name="customerConsents" type="java.lang.Boolean"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountStorefrontDTO">
+        <property name="class_type" type="java.lang.String"/>
+        <property name="id" type="java.lang.String"/>
+        <property name="mask" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="subtype" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="verification_status" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseInstitutionStorefrontDTO">
+        <property name="institution_id" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseStorefrontDTO">
+        <property name="account"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountStorefrontDTO"/>
+        <property name="accounts"
+                  type="java.util.List&lt;com.checkout.dto.plaidlink.PlaidLinkMetadataResponseAccountStorefrontDTO&gt;"/>
+        <property name="account_id" type="java.lang.String"/>
+        <property name="link_session_id" type="java.lang.String"/>
+        <property name="public_token" type="java.lang.String"/>
+        <property name="status" type="java.lang.String"/>
+        <property name="transfer_status" type="java.lang.String"/>
+        <property name="institution"
+                  type="com.checkout.dto.plaidlink.PlaidLinkMetadataResponseInstitutionStorefrontDTO"/>
+    </bean>
+
+    <bean class="com.checkout.dto.redirect.RedirectObject">
+        <property name="url" type="java.lang.String"/>
+        <property name="errors"
+                  type="java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.String>>"/>
+    </bean>
 </beans>

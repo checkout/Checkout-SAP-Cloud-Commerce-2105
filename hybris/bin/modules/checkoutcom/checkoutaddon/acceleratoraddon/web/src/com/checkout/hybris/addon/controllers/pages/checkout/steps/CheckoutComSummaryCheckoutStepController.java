@@ -141,30 +141,7 @@ public class CheckoutComSummaryCheckoutStepController extends AbstractCheckoutSt
             return redirectToChoosePaymentMethodStep();
         }
 
-        final AuthorizeResponseData authorizeResponseData = checkoutFlowFacade.authorizePayment();
-
-        if (!authorizeResponseData.getIsSuccess() || Boolean.TRUE.equals(authorizeResponseData.getIsRedirect())) {
-            if (Boolean.TRUE.equals(authorizeResponseData.getIsRedirect())) {
-                LOG.debug("Redirecting to checkout.com url [{}] for 3d secure.", authorizeResponseData.getRedirectUrl());
-                return REDIRECT_PREFIX + authorizeResponseData.getRedirectUrl();
-            } else {
-                LOG.error("Error with the authorization process. Redirecting to payment method step.");
-                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, "checkout.error.authorization.failed");
-                return redirectToChoosePaymentMethodStep();
-            }
-        }
-
-        final OrderData orderData;
-        try {
-            orderData = getCheckoutFacade().placeOrder();
-        } catch (final InvalidCartException e) {
-            LOG.error("Failed to place Order", e);
-            checkoutFlowFacade.removePaymentInfoFromSessionCart();
-            GlobalMessages.addErrorMessage(model, "checkout.placeOrder.failed");
-            return enterStep(model, redirectAttributes);
-        }
-
-        return redirectToOrderConfirmationPage(orderData);
+        return authorisePlaceOrderAndRedirectToResultPage(model, redirectAttributes);
     }
 
     /**
@@ -240,5 +217,38 @@ public class CheckoutComSummaryCheckoutStepController extends AbstractCheckoutSt
 
     protected CheckoutStep getCheckoutStep() {
         return getCheckoutStep(SUMMARY);
+    }
+
+    protected String authorisePlaceOrderAndRedirectToResultPage(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        final AuthorizeResponseData authorizeResponseData = checkoutFlowFacade.authorizePayment();
+
+        if (!authorizeResponseData.getIsSuccess() || Boolean.TRUE.equals(authorizeResponseData.getIsRedirect())) {
+            if (Boolean.TRUE.equals(authorizeResponseData.getIsRedirect())) {
+                LOG.debug("Redirecting to checkout.com url [{}] for 3d secure.", authorizeResponseData.getRedirectUrl());
+                return REDIRECT_PREFIX + authorizeResponseData.getRedirectUrl();
+            } else {
+                LOG.error("Error with the authorization process. Redirecting to payment method step.");
+                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, "checkout.error.authorization.failed");
+                return redirectToChoosePaymentMethodStep();
+            }
+        }
+
+        final OrderData orderData;
+        try {
+            orderData = getCheckoutFacade().placeOrder();
+        }
+        catch (final InvalidCartException e) {
+            LOG.error("Failed to place Order", e);
+            checkoutFlowFacade.removePaymentInfoFromSessionCart();
+            GlobalMessages.addErrorMessage(model, "checkout.placeOrder.failed");
+            return enterStep(model, redirectAttributes);
+        }
+
+        return redirectToOrderConfirmationPage(orderData);
+    }
+
+    @Override
+    protected String redirectToOrderConfirmationPage(final OrderData orderData) {
+        return super.redirectToOrderConfirmationPage(orderData);
     }
 }

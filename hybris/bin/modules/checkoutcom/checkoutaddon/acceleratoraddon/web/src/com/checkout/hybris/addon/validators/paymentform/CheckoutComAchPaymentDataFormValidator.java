@@ -19,6 +19,8 @@ public class CheckoutComAchPaymentDataFormValidator extends CheckoutComAbstractP
     protected static final String COMPANY_NAME_FORM_KEY = "companyName";
     protected static final String CORPORATE_ACCOUNT_TYPE_VALUE = "Corporate";
     protected static final String CORP_SAVINGS_ACCOUNT_TYPE_VALUE = "CorpSavings";
+    protected static final String PAYMENT_METHOD_FORM_KEY = "paymentMethod";
+    protected static final String BANK_CODE_FORM_KEY = "bankCode";
 
     protected final EnumerationService enumerationService;
 
@@ -44,6 +46,8 @@ public class CheckoutComAchPaymentDataFormValidator extends CheckoutComAbstractP
         validateAccountType(errors, paymentDataForm);
         validateAccountNumber(errors, paymentDataForm);
         validateRoutingNumber(errors, paymentDataForm);
+        validatePaymentMethod(errors, paymentDataForm);
+        validateBankCode(errors, paymentDataForm);
     }
 
     private void validateAccountHolderName(final Errors errors, final PaymentDataForm paymentDataForm) {
@@ -59,6 +63,22 @@ public class CheckoutComAchPaymentDataFormValidator extends CheckoutComAbstractP
             errors.rejectValue(getAttributeToReject(ROUTING_NUMBER_FORM_KEY), "checkoutcom.ach.routingnumber.mandatory");
         } else if (!isValidRoutingNumber((String) paymentDataForm.getFormAttributes().get(ROUTING_NUMBER_FORM_KEY))) {
             errors.rejectValue(getAttributeToReject(ROUTING_NUMBER_FORM_KEY), "checkoutcom.ach.routingnumber.invalid");
+        }
+    }
+
+    private void validatePaymentMethod(final Errors errors, final PaymentDataForm paymentDataForm) {
+        if (!paymentDataForm.getFormAttributes().containsKey(PAYMENT_METHOD_FORM_KEY)) {
+            errors.rejectValue(getAttributeToReject(PAYMENT_METHOD_FORM_KEY), "checkoutcom.ach.paymentmethod.mandatory");
+        } else if (StringUtils.isBlank((String) paymentDataForm.getFormAttributes().get(PAYMENT_METHOD_FORM_KEY))) {
+            errors.rejectValue(getAttributeToReject(PAYMENT_METHOD_FORM_KEY), "checkoutcom.ach.paymentmethod.invalid");
+        }
+    }
+
+    private void validateBankCode(final Errors errors, final PaymentDataForm paymentDataForm) {
+        if (!paymentDataForm.getFormAttributes().containsKey(BANK_CODE_FORM_KEY)) {
+            errors.rejectValue(getAttributeToReject(BANK_CODE_FORM_KEY), "checkoutcom.ach.bankcode.mandatory");
+        } else if (!isValidBankCode((String) paymentDataForm.getFormAttributes().get(BANK_CODE_FORM_KEY))) {
+            errors.rejectValue(getAttributeToReject(BANK_CODE_FORM_KEY), "checkoutcom.ach.bankcode.invalid");
         }
     }
 
@@ -128,4 +148,15 @@ public class CheckoutComAchPaymentDataFormValidator extends CheckoutComAbstractP
     protected boolean isCompanyNameRequired(final String accountType) {
         return accountType.equalsIgnoreCase(CORPORATE_ACCOUNT_TYPE_VALUE) || accountType.equalsIgnoreCase(CORP_SAVINGS_ACCOUNT_TYPE_VALUE);
     }
+
+    /**
+     * Checks if the account bank code contains at least one number
+     *
+     * @param bankCode the bank code string
+     * @return true if valid, false otherwise
+     */
+    protected boolean isValidBankCode(final String bankCode) {
+        return bankCode.matches("\\d+");
+    }
+
 }

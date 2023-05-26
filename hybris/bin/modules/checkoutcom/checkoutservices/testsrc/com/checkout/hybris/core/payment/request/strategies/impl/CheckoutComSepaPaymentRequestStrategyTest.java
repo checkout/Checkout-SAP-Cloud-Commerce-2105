@@ -4,7 +4,6 @@ import com.checkout.common.Address;
 import com.checkout.hybris.core.currency.services.CheckoutComCurrencyService;
 import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurationService;
 import com.checkout.hybris.core.merchantconfiguration.BillingDescriptor;
-import com.checkout.hybris.core.model.CheckoutComAchPaymentInfoModel;
 import com.checkout.hybris.core.model.CheckoutComSepaPaymentInfoModel;
 import com.checkout.hybris.core.payment.exception.CheckoutComPaymentIntegrationException;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentIntegrationService;
@@ -15,6 +14,7 @@ import com.checkout.sources.*;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,6 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.checkout.hybris.core.enums.SepaPaymentType.RECURRING;
-import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.ACH;
 import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.SEPA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -63,8 +62,6 @@ public class CheckoutComSepaPaymentRequestStrategyTest {
     @Mock
     private SourceResponse sourceResponseMock;
     @Mock
-    private CheckoutComAchPaymentInfoModel achPaymentInfoMock;
-    @Mock
     private CheckoutComSepaPaymentInfoModel sepaPaymentInfoModelMock;
     @Mock
     private CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationServiceMock;
@@ -84,6 +81,8 @@ public class CheckoutComSepaPaymentRequestStrategyTest {
     private Address addressMock;
     @Mock
     private SourceData sourceDataMock;
+    @Mock
+    private PaymentInfoModel paymentInfoMock;
 
     @Before
     public void setUp() {
@@ -93,7 +92,6 @@ public class CheckoutComSepaPaymentRequestStrategyTest {
         when(cartMock.getCheckoutComPaymentReference()).thenReturn(CART_REFERENCE);
         when(cartMock.getCurrency()).thenReturn(currencyModelMock);
         when(currencyModelMock.getIsocode()).thenReturn(GBP);
-        when(achPaymentInfoMock.getType()).thenReturn(ACH.name());
         when(checkoutComMerchantConfigurationServiceMock.getBillingDescriptor()).thenReturn(billingDescriptorMock);
         when(billingDescriptorMock.getBillingDescriptorName()).thenReturn(BILLING_DESCRIPTOR_NAME);
         when(checkoutComPaymentIntegrationServiceMock.setUpPaymentSource(any(SourceRequest.class))).thenReturn(sourceResponseMock);
@@ -114,10 +112,10 @@ public class CheckoutComSepaPaymentRequestStrategyTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createPaymentRequest_WhenPaymentInfoIsNotSepa_ShouldThrowException() {
-        when(cartMock.getPaymentInfo()).thenReturn(achPaymentInfoMock);
+    public void getRequestSourcePaymentRequest_WhenPaymentInfoIsNotSepa_ShouldThrowException() {
+        when(cartMock.getPaymentInfo()).thenReturn(paymentInfoMock);
 
-        testObj.createPaymentRequest(cartMock);
+        testObj.getRequestSourcePaymentRequest(cartMock, CURRENCY_ISO_CODE, CHECKOUT_COM_TOTAL_PRICE);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -140,7 +138,7 @@ public class CheckoutComSepaPaymentRequestStrategyTest {
     public void createPaymentRequest_WhenEverythingIsCorrectButCustomerNotPopulated_ShouldReturnThePopulatedRequestWithoutCustomer() {
         when(sourceProcessedMock.getCustomer()).thenReturn(null);
 
-        PaymentRequest<RequestSource> result = testObj.createPaymentRequest(cartMock);
+        final PaymentRequest<RequestSource> result = testObj.createPaymentRequest(cartMock);
 
         assertEquals(PAYMENT_SOURCE_ID_KEY, result.getSource().getType());
         assertEquals(PAYMENT_ID, ((AlternativePaymentSource) result.getSource()).get(PAYMENT_SOURCE_ID_KEY));

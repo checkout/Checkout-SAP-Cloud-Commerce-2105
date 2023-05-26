@@ -10,6 +10,7 @@ import com.checkout.hybris.core.model.CheckoutComFawryPaymentInfoModel;
 import com.checkout.hybris.core.payment.enums.CheckoutComPaymentType;
 import com.checkout.hybris.core.payment.request.mappers.CheckoutComPaymentRequestStrategyMapper;
 import com.checkout.hybris.core.payment.request.strategies.CheckoutComPaymentRequestStrategy;
+import com.checkout.hybris.core.populators.payments.CheckoutComCartModelToPaymentL2AndL3Converter;
 import com.checkout.hybris.core.url.services.CheckoutComUrlService;
 import com.checkout.payments.AlternativePaymentSource;
 import com.checkout.payments.PaymentRequest;
@@ -29,6 +30,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * specific {@link CheckoutComPaymentRequestStrategy} implementation for Fawry apm payments
  */
+@SuppressWarnings("java:S107")
 public class CheckoutComFawryPaymentRequestStrategy extends CheckoutComAbstractApmPaymentRequestStrategy {
 
     protected static final String MOBILE_NUMBER_KEY = "customer_mobile";
@@ -47,8 +49,11 @@ public class CheckoutComFawryPaymentRequestStrategy extends CheckoutComAbstractA
                                                   final CheckoutComPaymentRequestStrategyMapper checkoutComPaymentRequestStrategyMapper,
                                                   final CMSSiteService cmsSiteService,
                                                   final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
+                                                  final CheckoutComCartModelToPaymentL2AndL3Converter checkoutComCartModelToPaymentL2AndL3Converter,
                                                   final CheckoutComAPMConfigurationService checkoutComAPMConfigurationService) {
-        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService, checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService);
+        super(checkoutComUrlService, checkoutComPhoneNumberStrategy, checkoutComCurrencyService,
+              checkoutComPaymentRequestStrategyMapper, cmsSiteService, checkoutComMerchantConfigurationService,
+              checkoutComCartModelToPaymentL2AndL3Converter);
         this.checkoutComAPMConfigurationService = checkoutComAPMConfigurationService;
     }
 
@@ -78,13 +83,16 @@ public class CheckoutComFawryPaymentRequestStrategy extends CheckoutComAbstractA
         return paymentRequest;
     }
 
-    protected List<Map> populateProductsField(final Long amount) {
-        final Map products = new HashMap();
+    protected List<Map<String, Object>> populateProductsField(final Long amount) {
+        final Map<String, Object> products = new HashMap<>();
 
-        final Optional<CheckoutComAPMConfigurationModel> optionalFawryConfiguration = checkoutComAPMConfigurationService.getApmConfigurationByCode(FAWRY.name());
+        final Optional<CheckoutComAPMConfigurationModel> optionalFawryConfiguration =
+                checkoutComAPMConfigurationService.getApmConfigurationByCode(
+                        FAWRY.name());
         checkArgument(optionalFawryConfiguration.isPresent(), "Fawry configuration cannot be null");
 
-        final CheckoutComFawryConfigurationModel fawryConfiguration = (CheckoutComFawryConfigurationModel) optionalFawryConfiguration.get();
+        final CheckoutComFawryConfigurationModel fawryConfiguration =
+                (CheckoutComFawryConfigurationModel) optionalFawryConfiguration.get();
         products.put(PRODUCTS_PRODUCT_ID_KEY, fawryConfiguration.getProductId());
         products.put(DESCRIPTION_KEY, fawryConfiguration.getProductDescription());
         products.put(PRODUCTS_QUANTITY_KEY, 1);

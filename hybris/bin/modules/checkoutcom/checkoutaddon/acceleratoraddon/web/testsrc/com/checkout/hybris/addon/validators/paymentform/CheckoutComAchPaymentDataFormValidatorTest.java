@@ -34,6 +34,8 @@ public class CheckoutComAchPaymentDataFormValidatorTest {
     private static final String ROUTING_NUMBER_MAP_FIELD = "formAttributes[routingNumber]";
     private static final String COMPANY_NAME_MAP_FIELD = "formAttributes[companyName]";
     private static final String CORPORATE_ACCOUNT_TYPE = "Corporate";
+    private static final String BANK_CODE_MAP_FIELD = "formAttributes[bankCode]";
+    private static final String PAYMENT_METHOD_MAP_FIELD = "formAttributes[paymentMethod]";
 
     @InjectMocks
     private CheckoutComAchPaymentDataFormValidator testObj;
@@ -55,6 +57,8 @@ public class CheckoutComAchPaymentDataFormValidatorTest {
         attributesMap.put(ACCOUNT_NUMBER_FORM_KEY, "4099999992");
         attributesMap.put(ROUTING_NUMBER_FORM_KEY, "011075150");
         attributesMap.put(COMPANY_NAME_FORM_KEY, "Electronics");
+        attributesMap.put(BANK_CODE_FORM_KEY, "123");
+        attributesMap.put(PAYMENT_METHOD_FORM_KEY, "Payment Method");
         attributesMap.put("type", ACH.name());
         paymentDataForm.setFormAttributes(attributesMap);
 
@@ -248,6 +252,61 @@ public class CheckoutComAchPaymentDataFormValidatorTest {
         assertTrue(errors.hasErrors());
         assertEquals(1, errors.getErrorCount());
         assertEquals(COMPANY_NAME_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeNotFound_ShouldReturnError() {
+        attributesMap.remove(BANK_CODE_FORM_KEY);
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeEmpty_ShouldReturnError() {
+        attributesMap.put(BANK_CODE_FORM_KEY, "   ");
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenBankCodeNotValid_ShouldReturnError() {
+        attributesMap.put(BANK_CODE_FORM_KEY, "233dda");
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(BANK_CODE_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenPaymentMethodNotFound_ShouldReturnError() {
+        attributesMap.remove(PAYMENT_METHOD_FORM_KEY);
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(PAYMENT_METHOD_MAP_FIELD, errors.getFieldError().getField());
+    }
+
+    @Test
+    public void validate_WhenPaymentMethodEmpty_ShouldReturnError() {
+        attributesMap.put(PAYMENT_METHOD_FORM_KEY, "   ");
+
+        testObj.validate(paymentDataForm, errors);
+
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getErrorCount());
+        assertEquals(PAYMENT_METHOD_MAP_FIELD, errors.getFieldError().getField());
     }
 
     @Test

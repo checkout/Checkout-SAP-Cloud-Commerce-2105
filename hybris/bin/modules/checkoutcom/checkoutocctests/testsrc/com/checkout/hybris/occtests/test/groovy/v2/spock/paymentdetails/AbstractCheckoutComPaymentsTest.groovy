@@ -261,6 +261,22 @@ abstract class AbstractCheckoutComPaymentsTest extends AbstractCartTest {
         return response.data.token
     }
 
+    def useNAS() {
+        def modelService = Registry.getApplicationContext()
+                .getBean("modelService", ModelService.class)
+        def merchantConf = getMerchantConfiguration()
+        merchantConf.setUseNas(Boolean.TRUE)
+        modelService.save(merchantConf);
+    }
+
+    def useABC() {
+        def modelService = Registry.getApplicationContext()
+                .getBean("modelService", ModelService.class)
+        def merchantConf = getMerchantConfiguration()
+        merchantConf.setUseNas(Boolean.FALSE)
+        modelService.save(merchantConf);
+    }
+
     /**
      * Activates 3DS
      */

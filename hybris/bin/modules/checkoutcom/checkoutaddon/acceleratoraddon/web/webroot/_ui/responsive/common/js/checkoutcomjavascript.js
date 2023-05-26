@@ -8,10 +8,12 @@ window.onload = function () {
 
     Frames.init({
         publicKey: publicKeyValue,
+        modes: [ Frames.modes.FEATURE_FLAG_SCHEME_CHOICE],
         cardholder: {
             name: document.getElementById("cardHolderFirstName").value + ' ' + document.getElementById("cardHolderLastName").value,
             billingAddress: {}
-        }
+        },
+        schemeChoice: isABC === 'false'
     });
 
     var logos = generateLogos();
@@ -39,8 +41,8 @@ window.onload = function () {
     errors["cvv"] = "Please enter a valid cvv code";
 
     Frames.addEventHandler(
-        Frames.Events.FRAME_VALIDATION_CHANGED,
-        onValidationChanged
+      Frames.Events.FRAME_VALIDATION_CHANGED,
+      onValidationChanged
     );
 
     function onValidationChanged(event) {
@@ -119,8 +121,8 @@ window.onload = function () {
     }
 
     Frames.addEventHandler(
-        Frames.Events.CARD_VALIDATION_CHANGED,
-        cardValidationChanged
+      Frames.Events.CARD_VALIDATION_CHANGED,
+      cardValidationChanged
     );
 
     function cardValidationChanged(event) {
@@ -128,8 +130,8 @@ window.onload = function () {
     }
 
     Frames.addEventHandler(
-        Frames.Events.CARD_TOKENIZATION_FAILED,
-        onCardTokenizationFailed
+      Frames.Events.CARD_TOKENIZATION_FAILED,
+      onCardTokenizationFailed
     );
 
     function onCardTokenizationFailed(error) {
@@ -137,13 +139,29 @@ window.onload = function () {
         Frames.enableSubmitForm();
     }
 
+    Frames.addEventHandler(
+      Frames.Events.CARD_BIN_CHANGED,
+      onCardBinChanged
+    )
+
+    function onCardBinChanged(event) {
+        const cobadgeTooltip = $('.cobadgeTooltip');
+        if(event.isCoBadged) {
+            cobadgeTooltip.removeClass("hidden");
+        } else {
+            $('.cobadgeTooltip').addClass("hidden");
+        }
+    }
+
     Frames.addEventHandler(Frames.Events.CARD_TOKENIZED, onCardTokenized);
+
 
     function onCardTokenized(event) {
         document.getElementById("paymentToken").value = event.token;
         document.getElementById("number").value = event.bin + event.last4;
         document.getElementById("cardBin").value = event.bin;
         document.getElementById("cardType").value = event.scheme;
+        document.getElementById("schemeLocal").value = event.preferred_scheme;
         document.getElementById("validToMonth").value = event.expiry_month;
         document.getElementById("validToYear").value = event.expiry_year;
         document.getElementById("accountHolderName").value = $('#cardholdername').val();
@@ -153,13 +171,13 @@ window.onload = function () {
         }
 
         $('#checkoutComPaymentTokenForm')
-            .attr('action', ACC.config.encodedContextPath + '/checkout/multi/checkout-com/payment/submit-payment-data')
-            .submit();
+          .attr('action', ACC.config.encodedContextPath + '/checkout/multi/checkout-com/payment/submit-payment-data')
+          .submit();
     }
 
     Frames.addEventHandler(
-        Frames.Events.PAYMENT_METHOD_CHANGED,
-        paymentMethodChanged
+      Frames.Events.PAYMENT_METHOD_CHANGED,
+      paymentMethodChanged
     );
 
     function paymentMethodChanged(event) {

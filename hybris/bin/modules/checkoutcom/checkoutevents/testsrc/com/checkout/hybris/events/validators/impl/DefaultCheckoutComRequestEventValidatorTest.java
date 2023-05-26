@@ -70,8 +70,9 @@ public class DefaultCheckoutComRequestEventValidatorTest {
     }
 
     @Test
-    public void isRequestEventValid_whenABCIsActive_andCKOSignatureIsValid_shouldReturnTrue() throws NoSuchAlgorithmException, InvalidKeyException {
+    public void isRequestEventValid_whenABCIsActive_andAbcSignatureIsEnabled_andCKOSignatureIsValid_shouldReturnTrue() throws NoSuchAlgorithmException, InvalidKeyException {
         when(checkoutComMerchantConfigurationServiceMock.isNasUsed()).thenReturn(false);
+        when(checkoutComMerchantConfigurationServiceMock.isAbcSignatureKeyUsedOnNotificationValidation()).thenReturn(true);
         doReturn(true).when(testObj).isCkoSignatureValid(SECRET_KEY_MESSAGE_HASH, eventBody);
 
         assertTrue(testObj.isRequestEventValid(httpServletRequestMock, eventBody));
@@ -79,12 +80,23 @@ public class DefaultCheckoutComRequestEventValidatorTest {
     }
 
     @Test
-    public void isRequestEventValid_whenABCIsActive_andCKOSignatureIsInvalid_shouldReturnFalse() throws NoSuchAlgorithmException, InvalidKeyException {
+    public void isRequestEventValid_whenABCIsActive_andAbcSignatureIsEnabled_andCKOSignatureIsInvalid_shouldReturnTrue() throws NoSuchAlgorithmException, InvalidKeyException {
         when(checkoutComMerchantConfigurationServiceMock.isNasUsed()).thenReturn(false);
+        when(checkoutComMerchantConfigurationServiceMock.isAbcSignatureKeyUsedOnNotificationValidation()).thenReturn(true);
         doReturn(false).when(testObj).isCkoSignatureValid(SECRET_KEY_MESSAGE_HASH, eventBody);
 
         assertFalse(testObj.isRequestEventValid(httpServletRequestMock, eventBody));
         verify(baseSiteServiceMock).setCurrentBaseSite(baseSiteModelMock, false);
+    }
+
+    @Test
+    public void isRequestEventValid_whenABCIsActive_andAbcSignatureIsDisabled_shouldReturnTrue() throws NoSuchAlgorithmException, InvalidKeyException {
+        when(checkoutComMerchantConfigurationServiceMock.isNasUsed()).thenReturn(false);
+        when(checkoutComMerchantConfigurationServiceMock.isAbcSignatureKeyUsedOnNotificationValidation()).thenReturn(false);
+
+        assertTrue(testObj.isRequestEventValid(httpServletRequestMock, eventBody));
+        verify(baseSiteServiceMock).setCurrentBaseSite(baseSiteModelMock, false);
+        verify(testObj, never()).isCkoSignatureValid(SECRET_KEY_MESSAGE_HASH, eventBody);
     }
 
     @Test

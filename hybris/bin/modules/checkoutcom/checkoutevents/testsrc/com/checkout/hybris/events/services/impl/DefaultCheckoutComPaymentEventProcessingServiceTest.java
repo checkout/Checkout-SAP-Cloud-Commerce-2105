@@ -469,6 +469,13 @@ public class DefaultCheckoutComPaymentEventProcessingServiceTest {
     }
 
     @Test
+    public void processPayment_WhenEventResponseIsReturn_ShouldReturnPayment() {
+        testObj.processPayment(eventMock, paymentTransactionMock, RETURN);
+
+        verify(paymentServiceMock).returnPayment(eventMock, paymentTransactionMock, RETURN);
+    }
+
+    @Test
     public void createWaitForEventName_WhenRefundPayment_ShouldConcatenateProcessCodeActionIdAndPaymentTransactionType() {
         when(businessProcessMock.getCode()).thenReturn(BUSINESS_PROCESS_CODE);
 

@@ -1,0 +1,20 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]          ; integrationType(code)
+                               ; InboundCheckoutComAchConsent ; INBOUND
+
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]   ; type(code)            ; root[default = false]; itemTypeMatch(code)
+                                   ; InboundCheckoutComAchConsent          ; CheckoutComACHConsent ; CheckoutComACHConsent ; true                 ; ALL_SUB_AND_SUPER_TYPES ;
+                                   ; InboundCheckoutComAchConsent          ; AchAccountType        ; AchAccountType        ;                      ; ALL_SUBTYPES            ;
+                                   ; InboundCheckoutComAchConsent          ; AbstractOrder         ; AbstractOrder         ;                      ; ALL_SUBTYPES            ;
+
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false]
+                                            ; InboundCheckoutComAchConsent:CheckoutComACHConsent                 ; accountType                 ; CheckoutComACHConsent:accountType                  ; InboundCheckoutComAchConsent:AchAccountType               ; true                   ;
+                                            ; InboundCheckoutComAchConsent:CheckoutComACHConsent                 ; accountNumber               ; CheckoutComACHConsent:accountNumber                ;                                                           ; true                   ;
+                                            ; InboundCheckoutComAchConsent:CheckoutComACHConsent                 ; order                       ; CheckoutComACHConsent:order                        ; InboundCheckoutComAchConsent:AbstractOrder                ; true                   ;
+                                            ; InboundCheckoutComAchConsent:CheckoutComACHConsent                 ; bankName                    ; CheckoutComACHConsent:bankName                     ;                                                           ; true                   ;
+                                            ; InboundCheckoutComAchConsent:CheckoutComACHConsent                 ; email                       ; CheckoutComACHConsent:email                        ;                                                           ; true                   ;
+                                            ; InboundCheckoutComAchConsent:AchAccountType                        ; code                        ; AchAccountType:code                                ;                                                           ; true                   ;
+                                            ; InboundCheckoutComAchConsent:AbstractOrder                         ; checkoutComPaymentReference ; AbstractOrder:checkoutComPaymentReference          ;                                                           ; true                   ;
+                                            ; InboundCheckoutComAchConsent:AbstractOrder                         ; code                        ; AbstractOrder:code                                 ;                                                           ; true                   ;
+
+INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true]; authenticationType(code)
+                                         ; InboundCheckoutComAchConsent          ; BASIC
