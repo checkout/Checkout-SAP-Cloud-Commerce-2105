@@ -5,6 +5,7 @@
 
     <collectiontypes>
         <collectiontype code="CheckoutComAPMs" elementtype="CheckoutComAPMConfiguration"/>
+        <collectiontype code="PayloadCollection" elementtype="Payload" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -423,12 +424,45 @@
                         <modifiers optional="true" initial="false"/>
                         <description>This is the related ACH Consent</description>
                     </attribute>
+                    <attribute qualifier="requestsPayload" type="PayloadCollection">
+                        <description>Checkout api requests payload</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="responsesPayload" type="PayloadCollection">
+                        <description>Checkout api responses payload</description>
+                        <persistence type="property"/>
+                    </attribute>
                 </attributes>
                 <indexes>
                     <index name="checkoutComPaymentReferenceIdx">
                         <key attribute="checkoutComPaymentReference"/>
                     </index>
                 </indexes>
+            </itemtype>
+
+            <itemtype code="Payload" extends="GenericItem">
+                <deployment table="Payload" typecode="23362"/>
+                <attributes>
+                    <attribute qualifier="payload" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                            <columntype database="mysql">
+                                <value>MEDIUMTEXT</value>
+                            </columntype>
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sqlserver">
+                                <value>TEXT</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                </attributes>
             </itemtype>
         </typegroup>
 

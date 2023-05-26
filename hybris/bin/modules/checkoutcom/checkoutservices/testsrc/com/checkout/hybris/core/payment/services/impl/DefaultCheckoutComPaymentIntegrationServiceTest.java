@@ -1,5 +1,6 @@
 package com.checkout.hybris.core.payment.services.impl;
 
+import com.checkout.hybris.core.payment.services.CheckoutComPaymentInfoService;
 import com.checkout.CheckoutApi;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.klarna.capture.request.KlarnaCaptureRequestDto;
@@ -164,6 +165,8 @@ public class DefaultCheckoutComPaymentIntegrationServiceTest {
     @Mock
     private CheckoutComApiService checkoutComApiServiceMock;
     @Mock
+    private CheckoutComPaymentInfoService paymentInfoServiceMock;
+    @Mock
     private PaymentInfoModel originalPaymentInfoMock;
     @Mock
     private Map<String, Object> metaDataMapMock;
@@ -273,6 +276,8 @@ public class DefaultCheckoutComPaymentIntegrationServiceTest {
         final GetPaymentResponse result = testObj.getPaymentDetails(CKO_SESSION_ID);
 
         assertEquals(getPaymentResponseMock, result);
+        verify(paymentInfoServiceMock).saveResponseInOrderByPaymentReference(any(), anyString());
+        verify(paymentInfoServiceMock).logInfoOut(anyString());
     }
 
     @Test

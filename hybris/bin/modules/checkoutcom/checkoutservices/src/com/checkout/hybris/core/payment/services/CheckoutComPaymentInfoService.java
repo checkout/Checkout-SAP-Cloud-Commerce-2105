@@ -109,4 +109,28 @@ public interface CheckoutComPaymentInfoService extends PaymentInfoService {
      * @return List<PaymentInfoModel> belonging to AbstractOrder
      */
     List<PaymentInfoModel> getPaymentInfosByPaymentId(String paymentId);
+
+    /**
+     * Set the payloads in the order
+     *
+     * @param abstractOrder the order
+     * @param request the request
+     * @param response the response
+     */
+    void saveRequestAndResponseInOrder(final AbstractOrderModel abstractOrder, final String request, final String response);
+
+    /**
+     * Set the payload in the order found by payment reference
+     *
+     * @param paymentReference the payment reference of the order
+     * @param response the response
+     */
+    void saveResponseInOrderByPaymentReference(final String paymentReference, final String response);
+
+    /**
+     * Print in the log the payload for test environments
+     *
+     * @param payload the payload
+     */
+    void logInfoOut(final String payload);
 }

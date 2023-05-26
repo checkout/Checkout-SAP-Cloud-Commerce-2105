@@ -6,11 +6,9 @@ import com.checkout.hybris.core.merchant.services.CheckoutComMerchantConfigurati
 import com.checkout.hybris.core.model.CheckoutComAPMConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComFawryConfigurationModel;
 import com.checkout.hybris.core.model.CheckoutComGlobalAPMConfigurationModel;
-import com.checkout.hybris.core.model.CheckoutComMerchantConfigurationModel;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.media.MediaModel;

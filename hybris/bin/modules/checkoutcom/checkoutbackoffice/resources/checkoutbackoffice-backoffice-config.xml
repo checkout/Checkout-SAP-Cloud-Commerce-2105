@@ -380,6 +380,10 @@
                         <editorArea:attribute qualifier="checkoutComPaymentReference"/>
                         <editorArea:attribute qualifier="achConsent"/>
                     </editorArea:section>
+                    <editorArea:section name="sec.abstractorder.checkoutcom.api.payload.section">
+                        <editorArea:attribute qualifier="requestsPayload" readonly="true"/>
+                        <editorArea:attribute qualifier="responsesPayload" readonly="true"/>
+                    </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
         </context>

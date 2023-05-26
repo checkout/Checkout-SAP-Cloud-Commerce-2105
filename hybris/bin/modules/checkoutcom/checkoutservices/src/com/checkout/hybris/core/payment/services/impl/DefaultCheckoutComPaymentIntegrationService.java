@@ -1,8 +1,5 @@
 package com.checkout.hybris.core.payment.services.impl;
 
-import com.checkout.CheckoutApi;
-import com.checkout.CheckoutApiException;
-import com.checkout.common.ApiResponseInfo;
 import com.checkout.hybris.core.enums.EnvironmentType;
 import com.checkout.hybris.core.klarna.capture.request.KlarnaCaptureRequestDto;
 import com.checkout.hybris.core.klarna.capture.response.KlarnaCaptureResponseDto;
@@ -16,7 +13,12 @@ import com.checkout.hybris.core.order.daos.CheckoutComOrderDao;
 import com.checkout.hybris.core.payment.daos.CheckoutComPaymentInfoDao;
 import com.checkout.hybris.core.payment.exception.CheckoutComPaymentIntegrationException;
 import com.checkout.hybris.core.payment.services.CheckoutComApiService;
+import com.checkout.hybris.core.payment.services.CheckoutComPaymentInfoService;
 import com.checkout.hybris.core.payment.services.CheckoutComPaymentIntegrationService;
+import com.checkout.CheckoutApi;
+import com.checkout.CheckoutApiException;
+import com.checkout.GsonSerializer;
+import com.checkout.common.ApiResponseInfo;
 import com.checkout.payments.*;
 import com.checkout.sources.SourceRequest;
 import com.checkout.sources.SourceResponse;
@@ -50,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Default implementation of the {@link CheckoutComPaymentIntegrationService}
  */
+@SuppressWarnings("java:S107")
 public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComPaymentIntegrationService {
 
     protected static final Logger LOG = LogManager.getLogger(DefaultCheckoutComPaymentIntegrationService.class);
@@ -68,6 +71,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
     protected final ConfigurationService configurationService;
     protected final CheckoutComApiService checkoutComApiService;
     protected final RestTemplate restTemplate;
+    protected final CheckoutComPaymentInfoService paymentInfoService;
 
     public DefaultCheckoutComPaymentIntegrationService(final CheckoutComMerchantConfigurationService checkoutComMerchantConfigurationService,
                                                        final SessionService sessionService,
@@ -75,7 +79,9 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
                                                        final CheckoutComPaymentInfoDao checkoutComPaymentInfoDao,
                                                        final RestTemplate restTemplate,
                                                        final ConfigurationService configurationService,
-                                                       final CheckoutComApiService checkoutComApiService) {
+                                                       final CheckoutComApiService checkoutComApiService,
+                                                       final CheckoutComPaymentInfoService paymentInfoService) {
+
         this.checkoutComMerchantConfigurationService = checkoutComMerchantConfigurationService;
         this.sessionService = sessionService;
         this.orderDao = orderDao;
@@ -83,6 +89,7 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
         this.restTemplate = restTemplate;
         this.configurationService = configurationService;
         this.checkoutComApiService = checkoutComApiService;
+        this.paymentInfoService = paymentInfoService;
     }
 
     /**
@@ -112,7 +119,13 @@ public class DefaultCheckoutComPaymentIntegrationService implements CheckoutComP
         final CheckoutApi checkoutApi = checkoutComApiService.createCheckoutApi();
 
         try {
-            return checkoutApi.paymentsClient().getAsync(paymentIdentifier).get();
+            final GetPaymentResponse getPaymentResponse = checkoutApi.paymentsClient().getAsync(paymentIdentifier).get();
+            final GsonSerializer gsonSerializer = new GsonSerializer();
+            final String paymentResponseJson = gsonSerializer.toJson(getPaymentResponse);
+            paymentInfoService.saveResponseInOrderByPaymentReference(getPaymentResponse.getReference(), paymentResponseJson);
+            paymentInfoService.logInfoOut(paymentResponseJson);
+
+            return getPaymentResponse;
         } catch (final ExecutionException | CancellationException e) {
             LOG.error("Error while getting the payment details from Checkout.com for payment identifier [{}]", paymentIdentifier);
             throw new CheckoutComPaymentIntegrationException(GET_PAYMENT_DETAILS_REQUEST_FAILED, e);

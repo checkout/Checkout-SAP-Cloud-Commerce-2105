@@ -13,7 +13,6 @@ import com.checkout.hybris.core.payment.services.CheckoutComPaymentTransactionSe
 import com.checkout.hybris.events.model.CheckoutComPaymentEventModel;
 import com.checkout.payments.CardSourceResponse;
 import com.checkout.payments.PaymentPending;
-import com.google.common.collect.ImmutableList;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commerceservices.order.CommercePaymentProviderStrategy;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -34,9 +33,7 @@ import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Optional;
 
 import static com.checkout.hybris.core.payment.enums.CheckoutComPaymentType.MULTIBANCO;
@@ -60,15 +57,7 @@ public class DefaultCheckoutComPaymentServiceTest {
 
     private static final String SITE_ID = "siteId";
     private static final String PAYMENT_ID = "PAYMENT_ID";
-    private static final Date CURRENT_DATE = new Date();
     private static final String PAYMENT_REFERENCE = "PAYMENT-REFERENCE";
-    private static final String PROVIDER = "PROVIDER";
-    private static final BigDecimal AMOUNT = BigDecimal.valueOf(2000d);
-    private static final String ACTION_ID = "actionId";
-    private static final String SUBSCRIPTION_ID = "subscriptionID";
-    private static final String USER_ID = "USER_ID";
-    private static final String PAYMENT_1_CODE = "payment1Code";
-    private static final String PAYMENT_2_CODE = "payment2Code";
 
     @Spy
     @InjectMocks
@@ -130,25 +119,9 @@ public class DefaultCheckoutComPaymentServiceTest {
         setUpPaymentEvent();
         setUpPaymentTransactionsAndTransactionEntries();
 
-        when(timeServiceMock.getCurrentTime()).thenReturn(CURRENT_DATE);
         when(orderMock.getCurrency()).thenReturn(currencyModelMock);
         when(orderMock.getPaymentInfo()).thenReturn(cardPaymentInfoMock);
         when(orderMock.getPaymentTransactions()).thenReturn(singletonList(paymentTransactionMock));
-        when(commercePaymentProviderStrategyMock.getPaymentProvider()).thenReturn(PROVIDER);
-        when(modelServiceMock.create(PaymentTransactionModel.class)).thenReturn(new PaymentTransactionModel());
-        when(modelServiceMock.create(PaymentTransactionEntryModel.class)).thenReturn(new PaymentTransactionEntryModel());
-        when(currencyModelMock.getIsocode()).thenReturn("GBP");
-        when(cardPaymentInfoMock.getCode()).thenReturn(PAYMENT_1_CODE);
-        when(cartMock.getPaymentInfo()).thenReturn(cardPaymentInfoMock);
-        when(cartMock.getUser()).thenReturn(userMock);
-        when(userMock.getUid()).thenReturn(USER_ID);
-        when(userMock.getPaymentInfos()).thenReturn(ImmutableList.of(userPaymentInfo1Mock, userPaymentInfo2Mock));
-        when(userPaymentInfo1Mock.getCode()).thenReturn(PAYMENT_1_CODE);
-        when(userPaymentInfo2Mock.getCode()).thenReturn(PAYMENT_2_CODE);
-        when(cardPaymentInfoMock.getCode()).thenReturn(PAYMENT_1_CODE);
-        when(cardPaymentInfoMock.getUser()).thenReturn(userMock);
-        when(cartMock.getPaymentInfo()).thenReturn(cardPaymentInfoMock);
-        when(sourceMock.getId()).thenReturn(SUBSCRIPTION_ID);
         when(paymentTransactionMock.getOrder()).thenReturn(orderMock);
         when(orderMock.getSite().getUid()).thenReturn(SITE_ID);
     }
@@ -209,7 +182,6 @@ public class DefaultCheckoutComPaymentServiceTest {
         when(orderMock.getPaymentTransactions()).thenReturn(Collections.singletonList(paymentTransactionMock));
         when(paymentTransactionMock.getEntries()).thenReturn(Collections.singletonList(paymentTransactionEntryMock));
         when(paymentTransactionEntryMock.getType()).thenReturn(CAPTURE);
-        when(paymentTransactionEntryMock.getTransactionStatus()).thenReturn(ACCEPTED.toString());
 
         final boolean result = testObj.isAuthorizationPending(orderMock);
 
@@ -279,7 +251,6 @@ public class DefaultCheckoutComPaymentServiceTest {
         when(orderMock.getPaymentTransactions()).thenReturn(Collections.singletonList(paymentTransactionMock));
         when(paymentTransactionMock.getEntries()).thenReturn(Collections.singletonList(paymentTransactionEntryMock));
         when(paymentTransactionEntryMock.getType()).thenReturn(AUTHORIZATION);
-        when(paymentTransactionEntryMock.getTransactionStatus()).thenReturn(ACCEPTED.toString());
 
         final boolean result = testObj.isCaptureApproved(orderMock);
 
@@ -483,7 +454,6 @@ public class DefaultCheckoutComPaymentServiceTest {
     @Test
     public void findPendingTransactionEntry_WhenNoTransactionEntryForType_ShouldReturnEmpty() {
         when(paymentTransactionMock.getEntries()).thenReturn(singletonList(refundPaymentTransactionEntry1Mock));
-        when(refundPaymentTransactionEntry1Mock.getRequestId()).thenReturn(PAYMENT_ID);
 
         final Optional<PaymentTransactionEntryModel> result = testObj.findPendingTransactionEntry(PAYMENT_ID, paymentTransactionMock, CAPTURE);
 
@@ -646,7 +616,6 @@ public class DefaultCheckoutComPaymentServiceTest {
 
     @Test
     public void acceptPayment_WhenPaymentTransactionEntryDoesNotExistAndEventIsPaymentPending_ShouldCreateNewPendingEntry() {
-        when(paymentEventMock.getRiskFlag()).thenReturn(Boolean.FALSE);
         when(paymentEventMock.getEventType()).thenReturn(PAYMENT_PENDING.getCode());
         doNothing().when(checkoutComPaymentTransactionServiceMock).createPaymentTransactionEntry(any(PaymentTransactionModel.class), any(CheckoutComPaymentEventModel.class), anyString(), anyString(), any(PaymentTransactionType.class));
 
@@ -711,31 +680,19 @@ public class DefaultCheckoutComPaymentServiceTest {
     }
 
     private void setUpPaymentEvent() {
-        when(paymentEventMock.getActionId()).thenReturn(ACTION_ID);
-        when(paymentEventMock.getCurrency()).thenReturn(currencyModelMock);
-        when(paymentEventMock.getAmount()).thenReturn(AMOUNT);
         when(paymentEventMock.getEventType()).thenReturn(PAYMENT_APPROVED.toString());
     }
 
     private void setUpPaymentTransactionsAndTransactionEntries() {
-        when(paymentTransactionMock.getCode()).thenReturn(PAYMENT_REFERENCE);
-        when(paymentTransactionMock.getRequestId()).thenReturn(PAYMENT_ID);
         when(capturePaymentTransactionEntryMock.getType()).thenReturn(CAPTURE);
         when(capturePendingPaymentTransactionEntryMock.getType()).thenReturn(CAPTURE);
-        when(capturePendingPaymentTransactionEntryMock.getTransactionStatus()).thenReturn(PENDING.toString());
-        when(authorizationPendingPaymentTransactionEntryMock.getType()).thenReturn(AUTHORIZATION);
-        when(authorizationPendingPaymentTransactionEntryMock.getTransactionStatus()).thenReturn(PENDING.toString());
         when(rejectedAuthorizationPaymentTransactionEntryMock.getType()).thenReturn(AUTHORIZATION);
         when(rejectedAuthorizationPaymentTransactionEntryMock.getTransactionStatus()).thenReturn(TransactionStatus.REJECTED.toString());
         when(acceptedAuthorizationPaymentTransactionEntryMock.getType()).thenReturn(AUTHORIZATION);
         when(acceptedAuthorizationPaymentTransactionEntryMock.getTransactionStatus()).thenReturn(TransactionStatus.ACCEPTED.toString());
-        when(acceptedAuthorizationPaymentTransactionEntryMock.getTransactionStatusDetails()).thenReturn(SUCCESFULL.toString());
         when(reviewAuthorizationPaymentTransactionEntryMock.getType()).thenReturn(AUTHORIZATION);
         when(reviewAuthorizationPaymentTransactionEntryMock.getTransactionStatus()).thenReturn(TransactionStatus.REVIEW.toString());
-        when(refundPaymentTransactionEntry1Mock.getType()).thenReturn(REFUND_FOLLOW_ON);
-        when(refundPaymentTransactionEntry2Mock.getType()).thenReturn(REFUND_FOLLOW_ON);
         when(cancelPaymentTransactionEntryMock.getType()).thenReturn(CANCEL);
-        when(acceptedAuthorizationPaymentTransactionEntryMock.getCurrency()).thenReturn(currencyModelMock);
         when(checkoutComPaymentTransactionServiceMock.getPaymentTransaction(orderMock)).thenReturn(paymentTransactionMock);
     }
 }
